@@ -1,0 +1,11 @@
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
+from PySide2.QtCore import *
+import sys
+
+def main():
+    app = QApplication([])
+    sys.exit(app.exec_())
+    
+if __name__ == "__main__":
+    main()
