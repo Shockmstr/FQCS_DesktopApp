@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MeasurementScreen</class>
- <widget class="QWidget" name="MeasurementScreen">
+ <class>test_detect_pair_screen</class>
+ <widget class="QWidget" name="test_detect_pair_screen">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -107,12 +107,19 @@
      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,9">
       <item>
        <widget class="QLabel" name="lblTitle">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true">text-align:center;
 font-weight:bold;</string>
         </property>
         <property name="text">
-         <string>DEFINE MEASUREMENT AND MIN AREA</string>
+         <string>THIS IS THE CONFIGURATION TITLE</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -147,7 +154,122 @@ font-weight:bold;</string>
 	border: 1px solid #A5A5A5
 }</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_10"/>
+           <layout class="QVBoxLayout" name="verticalLayout_10">
+            <item>
+             <widget class="QGroupBox" name="groupCbbTemplate">
+              <property name="title">
+               <string>Label combo box</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_7">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QComboBox" name="cbbTemplate_5">
+                 <property name="autoFillBackground">
+                  <bool>false</bool>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">height:22px</string>
+                 </property>
+                 <property name="frame">
+                  <bool>true</bool>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Item 1</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Item 2</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupCbbTemplate_2">
+              <property name="title">
+               <string>Label combo box</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_8">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QComboBox" name="cbbTemplate_6">
+                 <property name="autoFillBackground">
+                  <bool>false</bool>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">height:22px</string>
+                 </property>
+                 <property name="frame">
+                  <bool>true</bool>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Item 1</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Item 2</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupCbbTemplate_3">
+              <property name="title">
+               <string>Label combo box</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_9">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QComboBox" name="cbbTemplate_7">
+                 <property name="autoFillBackground">
+                  <bool>false</bool>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">height:22px</string>
+                 </property>
+                 <property name="frame">
+                  <bool>true</bool>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Item 1</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Item 2</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
          <item>
@@ -159,9 +281,9 @@ font-weight:bold;</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
-             <widget class="QGroupBox" name="groupSliderWidth">
+             <widget class="QGroupBox" name="groupSliderTemplate">
               <property name="title">
-               <string>Mininum width(%)</string>
+               <string>Label slider</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <property name="topMargin">
@@ -171,7 +293,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSlider" name="sldMininumWidth">
+                <widget class="QSlider" name="sliderTemplate">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -180,38 +302,10 @@ font-weight:bold;</string>
               </layout>
              </widget>
             </item>
-            <item row="1" column="1">
-             <widget class="QGroupBox" name="groupLeftActualLength">
-              <property name="title">
-               <string>Left side actual length</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_14">
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QLineEdit" name="inpLeftActualLength">
-                 <property name="inputMask">
-                  <string/>
-                 </property>
-                 <property name="text">
-                  <string>27</string>
-                 </property>
-                 <property name="placeholderText">
-                  <string>Input something</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
             <item row="0" column="2">
-             <widget class="QGroupBox" name="groupSliderPosition">
+             <widget class="QGroupBox" name="groupSliderTemplate_3">
               <property name="title">
-               <string>Detect position</string>
+               <string>Label slider</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
                <property name="topMargin">
@@ -221,7 +315,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSlider" name="sldDectectPosition">
+                <widget class="QSlider" name="sliderTemplate_3">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -230,12 +324,12 @@ font-weight:bold;</string>
               </layout>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QGroupBox" name="groupLeftDetectedLength">
+            <item row="1" column="0">
+             <widget class="QGroupBox" name="groupInputTemplate">
               <property name="title">
-               <string>Left side detected length (px)</string>
+               <string>Label input</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_15">
+              <layout class="QVBoxLayout" name="verticalLayout_14">
                <property name="topMargin">
                 <number>0</number>
                </property>
@@ -243,12 +337,12 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpLeftDetectedLength">
+                <widget class="QLineEdit" name="inpTemplate">
                  <property name="inputMask">
                   <string/>
                  </property>
                  <property name="text">
-                  <string>420</string>
+                  <string/>
                  </property>
                  <property name="placeholderText">
                   <string>Input something</string>
@@ -258,10 +352,10 @@ font-weight:bold;</string>
               </layout>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QGroupBox" name="groupSliderHeight">
+            <item row="0" column="1">
+             <widget class="QGroupBox" name="groupSliderTemplate_2">
               <property name="title">
-               <string>Maxinum height(%)</string>
+               <string>Label slider</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_12">
                <property name="topMargin">
@@ -271,7 +365,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSlider" name="sldMaxinumHeight">
+                <widget class="QSlider" name="sliderTemplate_2">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -280,12 +374,12 @@ font-weight:bold;</string>
               </layout>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="QGroupBox" name="groupLeftLengthUnit">
+            <item row="2" column="0">
+             <widget class="QGroupBox" name="groupColorPickerTemplate">
               <property name="title">
-               <string>Length unit</string>
+               <string>Label color picker</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_5">
+              <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="4,2,4">
                <property name="topMargin">
                 <number>0</number>
                </property>
@@ -293,15 +387,32 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpLengthUnit">
-                 <property name="inputMask">
-                  <string/>
+                <widget class="QPushButton" name="btnColorFromTemplate">
+                 <property name="styleSheet">
+                  <string notr="true">background-color:#F33</string>
                  </property>
                  <property name="text">
-                  <string>cm</string>
+                  <string/>
                  </property>
-                 <property name="placeholderText">
-                  <string>Input something</string>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="lblConnectTemplate">
+                 <property name="text">
+                  <string>---</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnColorToTemplate">
+                 <property name="styleSheet">
+                  <string notr="true">background-color:#3F3</string>
+                 </property>
+                 <property name="text">
+                  <string/>
                  </property>
                 </widget>
                </item>
@@ -309,11 +420,11 @@ font-weight:bold;</string>
              </widget>
             </item>
             <item row="1" column="2">
-             <widget class="QGroupBox" name="groupSliderDetectRange">
+             <widget class="QGroupBox" name="groupInputTemplate_2">
               <property name="title">
-               <string>Detect range</string>
+               <string>Label input</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_6">
+              <layout class="QVBoxLayout" name="verticalLayout_15">
                <property name="topMargin">
                 <number>0</number>
                </property>
@@ -321,34 +432,12 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSlider" name="sldDetectRange">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item row="2" column="2">
-             <widget class="QGroupBox" name="groupInputAllowDiff">
-              <property name="title">
-               <string>Allow difference ({unit})</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_7">
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QLineEdit" name="inpAllowDiff">
+                <widget class="QLineEdit" name="inpTemplate_2">
                  <property name="inputMask">
                   <string/>
                  </property>
                  <property name="text">
-                  <string>0.5</string>
+                  <string/>
                  </property>
                  <property name="placeholderText">
                   <string>Input something</string>
@@ -385,7 +474,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item alignment="Qt::AlignTop">
-                <widget class="QPushButton" name="btnCapture">
+                <widget class="QPushButton" name="btnTemplate">
                  <property name="text">
                   <string>CAPTURE</string>
                  </property>
@@ -410,14 +499,14 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QPushButton" name="btnBack">
+                <widget class="QPushButton" name="btnTemplate_2">
                  <property name="text">
                   <string>BACK</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="btnNext">
+                <widget class="QPushButton" name="btnTemplate_3">
                  <property name="text">
                   <string>NEXT</string>
                  </property>

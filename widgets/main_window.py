@@ -3,6 +3,7 @@ from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from views.main_window import Ui_MainWindow
 from widgets.measurement_screen import MeasurementScreen
+from widgets.test_detect_pair_screen import TestDetectPairScreen
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -14,7 +15,11 @@ class MainWindow(QMainWindow):
         
         #screen 1
         self.measurement_screen = MeasurementScreen()
-        self.setCentralWidget(self.measurement_screen)
+        # self.setCentralWidget(self.measurement_screen)
+
+        #screen 2
+        self.test_detect_pair_screen = TestDetectPairScreen()
+        self.setCentralWidget(self.test_detect_pair_screen)
 
         #event handler
     def exit_program(self):
