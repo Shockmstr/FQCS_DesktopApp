@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ScreenTemplate</class>
+ <widget class="QWidget" name="ScreenTemplate">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1440</width>
+    <height>900</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background:#E5E5E5</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="8,2">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="containerScreen" native="true">
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="screen1">
+        <property name="styleSheet">
+         <string notr="true">background-color: #AFF;font-weight:bold;</string>
+        </property>
+        <property name="text">
+         <string>SCREEN</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="screen2">
+        <property name="styleSheet">
+         <string notr="true">background-color: #AFF;font-weight:bold;</string>
+        </property>
+        <property name="text">
+         <string>SCREEN</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="screen3">
+        <property name="styleSheet">
+         <string notr="true">background-color: #AFF;font-weight:bold;</string>
+        </property>
+        <property name="text">
+         <string>SCREEN</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="screen4">
+        <property name="styleSheet">
+         <string notr="true">background-color: #AFF;font-weight:bold;</string>
+        </property>
+        <property name="text">
+         <string>SCREEN</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="containerConfig" native="true">
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: #EEEEEE</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,9">
+      <item>
+       <widget class="QLabel" name="lblTitle">
+        <property name="styleSheet">
+         <string notr="true">text-align:center;
+font-weight:bold;</string>
+        </property>
+        <property name="text">
+         <string>DEFINE MEASUREMENT AND MIN AREA</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="containerParam" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,6,2">
+         <property name="spacing">
+          <number>7</number>
+         </property>
+         <property name="sizeConstraint">
+          <enum>QLayout::SetDefaultConstraint</enum>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QWidget" name="containerLeft" native="true">
+           <property name="styleSheet">
+            <string notr="true">#containerLeft {
+	border: 1px solid #A5A5A5
+}</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_10"/>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="containerMid" native="true">
+           <property name="styleSheet">
+            <string notr="true">#containerMid {
+	border: 1px solid #A5A5A5
+}</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <widget class="QGroupBox" name="groupSliderTemplate">
+              <property name="title">
+               <string>Mininum width(%)</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_11">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QSlider" name="sliderTemplate">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QGroupBox" name="groupInputTemplate">
+              <property name="title">
+               <string>Left side actual length</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_14">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLineEdit" name="inpTemplate">
+                 <property name="inputMask">
+                  <string/>
+                 </property>
+                 <property name="text">
+                  <string>27</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Input something</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QGroupBox" name="groupSliderTemplate_3">
+              <property name="title">
+               <string>Detect position</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_13">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QSlider" name="sliderTemplate_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QGroupBox" name="groupInputTemplate_2">
+              <property name="title">
+               <string>Left side detected length (px)</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_15">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLineEdit" name="inpTemplate_2">
+                 <property name="inputMask">
+                  <string/>
+                 </property>
+                 <property name="text">
+                  <string>420</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Input something</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QGroupBox" name="groupSliderTemplate_2">
+              <property name="title">
+               <string>Maxinum height(%)</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_12">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QSlider" name="sliderTemplate_2">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QGroupBox" name="groupInputTemplate_3">
+              <property name="title">
+               <string>Length unit</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_5">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLineEdit" name="inpTemplate_3">
+                 <property name="inputMask">
+                  <string/>
+                 </property>
+                 <property name="text">
+                  <string>cm</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Input something</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QGroupBox" name="groupSliderTemplate_4">
+              <property name="title">
+               <string>Detect range</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_6">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QSlider" name="sliderTemplate_4">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QGroupBox" name="groupInputTemplate_4">
+              <property name="title">
+               <string>Allow difference ({unit})</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_7">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLineEdit" name="inpTemplate_4">
+                 <property name="inputMask">
+                  <string/>
+                 </property>
+                 <property name="text">
+                  <string>0.5</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Input something</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="containerRight" native="true">
+           <property name="styleSheet">
+            <string notr="true">#containerRight {
+	border: 1px solid #A5A5A5
+}</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_16">
+            <item alignment="Qt::AlignTop">
+             <widget class="QWidget" name="containerVerticalBtn" native="true">
+              <layout class="QVBoxLayout" name="verticalLayout_17">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item alignment="Qt::AlignTop">
+                <widget class="QPushButton" name="btnTemplate">
+                 <property name="text">
+                  <string>CAPTURE</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item alignment="Qt::AlignBottom">
+             <widget class="QWidget" name="containerNavBtn" native="true">
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QPushButton" name="btnTemplate_2">
+                 <property name="text">
+                  <string>BACK</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnTemplate_3">
+                 <property name="text">
+                  <string>NEXT</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
