@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ScreenTemplate</class>
- <widget class="QWidget" name="ScreenTemplate">
+ <class>MeasurementScreen</class>
+ <widget class="QWidget" name="MeasurementScreen">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -159,7 +159,7 @@ font-weight:bold;</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
-             <widget class="QGroupBox" name="groupSliderTemplate">
+             <widget class="QGroupBox" name="groupSliderWidth">
               <property name="title">
                <string>Mininum width(%)</string>
               </property>
@@ -171,7 +171,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSlider" name="sliderTemplate">
+                <widget class="QSlider" name="sldMininumWidth">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -181,7 +181,7 @@ font-weight:bold;</string>
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QGroupBox" name="groupInputTemplate">
+             <widget class="QGroupBox" name="groupLeftActualLength">
               <property name="title">
                <string>Left side actual length</string>
               </property>
@@ -193,7 +193,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpTemplate">
+                <widget class="QLineEdit" name="inpLeftActualLength">
                  <property name="inputMask">
                   <string/>
                  </property>
@@ -209,7 +209,7 @@ font-weight:bold;</string>
              </widget>
             </item>
             <item row="0" column="2">
-             <widget class="QGroupBox" name="groupSliderTemplate_3">
+             <widget class="QGroupBox" name="groupSliderPosition">
               <property name="title">
                <string>Detect position</string>
               </property>
@@ -221,7 +221,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSlider" name="sliderTemplate_3">
+                <widget class="QSlider" name="sldDectectPosition">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -231,7 +231,7 @@ font-weight:bold;</string>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QGroupBox" name="groupInputTemplate_2">
+             <widget class="QGroupBox" name="groupLeftDetectedLength">
               <property name="title">
                <string>Left side detected length (px)</string>
               </property>
@@ -243,7 +243,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpTemplate_2">
+                <widget class="QLineEdit" name="inpLeftDetectedLength">
                  <property name="inputMask">
                   <string/>
                  </property>
@@ -259,7 +259,7 @@ font-weight:bold;</string>
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QGroupBox" name="groupSliderTemplate_2">
+             <widget class="QGroupBox" name="groupSliderHeight">
               <property name="title">
                <string>Maxinum height(%)</string>
               </property>
@@ -271,7 +271,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSlider" name="sliderTemplate_2">
+                <widget class="QSlider" name="sldMaxinumHeight">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -281,7 +281,7 @@ font-weight:bold;</string>
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QGroupBox" name="groupInputTemplate_3">
+             <widget class="QGroupBox" name="groupLeftLengthUnit">
               <property name="title">
                <string>Length unit</string>
               </property>
@@ -293,7 +293,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpTemplate_3">
+                <widget class="QLineEdit" name="inpLengthUnit">
                  <property name="inputMask">
                   <string/>
                  </property>
@@ -309,7 +309,7 @@ font-weight:bold;</string>
              </widget>
             </item>
             <item row="1" column="2">
-             <widget class="QGroupBox" name="groupSliderTemplate_4">
+             <widget class="QGroupBox" name="groupSliderDetectRange">
               <property name="title">
                <string>Detect range</string>
               </property>
@@ -321,7 +321,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSlider" name="sliderTemplate_4">
+                <widget class="QSlider" name="sldDetectRange">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -331,7 +331,7 @@ font-weight:bold;</string>
              </widget>
             </item>
             <item row="2" column="2">
-             <widget class="QGroupBox" name="groupInputTemplate_4">
+             <widget class="QGroupBox" name="groupInputAllowDiff">
               <property name="title">
                <string>Allow difference ({unit})</string>
               </property>
@@ -343,7 +343,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpTemplate_4">
+                <widget class="QLineEdit" name="inpAllowDiff">
                  <property name="inputMask">
                   <string/>
                  </property>

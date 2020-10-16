@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'MeasurementAndMinScreenrPqtZD.ui'
+## Form generated from reading UI file 'measurement_screennCZCne.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -13,18 +13,18 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 
-class Ui_measurement_screen(object):
-    def setupUi(self, measurement_screen):
-        if not measurement_screen.objectName():
-            measurement_screen.setObjectName(u"measurement_screen")
-        measurement_screen.resize(1440, 900)
-        measurement_screen.setAutoFillBackground(False)
-        measurement_screen.setStyleSheet(u"background:#E5E5E5")
-        self.verticalLayout = QVBoxLayout(measurement_screen)
+class Ui_MeasurementScreen(object):
+    def setupUi(self, MeasurementScreen):
+        if not MeasurementScreen.objectName():
+            MeasurementScreen.setObjectName(u"MeasurementScreen")
+        MeasurementScreen.resize(1440, 900)
+        MeasurementScreen.setAutoFillBackground(False)
+        MeasurementScreen.setStyleSheet(u"background:#E5E5E5")
+        self.verticalLayout = QVBoxLayout(MeasurementScreen)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.containerScreen = QWidget(measurement_screen)
+        self.containerScreen = QWidget(MeasurementScreen)
         self.containerScreen.setObjectName(u"containerScreen")
         self.containerScreen.setAutoFillBackground(False)
         self.gridLayout = QGridLayout(self.containerScreen)
@@ -60,7 +60,7 @@ class Ui_measurement_screen(object):
 
         self.verticalLayout.addWidget(self.containerScreen)
 
-        self.containerConfig = QWidget(measurement_screen)
+        self.containerConfig = QWidget(MeasurementScreen)
         self.containerConfig.setObjectName(u"containerConfig")
         self.containerConfig.setAutoFillBackground(False)
         self.containerConfig.setStyleSheet(u"background-color: #EEEEEE")
@@ -98,113 +98,113 @@ class Ui_measurement_screen(object):
 "}")
         self.gridLayout_2 = QGridLayout(self.containerMid)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.groupSliderTemplate = QGroupBox(self.containerMid)
-        self.groupSliderTemplate.setObjectName(u"groupSliderTemplate")
-        self.verticalLayout_11 = QVBoxLayout(self.groupSliderTemplate)
+        self.groupSliderWidth = QGroupBox(self.containerMid)
+        self.groupSliderWidth.setObjectName(u"groupSliderWidth")
+        self.verticalLayout_11 = QVBoxLayout(self.groupSliderWidth)
         self.verticalLayout_11.setObjectName(u"verticalLayout_11")
         self.verticalLayout_11.setContentsMargins(-1, 0, -1, 0)
-        self.sliderTemplate = QSlider(self.groupSliderTemplate)
-        self.sliderTemplate.setObjectName(u"sliderTemplate")
-        self.sliderTemplate.setOrientation(Qt.Horizontal)
+        self.sldMininumWidth = QSlider(self.groupSliderWidth)
+        self.sldMininumWidth.setObjectName(u"sldMininumWidth")
+        self.sldMininumWidth.setOrientation(Qt.Horizontal)
 
-        self.verticalLayout_11.addWidget(self.sliderTemplate)
+        self.verticalLayout_11.addWidget(self.sldMininumWidth)
 
 
-        self.gridLayout_2.addWidget(self.groupSliderTemplate, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.groupSliderWidth, 0, 0, 1, 1)
 
-        self.groupInputTemplate = QGroupBox(self.containerMid)
-        self.groupInputTemplate.setObjectName(u"groupInputTemplate")
-        self.verticalLayout_14 = QVBoxLayout(self.groupInputTemplate)
+        self.groupLeftActualLength = QGroupBox(self.containerMid)
+        self.groupLeftActualLength.setObjectName(u"groupLeftActualLength")
+        self.verticalLayout_14 = QVBoxLayout(self.groupLeftActualLength)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
         self.verticalLayout_14.setContentsMargins(-1, 0, -1, 0)
-        self.inpTemplate = QLineEdit(self.groupInputTemplate)
-        self.inpTemplate.setObjectName(u"inpTemplate")
+        self.inpLeftActualLength = QLineEdit(self.groupLeftActualLength)
+        self.inpLeftActualLength.setObjectName(u"inpLeftActualLength")
 
-        self.verticalLayout_14.addWidget(self.inpTemplate)
+        self.verticalLayout_14.addWidget(self.inpLeftActualLength)
 
 
-        self.gridLayout_2.addWidget(self.groupInputTemplate, 1, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.groupLeftActualLength, 1, 1, 1, 1)
 
-        self.groupSliderTemplate_3 = QGroupBox(self.containerMid)
-        self.groupSliderTemplate_3.setObjectName(u"groupSliderTemplate_3")
-        self.verticalLayout_13 = QVBoxLayout(self.groupSliderTemplate_3)
+        self.groupSliderPosition = QGroupBox(self.containerMid)
+        self.groupSliderPosition.setObjectName(u"groupSliderPosition")
+        self.verticalLayout_13 = QVBoxLayout(self.groupSliderPosition)
         self.verticalLayout_13.setObjectName(u"verticalLayout_13")
         self.verticalLayout_13.setContentsMargins(-1, 0, -1, 0)
-        self.sliderTemplate_3 = QSlider(self.groupSliderTemplate_3)
-        self.sliderTemplate_3.setObjectName(u"sliderTemplate_3")
-        self.sliderTemplate_3.setOrientation(Qt.Horizontal)
+        self.sldDectectPosition = QSlider(self.groupSliderPosition)
+        self.sldDectectPosition.setObjectName(u"sldDectectPosition")
+        self.sldDectectPosition.setOrientation(Qt.Horizontal)
 
-        self.verticalLayout_13.addWidget(self.sliderTemplate_3)
+        self.verticalLayout_13.addWidget(self.sldDectectPosition)
 
 
-        self.gridLayout_2.addWidget(self.groupSliderTemplate_3, 0, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.groupSliderPosition, 0, 2, 1, 1)
 
-        self.groupInputTemplate_2 = QGroupBox(self.containerMid)
-        self.groupInputTemplate_2.setObjectName(u"groupInputTemplate_2")
-        self.verticalLayout_15 = QVBoxLayout(self.groupInputTemplate_2)
+        self.groupLeftDetectedLength = QGroupBox(self.containerMid)
+        self.groupLeftDetectedLength.setObjectName(u"groupLeftDetectedLength")
+        self.verticalLayout_15 = QVBoxLayout(self.groupLeftDetectedLength)
         self.verticalLayout_15.setObjectName(u"verticalLayout_15")
         self.verticalLayout_15.setContentsMargins(-1, 0, -1, 0)
-        self.inpTemplate_2 = QLineEdit(self.groupInputTemplate_2)
-        self.inpTemplate_2.setObjectName(u"inpTemplate_2")
+        self.inpLeftDetectedLength = QLineEdit(self.groupLeftDetectedLength)
+        self.inpLeftDetectedLength.setObjectName(u"inpLeftDetectedLength")
 
-        self.verticalLayout_15.addWidget(self.inpTemplate_2)
+        self.verticalLayout_15.addWidget(self.inpLeftDetectedLength)
 
 
-        self.gridLayout_2.addWidget(self.groupInputTemplate_2, 0, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.groupLeftDetectedLength, 0, 1, 1, 1)
 
-        self.groupSliderTemplate_2 = QGroupBox(self.containerMid)
-        self.groupSliderTemplate_2.setObjectName(u"groupSliderTemplate_2")
-        self.verticalLayout_12 = QVBoxLayout(self.groupSliderTemplate_2)
+        self.groupSliderHeight = QGroupBox(self.containerMid)
+        self.groupSliderHeight.setObjectName(u"groupSliderHeight")
+        self.verticalLayout_12 = QVBoxLayout(self.groupSliderHeight)
         self.verticalLayout_12.setObjectName(u"verticalLayout_12")
         self.verticalLayout_12.setContentsMargins(-1, 0, -1, 0)
-        self.sliderTemplate_2 = QSlider(self.groupSliderTemplate_2)
-        self.sliderTemplate_2.setObjectName(u"sliderTemplate_2")
-        self.sliderTemplate_2.setOrientation(Qt.Horizontal)
+        self.sldMaxinumHeight = QSlider(self.groupSliderHeight)
+        self.sldMaxinumHeight.setObjectName(u"sldMaxinumHeight")
+        self.sldMaxinumHeight.setOrientation(Qt.Horizontal)
 
-        self.verticalLayout_12.addWidget(self.sliderTemplate_2)
+        self.verticalLayout_12.addWidget(self.sldMaxinumHeight)
 
 
-        self.gridLayout_2.addWidget(self.groupSliderTemplate_2, 1, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.groupSliderHeight, 1, 0, 1, 1)
 
-        self.groupInputTemplate_3 = QGroupBox(self.containerMid)
-        self.groupInputTemplate_3.setObjectName(u"groupInputTemplate_3")
-        self.verticalLayout_5 = QVBoxLayout(self.groupInputTemplate_3)
+        self.groupLeftLengthUnit = QGroupBox(self.containerMid)
+        self.groupLeftLengthUnit.setObjectName(u"groupLeftLengthUnit")
+        self.verticalLayout_5 = QVBoxLayout(self.groupLeftLengthUnit)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.verticalLayout_5.setContentsMargins(-1, 0, -1, 0)
-        self.inpTemplate_3 = QLineEdit(self.groupInputTemplate_3)
-        self.inpTemplate_3.setObjectName(u"inpTemplate_3")
+        self.inpLengthUnit = QLineEdit(self.groupLeftLengthUnit)
+        self.inpLengthUnit.setObjectName(u"inpLengthUnit")
 
-        self.verticalLayout_5.addWidget(self.inpTemplate_3)
+        self.verticalLayout_5.addWidget(self.inpLengthUnit)
 
 
-        self.gridLayout_2.addWidget(self.groupInputTemplate_3, 2, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.groupLeftLengthUnit, 2, 1, 1, 1)
 
-        self.groupSliderTemplate_4 = QGroupBox(self.containerMid)
-        self.groupSliderTemplate_4.setObjectName(u"groupSliderTemplate_4")
-        self.verticalLayout_6 = QVBoxLayout(self.groupSliderTemplate_4)
+        self.groupSliderDetectRange = QGroupBox(self.containerMid)
+        self.groupSliderDetectRange.setObjectName(u"groupSliderDetectRange")
+        self.verticalLayout_6 = QVBoxLayout(self.groupSliderDetectRange)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.verticalLayout_6.setContentsMargins(-1, 0, -1, 0)
-        self.sliderTemplate_4 = QSlider(self.groupSliderTemplate_4)
-        self.sliderTemplate_4.setObjectName(u"sliderTemplate_4")
-        self.sliderTemplate_4.setOrientation(Qt.Horizontal)
+        self.sldDetectRange = QSlider(self.groupSliderDetectRange)
+        self.sldDetectRange.setObjectName(u"sldDetectRange")
+        self.sldDetectRange.setOrientation(Qt.Horizontal)
 
-        self.verticalLayout_6.addWidget(self.sliderTemplate_4)
+        self.verticalLayout_6.addWidget(self.sldDetectRange)
 
 
-        self.gridLayout_2.addWidget(self.groupSliderTemplate_4, 1, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.groupSliderDetectRange, 1, 2, 1, 1)
 
-        self.groupInputTemplate_4 = QGroupBox(self.containerMid)
-        self.groupInputTemplate_4.setObjectName(u"groupInputTemplate_4")
-        self.verticalLayout_7 = QVBoxLayout(self.groupInputTemplate_4)
+        self.groupInputAllowDiff = QGroupBox(self.containerMid)
+        self.groupInputAllowDiff.setObjectName(u"groupInputAllowDiff")
+        self.verticalLayout_7 = QVBoxLayout(self.groupInputAllowDiff)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.verticalLayout_7.setContentsMargins(-1, 0, -1, 0)
-        self.inpTemplate_4 = QLineEdit(self.groupInputTemplate_4)
-        self.inpTemplate_4.setObjectName(u"inpTemplate_4")
+        self.inpAllowDiff = QLineEdit(self.groupInputAllowDiff)
+        self.inpAllowDiff.setObjectName(u"inpAllowDiff")
 
-        self.verticalLayout_7.addWidget(self.inpTemplate_4)
+        self.verticalLayout_7.addWidget(self.inpAllowDiff)
 
 
-        self.gridLayout_2.addWidget(self.groupInputTemplate_4, 2, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.groupInputAllowDiff, 2, 2, 1, 1)
 
 
         self.horizontalLayout.addWidget(self.containerMid)
@@ -264,40 +264,40 @@ class Ui_measurement_screen(object):
         self.verticalLayout.setStretch(0, 8)
         self.verticalLayout.setStretch(1, 2)
 
-        self.retranslateUi(measurement_screen)
+        self.retranslateUi(MeasurementScreen)
 
-        QMetaObject.connectSlotsByName(measurement_screen)
+        QMetaObject.connectSlotsByName(MeasurementScreen)
     # setupUi
 
-    def retranslateUi(self, measurement_screen):
-        measurement_screen.setWindowTitle(QCoreApplication.translate("measurement_screen", u"Form", None))
-        self.screen1.setText(QCoreApplication.translate("measurement_screen", u"SCREEN", None))
-        self.screen2.setText(QCoreApplication.translate("measurement_screen", u"SCREEN", None))
-        self.screen3.setText(QCoreApplication.translate("measurement_screen", u"SCREEN", None))
-        self.screen4.setText(QCoreApplication.translate("measurement_screen", u"SCREEN", None))
-        self.lblTitle.setText(QCoreApplication.translate("measurement_screen", u"DEFINE MEASUREMENT AND MIN AREA", None))
-        self.groupSliderTemplate.setTitle(QCoreApplication.translate("measurement_screen", u"Mininum width(%)", None))
-        self.groupInputTemplate.setTitle(QCoreApplication.translate("measurement_screen", u"Left side actual length", None))
-        self.inpTemplate.setInputMask("")
-        self.inpTemplate.setText(QCoreApplication.translate("measurement_screen", u"27", None))
-        self.inpTemplate.setPlaceholderText(QCoreApplication.translate("measurement_screen", u"Input something", None))
-        self.groupSliderTemplate_3.setTitle(QCoreApplication.translate("measurement_screen", u"Detect position", None))
-        self.groupInputTemplate_2.setTitle(QCoreApplication.translate("measurement_screen", u"Left side detected length (px)", None))
-        self.inpTemplate_2.setInputMask("")
-        self.inpTemplate_2.setText(QCoreApplication.translate("measurement_screen", u"420", None))
-        self.inpTemplate_2.setPlaceholderText(QCoreApplication.translate("measurement_screen", u"Input something", None))
-        self.groupSliderTemplate_2.setTitle(QCoreApplication.translate("measurement_screen", u"Maxinum height(%)", None))
-        self.groupInputTemplate_3.setTitle(QCoreApplication.translate("measurement_screen", u"Length unit", None))
-        self.inpTemplate_3.setInputMask("")
-        self.inpTemplate_3.setText(QCoreApplication.translate("measurement_screen", u"cm", None))
-        self.inpTemplate_3.setPlaceholderText(QCoreApplication.translate("measurement_screen", u"Input something", None))
-        self.groupSliderTemplate_4.setTitle(QCoreApplication.translate("measurement_screen", u"Detect range", None))
-        self.groupInputTemplate_4.setTitle(QCoreApplication.translate("measurement_screen", u"Allow difference ({unit})", None))
-        self.inpTemplate_4.setInputMask("")
-        self.inpTemplate_4.setText(QCoreApplication.translate("measurement_screen", u"0.5", None))
-        self.inpTemplate_4.setPlaceholderText(QCoreApplication.translate("measurement_screen", u"Input something", None))
-        self.btnTemplate.setText(QCoreApplication.translate("measurement_screen", u"CAPTURE", None))
-        self.btnTemplate_2.setText(QCoreApplication.translate("measurement_screen", u"BACK", None))
-        self.btnTemplate_3.setText(QCoreApplication.translate("measurement_screen", u"NEXT", None))
+    def retranslateUi(self, MeasurementScreen):
+        MeasurementScreen.setWindowTitle(QCoreApplication.translate("MeasurementScreen", u"Form", None))
+        self.screen1.setText(QCoreApplication.translate("MeasurementScreen", u"SCREEN", None))
+        self.screen2.setText(QCoreApplication.translate("MeasurementScreen", u"SCREEN", None))
+        self.screen3.setText(QCoreApplication.translate("MeasurementScreen", u"SCREEN", None))
+        self.screen4.setText(QCoreApplication.translate("MeasurementScreen", u"SCREEN", None))
+        self.lblTitle.setText(QCoreApplication.translate("MeasurementScreen", u"DEFINE MEASUREMENT AND MIN AREA", None))
+        self.groupSliderWidth.setTitle(QCoreApplication.translate("MeasurementScreen", u"Mininum width(%)", None))
+        self.groupLeftActualLength.setTitle(QCoreApplication.translate("MeasurementScreen", u"Left side actual length", None))
+        self.inpLeftActualLength.setInputMask("")
+        self.inpLeftActualLength.setText(QCoreApplication.translate("MeasurementScreen", u"27", None))
+        self.inpLeftActualLength.setPlaceholderText(QCoreApplication.translate("MeasurementScreen", u"Input something", None))
+        self.groupSliderPosition.setTitle(QCoreApplication.translate("MeasurementScreen", u"Detect position", None))
+        self.groupLeftDetectedLength.setTitle(QCoreApplication.translate("MeasurementScreen", u"Left side detected length (px)", None))
+        self.inpLeftDetectedLength.setInputMask("")
+        self.inpLeftDetectedLength.setText(QCoreApplication.translate("MeasurementScreen", u"420", None))
+        self.inpLeftDetectedLength.setPlaceholderText(QCoreApplication.translate("MeasurementScreen", u"Input something", None))
+        self.groupSliderHeight.setTitle(QCoreApplication.translate("MeasurementScreen", u"Maxinum height(%)", None))
+        self.groupLeftLengthUnit.setTitle(QCoreApplication.translate("MeasurementScreen", u"Length unit", None))
+        self.inpLengthUnit.setInputMask("")
+        self.inpLengthUnit.setText(QCoreApplication.translate("MeasurementScreen", u"cm", None))
+        self.inpLengthUnit.setPlaceholderText(QCoreApplication.translate("MeasurementScreen", u"Input something", None))
+        self.groupSliderDetectRange.setTitle(QCoreApplication.translate("MeasurementScreen", u"Detect range", None))
+        self.groupInputAllowDiff.setTitle(QCoreApplication.translate("MeasurementScreen", u"Allow difference ({unit})", None))
+        self.inpAllowDiff.setInputMask("")
+        self.inpAllowDiff.setText(QCoreApplication.translate("MeasurementScreen", u"0.5", None))
+        self.inpAllowDiff.setPlaceholderText(QCoreApplication.translate("MeasurementScreen", u"Input something", None))
+        self.btnTemplate.setText(QCoreApplication.translate("MeasurementScreen", u"CAPTURE", None))
+        self.btnTemplate_2.setText(QCoreApplication.translate("MeasurementScreen", u"BACK", None))
+        self.btnTemplate_3.setText(QCoreApplication.translate("MeasurementScreen", u"NEXT", None))
     # retranslateUi
 
