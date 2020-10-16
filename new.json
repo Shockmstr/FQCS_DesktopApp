@@ -1,0 +1,56 @@
+{
+  "min_area": 1,
+  "stop_condition": 0,
+  "detect_range": [
+    0.2,
+    0.8
+  ],
+  "length_per_10px": null,
+  "length_unit": "cm",
+  "max_size_diff": 0.3,
+  "color_cfg": {
+    "img_size": [
+      32,
+      64
+    ],
+    "blur_val": 0.05,
+    "alpha_r": 1,
+    "alpha_l": 1,
+    "beta_r": -150,
+    "beta_l": -150,
+    "sat_adj": 2,
+    "supp_thresh": 10,
+    "amplify_thresh": [
+      null,
+      null,
+      null
+    ],
+    "amplify_rate": 20,
+    "max_diff": 0.2
+  },
+  "detect_method": "thresh",
+  "err_cfg": {
+    "inp_shape": [
+      320,
+      160,
+      3
+    ],
+    "img_size": [
+      160,
+      320
+    ],
+    "num_classes": 1,
+    "yolo_max_boxes": 10,
+    "yolo_iou_threshold": 0.5,
+    "weights": "yolov4.h5",
+    "yolo_score_threshold": 0.3,
+    "classes": [
+      "dirt"
+    ]
+  },
+  "d_cfg": {
+    "bg_thresh": 110,
+    "adj_bg_thresh": 110,
+    "light_adj_thresh": 65
+  }
+}
