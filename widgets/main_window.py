@@ -7,6 +7,7 @@ from models.detector_config import *
 from app.helpers import *
 from widgets.measurement_screen import MeasurementScreen
 from widgets.test_detect_pair_screen import TestDetectPairScreen
+from widgets.color_preprocess_config_screen import ColorPreprocessConfigScreen
 from widgets.detection_config_screen_layout import DetectionConfigScreen
 
 
@@ -18,6 +19,7 @@ class MainWindow(QMainWindow):
         # self.setWindowFlags(Qt.WindowCloseButtonHint)
         self.showFullScreen()
         self.bind_exit_program()
+
         self.bind_load_config()
         self.bind_save_config()
         # screen 1
@@ -27,14 +29,20 @@ class MainWindow(QMainWindow):
         # screen 2
         self.measurement_screen = MeasurementScreen(
             backscreen=self.change_detection_screen, nextscreen=self.change_detect_pair_screen)
+            
         # screen 3
         self.test_detect_pair_screen = TestDetectPairScreen(
-            backscreen=self.change_measurement_screen, nextscreen=None)
+            backscreen=self.change_measurement_screen, nextscreen=self.color_preprocess_config_screen)
+
+        # screen 4
+        self.color_preprocess_config_screen = ColorPreprocessConfigScreen(
+            backscreen=self.test_detect_pair_screen, nextscreen=None)
 
         # add to Stacked Widget
         self.ui.centralStackWidget.addWidget(self.detection_screen)
         self.ui.centralStackWidget.addWidget(self.measurement_screen)
         self.ui.centralStackWidget.addWidget(self.test_detect_pair_screen)
+        self.ui.centralStackWidget.addWidget(self.color_preprocess_config_screen)
 
     # binding
 
@@ -47,7 +55,7 @@ class MainWindow(QMainWindow):
     def bind_save_config(self):
         self.ui.actionSaveCfg.triggered.connect(self.on_save_config)
 
-    # event handlers
+    # event handler
 
     def exit_program(self):
         self.close()
@@ -61,6 +69,10 @@ class MainWindow(QMainWindow):
     def change_detect_pair_screen(self):
         self.ui.centralStackWidget.setCurrentWidget(
             self.test_detect_pair_screen)
+
+    def change_color_preprocess_config_screen(self):
+        self.ui.centralStackWidget.setCurrentWidget(
+            self.color_preprocess_config_screen)
 
     def on_load_config(self):
         file_path = file_chooser_open_directory(self)
