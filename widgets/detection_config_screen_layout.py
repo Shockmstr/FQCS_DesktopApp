@@ -2,10 +2,9 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from views.detection_config_screen_layout import Ui_DetectionConfigScreen
-from widgets.threshold_container_mid import ThresholdContainer
 
 class DetectionConfigScreen(QWidget):
-    def __init__(self):
+    def __init__(self, nextscreen: ()):
         QWidget.__init__(self)
         self.ui = Ui_DetectionConfigScreen()
         self.ui.setupUi(self)
@@ -17,6 +16,7 @@ class DetectionConfigScreen(QWidget):
         self.combobox_method_setup()
         self.init_all_slider_value_changed()
         self.ui.cbbMethod.activated[int].connect(self.ui.stackContainerMid.setCurrentIndex)
+        self.bind_next_screen(nextscreen=nextscreen)
         #self.ui.cbbMethod.currentIndexChanged.connect(self.method_changed)
         #self.ui.sldContrast.valueChanged.connect(lambda: self.slider_value_change(slider=self.ui.sldContrast, grpboxSlider=self.ui.grbboxSldContrast))
     #setup data / event handler
@@ -102,6 +102,9 @@ class DetectionConfigScreen(QWidget):
     def light_adj_range_value_change(self):
         value = self.ui.sldLightAdjRange.value()
         self.ui.grpboxLightAdjRange.setTitle("Light Adjustment: " + str(value))
+
+    def bind_next_screen(self, nextscreen: ()):
+        self.ui.btnNext.clicked.connect(nextscreen)
     # def slider_value_change(self, slider: QSlider , grpboxSlider: QGroupBox):
     #     value = slider.value()
     #     title = grpboxSlider.title().split(":")[0] # get the first name before : to eliminate duplicate

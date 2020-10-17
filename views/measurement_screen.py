@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'measurement_screennCZCne.ui'
+## Form generated from reading UI file 'measurement_screenLOhexl.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -221,10 +221,10 @@ class Ui_MeasurementScreen(object):
         self.verticalLayout_17 = QVBoxLayout(self.containerVerticalBtn)
         self.verticalLayout_17.setObjectName(u"verticalLayout_17")
         self.verticalLayout_17.setContentsMargins(0, 0, 0, 0)
-        self.btnTemplate = QPushButton(self.containerVerticalBtn)
-        self.btnTemplate.setObjectName(u"btnTemplate")
+        self.btnCapture = QPushButton(self.containerVerticalBtn)
+        self.btnCapture.setObjectName(u"btnCapture")
 
-        self.verticalLayout_17.addWidget(self.btnTemplate, 0, Qt.AlignTop)
+        self.verticalLayout_17.addWidget(self.btnCapture, 0, Qt.AlignTop)
 
 
         self.verticalLayout_16.addWidget(self.containerVerticalBtn, 0, Qt.AlignTop)
@@ -234,15 +234,15 @@ class Ui_MeasurementScreen(object):
         self.horizontalLayout_3 = QHBoxLayout(self.containerNavBtn)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.btnTemplate_2 = QPushButton(self.containerNavBtn)
-        self.btnTemplate_2.setObjectName(u"btnTemplate_2")
+        self.btnBack = QPushButton(self.containerNavBtn)
+        self.btnBack.setObjectName(u"btnBack")
 
-        self.horizontalLayout_3.addWidget(self.btnTemplate_2)
+        self.horizontalLayout_3.addWidget(self.btnBack)
 
-        self.btnTemplate_3 = QPushButton(self.containerNavBtn)
-        self.btnTemplate_3.setObjectName(u"btnTemplate_3")
+        self.btnNext = QPushButton(self.containerNavBtn)
+        self.btnNext.setObjectName(u"btnNext")
 
-        self.horizontalLayout_3.addWidget(self.btnTemplate_3)
+        self.horizontalLayout_3.addWidget(self.btnNext)
 
 
         self.verticalLayout_16.addWidget(self.containerNavBtn, 0, Qt.AlignBottom)
@@ -296,8 +296,8 @@ class Ui_MeasurementScreen(object):
         self.inpAllowDiff.setInputMask("")
         self.inpAllowDiff.setText(QCoreApplication.translate("MeasurementScreen", u"0.5", None))
         self.inpAllowDiff.setPlaceholderText(QCoreApplication.translate("MeasurementScreen", u"Input something", None))
-        self.btnTemplate.setText(QCoreApplication.translate("MeasurementScreen", u"CAPTURE", None))
-        self.btnTemplate_2.setText(QCoreApplication.translate("MeasurementScreen", u"BACK", None))
-        self.btnTemplate_3.setText(QCoreApplication.translate("MeasurementScreen", u"NEXT", None))
+        self.btnCapture.setText(QCoreApplication.translate("MeasurementScreen", u"CAPTURE", None))
+        self.btnBack.setText(QCoreApplication.translate("MeasurementScreen", u"BACK", None))
+        self.btnNext.setText(QCoreApplication.translate("MeasurementScreen", u"NEXT", None))
     # retranslateUi
 
