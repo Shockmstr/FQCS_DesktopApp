@@ -9,15 +9,10 @@ class ColorPreprocessConfigScreen(QWidget):
         QWidget.__init__(self)
         self.ui = Ui_color_preprocess_config_screen()
         self.ui.setupUi(self)
+        self.binding(backscreen=backscreen, nextscreen=nextscreen)
 
-        self.bind_backscreen(backscreen=backscreen)
-        self.bind_nextscreen(nextscreen=nextscreen)
-
-    #data binding
-    def bind_backscreen(self, backscreen: ()):
+    # binding
+    def binding(self, backscreen:(), nextscreen: ()):
         self.ui.btnBack.clicked.connect(backscreen)
-
-    def bind_nextscreen(self, nextscreen: ()):
         self.ui.btnNext.clicked.connect(nextscreen)
-
 

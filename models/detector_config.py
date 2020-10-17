@@ -6,7 +6,7 @@ class DetectorConfig(Subject):
     __instance = None
 
     @staticmethod 
-    def getInstance():
+    def get_instance():
         if DetectorConfig.__instance == None:
             DetectorConfig()
         return DetectorConfig.__instance
