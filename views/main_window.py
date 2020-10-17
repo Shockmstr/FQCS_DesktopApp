@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_windowLKzxeZ.ui'
+## Form generated from reading UI file 'main_windowMAzLTo.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -31,6 +31,11 @@ class Ui_MainWindow(object):
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.centralStackWidget = QStackedWidget(self.centralwidget)
+        self.centralStackWidget.setObjectName(u"centralStackWidget")
+
+        self.verticalLayout.addWidget(self.centralStackWidget)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
