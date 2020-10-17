@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'tmp_screen_layoutICHqqG.ui'
+## Form generated from reading UI file 'test_detect_pair_screenBsfSNQ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -17,7 +17,7 @@ class Ui_test_detect_pair_screen(object):
     def setupUi(self, test_detect_pair_screen):
         if not test_detect_pair_screen.objectName():
             test_detect_pair_screen.setObjectName(u"test_detect_pair_screen")
-        test_detect_pair_screen.resize(1440, 900)
+        test_detect_pair_screen.resize(1440, 789)
         test_detect_pair_screen.setAutoFillBackground(False)
         test_detect_pair_screen.setStyleSheet(u"background:#E5E5E5")
         self.verticalLayout = QVBoxLayout(test_detect_pair_screen)
@@ -29,6 +29,7 @@ class Ui_test_detect_pair_screen(object):
         self.containerScreen.setAutoFillBackground(False)
         self.gridLayout = QGridLayout(self.containerScreen)
         self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setContentsMargins(-1, -1, -1, 12)
         self.screen2 = QLabel(self.containerScreen)
         self.screen2.setObjectName(u"screen2")
         self.screen2.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
@@ -50,6 +51,44 @@ class Ui_test_detect_pair_screen(object):
 
         self.gridLayout.addWidget(self.screen4, 1, 1, 1, 1)
 
+        self.widget = QWidget(self.containerScreen)
+        self.widget.setObjectName(u"widget")
+        self.horizontalLayout_2 = QHBoxLayout(self.widget)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.groupCbDisplayType = QGroupBox(self.widget)
+        self.groupCbDisplayType.setObjectName(u"groupCbDisplayType")
+        self.verticalLayout_6 = QVBoxLayout(self.groupCbDisplayType)
+        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.verticalLayout_6.setContentsMargins(-1, 0, -1, 0)
+        self.cbDisplayType = QComboBox(self.groupCbDisplayType)
+        self.cbDisplayType.addItem("")
+        self.cbDisplayType.addItem("")
+        self.cbDisplayType.setObjectName(u"cbDisplayType")
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.cbDisplayType.sizePolicy().hasHeightForWidth())
+        self.cbDisplayType.setSizePolicy(sizePolicy)
+        self.cbDisplayType.setAutoFillBackground(False)
+        self.cbDisplayType.setStyleSheet(u"height:22px")
+
+        self.verticalLayout_6.addWidget(self.cbDisplayType, 0, Qt.AlignTop)
+
+
+        self.horizontalLayout_2.addWidget(self.groupCbDisplayType, 0, Qt.AlignTop)
+
+        self.widget_2 = QWidget(self.widget)
+        self.widget_2.setObjectName(u"widget_2")
+
+        self.horizontalLayout_2.addWidget(self.widget_2)
+
+        self.horizontalLayout_2.setStretch(0, 1)
+        self.horizontalLayout_2.setStretch(1, 2)
+
+        self.gridLayout.addWidget(self.widget, 1, 0, 1, 1)
+
+        self.gridLayout.setColumnStretch(0, 1)
+        self.gridLayout.setColumnStretch(1, 1)
 
         self.verticalLayout.addWidget(self.containerScreen)
 
@@ -96,28 +135,6 @@ class Ui_test_detect_pair_screen(object):
 "}")
         self.gridLayout_2 = QGridLayout(self.containerMid)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.groupCbDisplayType = QGroupBox(self.containerMid)
-        self.groupCbDisplayType.setObjectName(u"groupCbDisplayType")
-        self.verticalLayout_6 = QVBoxLayout(self.groupCbDisplayType)
-        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
-        self.verticalLayout_6.setContentsMargins(-1, 0, -1, 0)
-        self.cbDisplayType = QComboBox(self.groupCbDisplayType)
-        self.cbDisplayType.addItem("")
-        self.cbDisplayType.addItem("")
-        self.cbDisplayType.setObjectName(u"cbDisplayType")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.cbDisplayType.sizePolicy().hasHeightForWidth())
-        self.cbDisplayType.setSizePolicy(sizePolicy)
-        self.cbDisplayType.setAutoFillBackground(False)
-        self.cbDisplayType.setStyleSheet(u"height:22px")
-
-        self.verticalLayout_6.addWidget(self.cbDisplayType, 0, Qt.AlignTop)
-
-
-        self.gridLayout_2.addWidget(self.groupCbDisplayType, 0, 0, 1, 1)
-
 
         self.horizontalLayout.addWidget(self.containerMid)
 
@@ -186,11 +203,11 @@ class Ui_test_detect_pair_screen(object):
         self.screen2.setText(QCoreApplication.translate("test_detect_pair_screen", u"SCREEN", None))
         self.screen1.setText(QCoreApplication.translate("test_detect_pair_screen", u"SCREEN", None))
         self.screen4.setText(QCoreApplication.translate("test_detect_pair_screen", u"SCREEN", None))
-        self.lblTitle.setText(QCoreApplication.translate("test_detect_pair_screen", u"TEST AND DEFINE SAMPLE", None))
         self.groupCbDisplayType.setTitle(QCoreApplication.translate("test_detect_pair_screen", u"Display type:", None))
         self.cbDisplayType.setItemText(0, QCoreApplication.translate("test_detect_pair_screen", u"Item 1", None))
         self.cbDisplayType.setItemText(1, QCoreApplication.translate("test_detect_pair_screen", u"Item 2", None))
 
+        self.lblTitle.setText(QCoreApplication.translate("test_detect_pair_screen", u"TEST AND DEFINE SAMPLE", None))
         self.btnSaveSample.setText(QCoreApplication.translate("test_detect_pair_screen", u"SAVE SAMPLE", None))
         self.btnBack.setText(QCoreApplication.translate("test_detect_pair_screen", u"BACK", None))
         self.btnNext.setText(QCoreApplication.translate("test_detect_pair_screen", u"NEXT", None))
