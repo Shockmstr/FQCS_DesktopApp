@@ -16,6 +16,7 @@ class DetectorConfig(Subject):
             raise Exception("DetectorConfig class is a singleton")
         else:
             DetectorConfig.__instance = self
+            self.load_config()
 
     def load_config(self, detector_config = None):
         if detector_config is None:
