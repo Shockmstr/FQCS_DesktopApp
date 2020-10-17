@@ -37,8 +37,8 @@ class MainWindow(QMainWindow):
 
     # event handlers
     def on_load_config(self):
-        file_path = file_chooser_open(self)
-        if (file_path):
+        file_path = file_chooser_open_directory(self)
+        if (file_path is not None):
             temp_cfg = detector.load_json_cfg(file_path)
             print(temp_cfg)
             DetectorConfig.getInstance().load_config(temp_cfg)
@@ -50,8 +50,8 @@ class MainWindow(QMainWindow):
         print(configs)
         if configs is not None:
             configs["min_area"] = 1
-            file_path = file_chooser_save(self)
+            file_path = file_chooser_open_directory(self)
             if (file_path):
                 detector.save_json_cfg(configs, file_path)
         else:
-            print("no config provided")
+            print("No config provided")

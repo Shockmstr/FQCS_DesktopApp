@@ -13,7 +13,7 @@ class DetectorConfig(Subject):
 
     def __init__(self):
         if DetectorConfig.__instance != None:
-            raise Exception("This class is a singleton")
+            raise Exception("DetectorConfig class is a singleton")
         else:
             DetectorConfig.__instance = self
 
@@ -22,4 +22,3 @@ class DetectorConfig(Subject):
             self.config = detector.default_detector_config()
         else:
             self.config = detector_config
-

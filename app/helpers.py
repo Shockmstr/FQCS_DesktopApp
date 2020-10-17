@@ -3,11 +3,10 @@ from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 
 
-def file_chooser_open(self):
-    filename, filter = QFileDialog.getOpenFileName()
-    return filename
-
-
-def file_chooser_save(self):
-    filename, filter = QFileDialog.getSaveFileName()
+def file_chooser_open_directory(self):
+    dialog = QFileDialog(self)
+    dialog.setFileMode(QFileDialog.Directory)
+    dialog.setOption(QFileDialog.ShowDirsOnly, True)
+    filename = dialog.getExistingDirectory()
+    print(filename)
     return filename
