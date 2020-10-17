@@ -28,21 +28,24 @@ class MainWindow(QMainWindow):
 
         # screen 2
         self.measurement_screen = MeasurementScreen(
-            backscreen=self.change_detection_screen, nextscreen=self.change_detect_pair_screen)
-            
+            backscreen=self.change_detection_screen,
+            nextscreen=self.change_detect_pair_screen)
+
         # screen 3
         self.test_detect_pair_screen = TestDetectPairScreen(
-            backscreen=self.change_measurement_screen, nextscreen=self.color_preprocess_config_screen)
+            backscreen=self.change_measurement_screen,
+            nextscreen=self.change_color_preprocess_config_screen)
 
         # screen 4
         self.color_preprocess_config_screen = ColorPreprocessConfigScreen(
-            backscreen=self.test_detect_pair_screen, nextscreen=None)
+            backscreen=self.change_detect_pair_screen, nextscreen=None)
 
         # add to Stacked Widget
         self.ui.centralStackWidget.addWidget(self.detection_screen)
         self.ui.centralStackWidget.addWidget(self.measurement_screen)
         self.ui.centralStackWidget.addWidget(self.test_detect_pair_screen)
-        self.ui.centralStackWidget.addWidget(self.color_preprocess_config_screen)
+        self.ui.centralStackWidget.addWidget(
+            self.color_preprocess_config_screen)
 
     # binding
 
