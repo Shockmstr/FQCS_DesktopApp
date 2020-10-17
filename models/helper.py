@@ -1,1 +1,0 @@
-#class for global configuration

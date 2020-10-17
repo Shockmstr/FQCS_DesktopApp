@@ -16,26 +16,18 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        # self.setWindowFlags(Qt.WindowCloseButtonHint)
         self.showFullScreen()
-        self.bind_exit_program()
-
-        self.bind_load_config()
-        self.bind_save_config()
         # screen 1
         self.detection_screen = DetectionConfigScreen(
             nextscreen=self.change_measurement_screen)
-
         # screen 2
         self.measurement_screen = MeasurementScreen(
             backscreen=self.change_detection_screen,
             nextscreen=self.change_detect_pair_screen)
-
         # screen 3
         self.test_detect_pair_screen = TestDetectPairScreen(
             backscreen=self.change_measurement_screen,
             nextscreen=self.change_color_preprocess_config_screen)
-
         # screen 4
         self.color_preprocess_config_screen = ColorPreprocessConfigScreen(
             backscreen=self.change_detect_pair_screen, nextscreen=None)
@@ -47,19 +39,15 @@ class MainWindow(QMainWindow):
         self.ui.centralStackWidget.addWidget(
             self.color_preprocess_config_screen)
 
+        self.binding()
+
     # binding
-
-    def bind_exit_program(self):
+    def binding(self):
         self.ui.actionExit.triggered.connect(self.exit_program)
-
-    def bind_load_config(self):
         self.ui.actionLoadCfg.triggered.connect(self.on_load_config)
-
-    def bind_save_config(self):
         self.ui.actionSaveCfg.triggered.connect(self.on_save_config)
 
-    # event handler
-
+    # handler
     def exit_program(self):
         self.close()
 
@@ -82,12 +70,12 @@ class MainWindow(QMainWindow):
         if (file_path is not None):
             temp_cfg = detector.load_json_cfg(file_path)
             print(temp_cfg)
-            DetectorConfig.getInstance().load_config(temp_cfg)
+            DetectorConfig.get_instance().load_config(temp_cfg)
         else:
             print("Error loading config")
 
     def on_save_config(self):
-        configs = DetectorConfig.getInstance().config
+        configs = DetectorConfig.get_instance().config
         print(configs)
         if configs is not None:
             configs["min_area"] = 1

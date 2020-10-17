@@ -8,49 +8,10 @@ class DetectionConfigScreen(QWidget):
         QWidget.__init__(self)
         self.ui = Ui_DetectionConfigScreen()
         self.ui.setupUi(self)
-        #init binding
-        self.combobox_placeholder_setup()
-        self.combobox_camera_data_setup()
-        self.combobox_height_data_setup()
-        self.combobox_width_data_setup()
-        self.combobox_method_setup()
-        self.init_all_slider_value_changed()
-        self.ui.cbbMethod.activated[int].connect(self.ui.stackContainerMid.setCurrentIndex)
-        self.bind_next_screen(nextscreen=nextscreen)
-        #self.ui.cbbMethod.currentIndexChanged.connect(self.method_changed)
-        #self.ui.sldContrast.valueChanged.connect(lambda: self.slider_value_change(slider=self.ui.sldContrast, grpboxSlider=self.ui.grbboxSldContrast))
-    #setup data / event handler
-    def combobox_placeholder_setup(self):
-        self.ui.cbbWidth.setPlaceholderText("Width")
-        self.ui.cbbHeight.setPlaceholderText("Height")
-        self.ui.cbbWidth.setCurrentIndex(-1)
-        self.ui.cbbHeight.setCurrentIndex(-1)
-
-    def combobox_camera_data_setup(self):
-        self.ui.cbbCamera.clear()
-        self.ui.cbbCamera.addItem("Camera 1")
-        self.ui.cbbCamera.addItem("Camera 2")
-        self.ui.cbbCamera.addItem("Camera 3")
-
-    def combobox_height_data_setup(self):
-        self.ui.cbbHeight.clear()
-        self.ui.cbbHeight.addItem("900")
-        self.ui.cbbHeight.addItem("1024")
-        self.ui.cbbHeight.addItem("1158")
-
-    def combobox_width_data_setup(self):
-        self.ui.cbbWidth.clear()
-        self.ui.cbbWidth.addItem("900")
-        self.ui.cbbWidth.addItem("1024")
-        self.ui.cbbWidth.addItem("1158")
-
-    def combobox_method_setup(self):
-        self.ui.cbbMethod.clear()
-        self.ui.cbbMethod.addItem("Edge")
-        self.ui.cbbMethod.addItem("Threshold")
-        self.ui.cbbMethod.addItem("Range")
-
-    def init_all_slider_value_changed(self):
+        self.binding(nextscreen=nextscreen)
+    
+    # binding
+    def binding(self, nextscreen: ()):
         self.ui.sldBrightness.valueChanged.connect(self.brightness_value_change)
         self.ui.sldContrast.valueChanged.connect(self.contrast_value_change)
         self.ui.sldThreshold1.valueChanged.connect(self.threshold1_value_change)
@@ -62,7 +23,36 @@ class DetectionConfigScreen(QWidget):
         self.ui.sldLightAdj.valueChanged.connect(self.light_adj_value_change)
         self.ui.sldLightAdjRange.valueChanged.connect(self.light_adj_range_value_change)
 
-    #data binding
+        self.ui.cbbWidth.setPlaceholderText("Width")
+        self.ui.cbbHeight.setPlaceholderText("Height")
+        self.ui.cbbWidth.setCurrentIndex(-1)
+        self.ui.cbbHeight.setCurrentIndex(-1)
+
+        self.ui.cbbCamera.clear()
+        self.ui.cbbCamera.addItem("Camera 1")
+        self.ui.cbbCamera.addItem("Camera 2")
+        self.ui.cbbCamera.addItem("Camera 3")
+
+        self.ui.cbbHeight.clear()
+        self.ui.cbbHeight.addItem("900")
+        self.ui.cbbHeight.addItem("1024")
+        self.ui.cbbHeight.addItem("1158")
+
+        self.ui.cbbWidth.clear()
+        self.ui.cbbWidth.addItem("900")
+        self.ui.cbbWidth.addItem("1024")
+        self.ui.cbbWidth.addItem("1158")
+
+        self.ui.cbbMethod.clear()
+        self.ui.cbbMethod.addItem("Edge")
+        self.ui.cbbMethod.addItem("Threshold")
+        self.ui.cbbMethod.addItem("Range")
+
+        self.ui.cbbMethod.activated[int].connect(self.ui.stackContainerMid.setCurrentIndex)
+
+        self.ui.btnNext.clicked.connect(nextscreen)
+
+    # handler
     def brightness_value_change(self):
         value = self.ui.sldBrightness.value()
         self.ui.grpboxSldBrightness.setTitle("Brightness: " + str(value))
@@ -102,10 +92,8 @@ class DetectionConfigScreen(QWidget):
     def light_adj_range_value_change(self):
         value = self.ui.sldLightAdjRange.value()
         self.ui.grpboxLightAdjRange.setTitle("Light Adjustment: " + str(value))
-
-    def bind_next_screen(self, nextscreen: ()):
-        self.ui.btnNext.clicked.connect(nextscreen)
-    # def slider_value_change(self, slider: QSlider , grpboxSlider: QGroupBox):
-    #     value = slider.value()
-    #     title = grpboxSlider.title().split(":")[0] # get the first name before : to eliminate duplicate
-    #     grpboxSlider.setTitle(title + ": " + str(value))
+        
+    def slider_value_change(self, slider: QSlider , grpboxSlider: QGroupBox):
+        value = slider.value()
+        title = grpboxSlider.title().split(":")[0] # get the first name before : to eliminate duplicate
+        grpboxSlider.setTitle(title + ": " + str(value))
