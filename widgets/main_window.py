@@ -10,6 +10,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         #self.setWindowFlags(Qt.WindowCloseButtonHint)
+        self.showFullScreen()
         self.bind_exit_program()
         
         #screen 1
