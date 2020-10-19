@@ -12,7 +12,7 @@ class DetectorConfig(Subject):
         return DetectorConfig.__instance
 
     def __init__(self):
-        self.__camera = None
+        self.camera = None
         if DetectorConfig.__instance != None:
             raise Exception("DetectorConfig class is a singleton")
         else:
@@ -25,9 +25,3 @@ class DetectorConfig(Subject):
         else:
             self.config = detector_config
 
-    def get_camera(self):
-        return self.__camera
-
-    def set_camera(self, val):
-        self.__camera = val
-        self.notify(KEY_VIDEO)
