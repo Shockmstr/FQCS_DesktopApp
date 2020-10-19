@@ -19,12 +19,8 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        # self.setWindowFlags(Qt.WindowCloseButtonHint)
         self.showFullScreen()
-        self.bind_exit_program()
-
-        self.bind_load_config()
-        self.bind_save_config()
+        self.binding()
 
         # screen 1
         self.detection_screen = DetectionConfigScreen(
@@ -69,18 +65,12 @@ class MainWindow(QMainWindow):
         self.ui.centralStackWidget.addWidget(self.progress_screen)
 
     # binding
-
-    def bind_exit_program(self):
+    def binding(self):
         self.ui.actionExit.triggered.connect(self.exit_program)
-
-    def bind_load_config(self):
         self.ui.actionLoadCfg.triggered.connect(self.on_load_config)
-
-    def bind_save_config(self):
         self.ui.actionSaveCfg.triggered.connect(self.on_save_config)
 
     # event handler
-
     def exit_program(self):
         self.close()
 
@@ -103,12 +93,10 @@ class MainWindow(QMainWindow):
             self.color_param_calib_screen)
 
     def change_error_detect_screen(self):
-        self.ui.centralStackWidget.setCurrentWidget(
-            self.error_detect_screen)
+        self.ui.centralStackWidget.setCurrentWidget(self.error_detect_screen)
 
     def change_progress_screen(self):
-        self.ui.centralStackWidget.setCurrentWidget(
-            self.progress_screen)
+        self.ui.centralStackWidget.setCurrentWidget(self.progress_screen)
 
     def on_load_config(self):
         file_path = file_chooser_open_directory(self)

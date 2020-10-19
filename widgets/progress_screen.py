@@ -10,7 +10,8 @@ class ProgressScreen(QWidget):
         QWidget.__init__(self)
         self.ui = Ui_ProgressScreen()
         self.ui.setupUi(self)
+        self.binding()
 
-    # data binding
+    # binding
     def binding(self):
         pass

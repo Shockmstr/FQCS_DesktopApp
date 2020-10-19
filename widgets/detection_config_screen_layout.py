@@ -4,13 +4,15 @@ from PySide2.QtCore import *
 from views.detection_config_screen_layout import Ui_DetectionConfigScreen
 from app.helpers import *
 
+
 class DetectionConfigScreen(QWidget):
     def __init__(self, nextscreen: ()):
         QWidget.__init__(self)
         self.ui = Ui_DetectionConfigScreen()
         self.ui.setupUi(self)
         self.binding(nextscreen=nextscreen)
-        
+
+    # binding
     def binding(self, nextscreen: ()):
         self.ui.cbbWidth.setPlaceholderText("Width")
         self.ui.cbbHeight.setPlaceholderText("Height")
@@ -37,18 +39,23 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbMethod.addItem("Threshold")
         self.ui.cbbMethod.addItem("Range")
 
-        self.ui.sldBrightness.valueChanged.connect(self.brightness_value_change)
+        self.ui.sldBrightness.valueChanged.connect(
+            self.brightness_value_change)
         self.ui.sldContrast.valueChanged.connect(self.contrast_value_change)
-        self.ui.sldThreshold1.valueChanged.connect(self.threshold1_value_change)
-        self.ui.sldThreshold2.valueChanged.connect(self.threshold2_value_change)
+        self.ui.sldThreshold1.valueChanged.connect(
+            self.threshold1_value_change)
+        self.ui.sldThreshold2.valueChanged.connect(
+            self.threshold2_value_change)
         self.ui.sldBlur.valueChanged.connect(self.blur_value_change)
         self.ui.sldDilate.valueChanged.connect(self.dilate_value_change)
         self.ui.sldErode.valueChanged.connect(self.erode_value_change)
         self.ui.sldBkgThresh.valueChanged.connect(self.bkg_value_change)
         self.ui.sldLightAdj.valueChanged.connect(self.light_adj_value_change)
-        self.ui.sldLightAdjRange.valueChanged.connect(self.light_adj_range_value_change)
+        self.ui.sldLightAdjRange.valueChanged.connect(
+            self.light_adj_range_value_change)
 
-        self.ui.cbbMethod.activated[int].connect(self.ui.stackContainerMid.setCurrentIndex)
+        self.ui.cbbMethod.activated[int].connect(
+            self.ui.stackContainerMid.setCurrentIndex)
         self.bind_next_screen(nextscreen=nextscreen)
 
     #handler
@@ -82,7 +89,8 @@ class DetectionConfigScreen(QWidget):
 
     def bkg_value_change(self):
         value = self.ui.sldBkgThresh.value()
-        self.ui.grpboxBkgThreshold.setTitle("Background Threshold: " + str(value))
+        self.ui.grpboxBkgThreshold.setTitle("Background Threshold: " +
+                                            str(value))
 
     def light_adj_value_change(self):
         value = self.ui.sldLightAdj.value()
