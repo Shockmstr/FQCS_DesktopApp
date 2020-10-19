@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'error_detect_screenoxCWoZ.ui'
+## Form generated from reading UI file 'error_detect_screenQtgMeH.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -99,6 +99,11 @@ class Ui_ErrorDetectScreen(object):
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.lblTitle = QLabel(self.containerConfig)
         self.lblTitle.setObjectName(u"lblTitle")
+        font = QFont()
+        font.setPointSize(11)
+        font.setBold(True)
+        font.setWeight(75)
+        self.lblTitle.setFont(font)
         self.lblTitle.setStyleSheet(u"text-align:center;\n"
 "font-weight:bold;")
         self.lblTitle.setAlignment(Qt.AlignCenter)

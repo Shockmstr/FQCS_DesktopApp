@@ -10,10 +10,9 @@ class ErrorDetectScreen(QWidget):
         QWidget.__init__(self)
         self.ui = Ui_ErrorDetectScreen()
         self.ui.setupUi(self)
-        self.bind_backscreen(backscreen=backscreen)
-        self.bind_nextscreen(nextscreen=nextscreen)
+        self.binding(backscreen=backscreen, nextscreen=nextscreen)
 
     # data binding
-    def binding(self):
-        self.ui.btnNext.clicked.connect(nextscreen)
+    def binding(self, backscreen: (), nextscreen: ()):
+        self.ui.btnFinish.clicked.connect(nextscreen)
         self.ui.btnBack.clicked.connect(backscreen)

@@ -10,6 +10,8 @@ from widgets.test_detect_pair_screen import TestDetectPairScreen
 from widgets.color_preprocess_config_screen import ColorPreprocessConfigScreen
 from widgets.detection_config_screen_layout import DetectionConfigScreen
 from widgets.color_param_calibration_screen import ColorParamCalibrationScreen
+from widgets.error_detect_screen import ErrorDetectScreen
+from widgets.progress_screen import ProgressScreen
 
 
 class MainWindow(QMainWindow):
@@ -46,7 +48,15 @@ class MainWindow(QMainWindow):
         # screen 5
         self.color_param_calib_screen = ColorParamCalibrationScreen(
             backscreen=self.change_color_preprocess_config_screen,
-            nextscreen=None)
+            nextscreen=self.change_error_detect_screen)
+
+        # screen 6
+        self.error_detect_screen = ErrorDetectScreen(
+            backscreen=self.change_color_param_calib_screen,
+            nextscreen=self.change_progress_screen)
+
+        # screen 7
+        self.progress_screen = ProgressScreen()
 
         # add to Stacked Widget
         self.ui.centralStackWidget.addWidget(self.detection_screen)
@@ -55,6 +65,8 @@ class MainWindow(QMainWindow):
         self.ui.centralStackWidget.addWidget(
             self.color_preprocess_config_screen)
         self.ui.centralStackWidget.addWidget(self.color_param_calib_screen)
+        self.ui.centralStackWidget.addWidget(self.error_detect_screen)
+        self.ui.centralStackWidget.addWidget(self.progress_screen)
 
     # binding
 
@@ -89,6 +101,14 @@ class MainWindow(QMainWindow):
     def change_color_param_calib_screen(self):
         self.ui.centralStackWidget.setCurrentWidget(
             self.color_param_calib_screen)
+
+    def change_error_detect_screen(self):
+        self.ui.centralStackWidget.setCurrentWidget(
+            self.error_detect_screen)
+
+    def change_progress_screen(self):
+        self.ui.centralStackWidget.setCurrentWidget(
+            self.progress_screen)
 
     def on_load_config(self):
         file_path = file_chooser_open_directory(self)

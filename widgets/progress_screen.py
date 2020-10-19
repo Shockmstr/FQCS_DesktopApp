@@ -13,3 +13,4 @@ class ProgressScreen(QWidget):
 
     # data binding
     def binding(self):
+        pass
