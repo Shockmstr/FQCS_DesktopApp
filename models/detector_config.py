@@ -6,7 +6,7 @@ KEY_VIDEO = "video"
 
 class DetectorConfig(Subject):
     @staticmethod
-    def get_instance(): #-> DetectorConfig:
+    def get_instance():  #-> DetectorConfig:
         if DetectorConfig.__instance == None:
             DetectorConfig()
         return DetectorConfig.__instance
@@ -24,4 +24,3 @@ class DetectorConfig(Subject):
             self.config = detector.default_detector_config()
         else:
             self.config = detector_config
-
