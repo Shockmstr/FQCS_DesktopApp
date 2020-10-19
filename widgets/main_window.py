@@ -8,7 +8,8 @@ from app.helpers import *
 from widgets.measurement_screen import MeasurementScreen
 from widgets.test_detect_pair_screen import TestDetectPairScreen
 from widgets.color_preprocess_config_screen import ColorPreprocessConfigScreen
-from widgets.detection_config_screen_layout import DetectionConfigScreen
+from widgets.detection_config_screen import DetectionConfigScreen
+from widgets.color_param_calibration_screen import ColorParamCalibrationScreen
 
 
 class MainWindow(QMainWindow):
@@ -22,6 +23,7 @@ class MainWindow(QMainWindow):
 
         self.bind_load_config()
         self.bind_save_config()
+
         # screen 1
         self.detection_screen = DetectionConfigScreen(
             nextscreen=self.change_measurement_screen)
@@ -38,7 +40,13 @@ class MainWindow(QMainWindow):
 
         # screen 4
         self.color_preprocess_config_screen = ColorPreprocessConfigScreen(
-            backscreen=self.change_detect_pair_screen, nextscreen=None)
+            backscreen=self.change_detect_pair_screen,
+            nextscreen=self.change_color_param_calib_screen)
+
+        # screen 5
+        self.color_param_calib_screen = ColorParamCalibrationScreen(
+            backscreen=self.change_color_preprocess_config_screen,
+            nextscreen=None)
 
         # add to Stacked Widget
         self.ui.centralStackWidget.addWidget(self.detection_screen)
@@ -46,6 +54,7 @@ class MainWindow(QMainWindow):
         self.ui.centralStackWidget.addWidget(self.test_detect_pair_screen)
         self.ui.centralStackWidget.addWidget(
             self.color_preprocess_config_screen)
+        self.ui.centralStackWidget.addWidget(self.color_param_calib_screen)
 
     # binding
 
@@ -76,6 +85,10 @@ class MainWindow(QMainWindow):
     def change_color_preprocess_config_screen(self):
         self.ui.centralStackWidget.setCurrentWidget(
             self.color_preprocess_config_screen)
+
+    def change_color_param_calib_screen(self):
+        self.ui.centralStackWidget.setCurrentWidget(
+            self.color_param_calib_screen)
 
     def on_load_config(self):
         file_path = file_chooser_open_directory(self)

@@ -2,6 +2,7 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from views.detection_config_screen_layout import Ui_DetectionConfigScreen
+from app.helpers import *
 
 class DetectionConfigScreen(QWidget):
     def __init__(self, nextscreen: ()):
@@ -27,10 +28,10 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbHeight.setCurrentIndex(-1)
 
     def combobox_camera_data_setup(self):
+        cam_array = get_all_camera_index(self)
         self.ui.cbbCamera.clear()
-        self.ui.cbbCamera.addItem("Camera 1")
-        self.ui.cbbCamera.addItem("Camera 2")
-        self.ui.cbbCamera.addItem("Camera 3")
+        for camera in cam_array:
+            self.ui.cbbCamera.addItem("Camera " + str(camera))
 
     def combobox_height_data_setup(self):
         self.ui.cbbHeight.clear()
