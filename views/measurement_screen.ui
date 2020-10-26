@@ -161,7 +161,7 @@ font-weight:bold;</string>
             <item row="0" column="0">
              <widget class="QGroupBox" name="groupSliderWidth">
               <property name="title">
-               <string>Maxinum width(%)</string>
+               <string>Maximum width(%)</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <property name="topMargin">
@@ -171,7 +171,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSlider" name="sldMaxinumWidth">
+                <widget class="QSlider" name="sldMaximumWidth">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -261,7 +261,7 @@ font-weight:bold;</string>
             <item row="1" column="0">
              <widget class="QGroupBox" name="groupSliderHeight">
               <property name="title">
-               <string>Maxinum height(%)</string>
+               <string>Maximum height(%)</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_12">
                <property name="topMargin">
@@ -271,7 +271,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSlider" name="sldMaxinumHeight">
+                <widget class="QSlider" name="sldMaximumHeight">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
