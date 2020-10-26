@@ -2,6 +2,8 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from views.detection_config_screen_layout import Ui_DetectionConfigScreen
+from widgets.image_widget import ImageWidget
+from cv2 import cv2
 from app.helpers import *
 
 
@@ -10,19 +12,26 @@ class DetectionConfigScreen(QWidget):
         QWidget.__init__(self)
         self.ui = Ui_DetectionConfigScreen()
         self.ui.setupUi(self)
+        self.label_w = 0
+        self.label_h = 0
         self.binding(nextscreen=nextscreen)
+
+       
+        
 
     # binding
     def binding(self, nextscreen: ()):
         self.ui.cbbWidth.setPlaceholderText("Width")
         self.ui.cbbHeight.setPlaceholderText("Height")
+        self.ui.cbbHeight.setPlaceholderText("Choose Cam")
         self.ui.cbbWidth.setCurrentIndex(-1)
         self.ui.cbbHeight.setCurrentIndex(-1)
+        self.ui.cbbCamera.setCurrentIndex(-1)
 
         cam_array = get_all_camera_index(self)
         self.ui.cbbCamera.clear()
         for camera in cam_array:
-            self.ui.cbbCamera.addItem("Camera " + str(camera))
+            self.ui.cbbCamera.addItem("Camera " + str(camera), userData=camera)
 
         self.ui.cbbHeight.clear()
         self.ui.cbbHeight.addItem("900")
@@ -39,6 +48,13 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbMethod.addItem("Threshold")
         self.ui.cbbMethod.addItem("Range")
 
+               
+        # create a timer
+        self.timer = QTimer()
+        # set timer timeout callback function
+        
+        self.timer.timeout.connect(self.view_cam)
+
         self.ui.sldBrightness.valueChanged.connect(
             self.brightness_value_change)
         self.ui.sldContrast.valueChanged.connect(self.contrast_value_change)
@@ -53,6 +69,7 @@ class DetectionConfigScreen(QWidget):
         self.ui.sldLightAdj.valueChanged.connect(self.light_adj_value_change)
         self.ui.sldLightAdjRange.valueChanged.connect(
             self.light_adj_range_value_change)
+        self.ui.cbbCamera.currentIndexChanged.connect(self.cbbCamera_chose)
 
         self.ui.cbbMethod.activated[int].connect(
             self.ui.stackContainerMid.setCurrentIndex)
@@ -101,4 +118,39 @@ class DetectionConfigScreen(QWidget):
         self.ui.grpboxLightAdjRange.setTitle("Light Adjustment: " + str(value))
 
     def bind_next_screen(self, nextscreen: ()):
-        self.ui.btnNext.clicked.connect(nextscreen)
+        self.ui.btnNext.clicked.connect(nextscreen)   
+
+    def cbbCamera_chose(self):
+        index = self.ui.cbbCamera.currentData()
+        self.control_timer(index)
+
+    # view camera
+    def view_cam(self):
+        # read image in BGR format       
+        _, self.img = self.cap.read()
+        self.dim = (self.label_w, self.label_h)
+        self.img = cv2.resize(self.img, self.dim)
+        self.image1.imshow(self.img)
+        
+    # start/stop timer
+    def control_timer(self, index: int):
+        # if timer is stopped
+        if not self.timer.isActive():
+            # create video capture
+            self.cap = cv2.VideoCapture(index)
+            # start timer
+            self.timer.start(20)
+        # if timer is started
+        else:
+            # stop timer
+            self.timer.stop()
+            # release video capture
+            self.cap.release()
+    
+    def showEvent(self, event: QShowEvent): #showEvent chay khi nao? Need tim hieu here/ co the thay the bang j nua dc ko?
+        self.image1 = ImageWidget()
+        self.label_w = self.ui.screen1.width()
+        self.label_h = self.ui.screen1.height()
+        self.imageLayout = self.ui.screen1.parentWidget().layout()     
+        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)      
+        
