@@ -434,7 +434,7 @@ class Ui_DetectionConfigScreen(object):
         self.retranslateUi(DetectionConfigScreen)
 
         self.cbbHeight.setCurrentIndex(-1)
-        self.stackContainerMid.setCurrentIndex(2)
+        self.stackContainerMid.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(DetectionConfigScreen)
