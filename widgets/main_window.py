@@ -6,10 +6,13 @@ from FQCS import detector
 from models.detector_config import *
 from app.helpers import *
 from widgets.measurement_screen import MeasurementScreen
+from widgets.home_screen import HomeScreen
 from widgets.test_detect_pair_screen import TestDetectPairScreen
 from widgets.color_preprocess_config_screen import ColorPreprocessConfigScreen
 from widgets.detection_config_screen_layout import DetectionConfigScreen
 from widgets.color_param_calibration_screen import ColorParamCalibrationScreen
+from widgets.error_detect_screen import ErrorDetectScreen
+from widgets.progress_screen import ProgressScreen
 
 
 class MainWindow(QMainWindow):
@@ -23,6 +26,9 @@ class MainWindow(QMainWindow):
 
         self.bind_load_config()
         self.bind_save_config()
+
+        # screen 0
+        self.home_screen = HomeScreen(configScreen=self.change_detection_screen, progressScreen=self.change_progress_screen, on_exit=self.exit_program)
 
         # screen 1
         self.detection_screen = DetectionConfigScreen(
@@ -46,15 +52,26 @@ class MainWindow(QMainWindow):
         # screen 5
         self.color_param_calib_screen = ColorParamCalibrationScreen(
             backscreen=self.change_color_preprocess_config_screen,
-            nextscreen=None)
+            nextscreen=self.change_error_detect_screen)
+
+        # screen 6
+        self.error_detect_screen = ErrorDetectScreen(
+            backscreen=self.change_color_param_calib_screen,
+            nextscreen=self.change_progress_screen)
+
+        # screen 7
+        self.progress_screen = ProgressScreen(homeScreen = self.change_home_screen)
 
         # add to Stacked Widget
+        self.ui.centralStackWidget.addWidget(self.home_screen)
         self.ui.centralStackWidget.addWidget(self.detection_screen)
         self.ui.centralStackWidget.addWidget(self.measurement_screen)
         self.ui.centralStackWidget.addWidget(self.test_detect_pair_screen)
         self.ui.centralStackWidget.addWidget(
             self.color_preprocess_config_screen)
         self.ui.centralStackWidget.addWidget(self.color_param_calib_screen)
+        self.ui.centralStackWidget.addWidget(self.error_detect_screen)
+        self.ui.centralStackWidget.addWidget(self.progress_screen)
 
     # binding
 
@@ -71,6 +88,9 @@ class MainWindow(QMainWindow):
 
     def exit_program(self):
         self.close()
+
+    def change_home_screen(self):
+        self.ui.centralStackWidget.setCurrentWidget(self.home_screen)
 
     def change_detection_screen(self):
         self.ui.centralStackWidget.setCurrentWidget(self.detection_screen)
@@ -89,6 +109,12 @@ class MainWindow(QMainWindow):
     def change_color_param_calib_screen(self):
         self.ui.centralStackWidget.setCurrentWidget(
             self.color_param_calib_screen)
+
+    def change_error_detect_screen(self):
+        self.ui.centralStackWidget.setCurrentWidget(self.error_detect_screen)
+
+    def change_progress_screen(self):
+        self.ui.centralStackWidget.setCurrentWidget(self.progress_screen)
 
     def on_load_config(self):
         file_path = file_chooser_open_directory(self)
