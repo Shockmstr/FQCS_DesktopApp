@@ -16,3 +16,4 @@ class ErrorDetectScreen(QWidget):
     def binding(self, backscreen: (), nextscreen: ()):
         self.ui.btnFinish.clicked.connect(nextscreen)
         self.ui.btnBack.clicked.connect(backscreen)
+        self.ui.btnFinish.clicked.connect(nextscreen)

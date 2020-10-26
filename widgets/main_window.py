@@ -6,6 +6,7 @@ from FQCS import detector
 from models.detector_config import *
 from app.helpers import *
 from widgets.measurement_screen import MeasurementScreen
+from widgets.home_screen import HomeScreen
 from widgets.test_detect_pair_screen import TestDetectPairScreen
 from widgets.color_preprocess_config_screen import ColorPreprocessConfigScreen
 from widgets.detection_config_screen_layout import DetectionConfigScreen
@@ -21,6 +22,9 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.showFullScreen()
         self.binding()
+
+        # screen 0
+        self.home_screen = HomeScreen(configScreen=self.change_detection_screen, progressScreen=self.change_progress_screen, on_exit=self.exit_program)
 
         # screen 1
         self.detection_screen = DetectionConfigScreen(
@@ -52,9 +56,10 @@ class MainWindow(QMainWindow):
             nextscreen=self.change_progress_screen)
 
         # screen 7
-        self.progress_screen = ProgressScreen()
+        self.progress_screen = ProgressScreen(homeScreen = self.change_home_screen)
 
         # add to Stacked Widget
+        self.ui.centralStackWidget.addWidget(self.home_screen)
         self.ui.centralStackWidget.addWidget(self.detection_screen)
         self.ui.centralStackWidget.addWidget(self.measurement_screen)
         self.ui.centralStackWidget.addWidget(self.test_detect_pair_screen)
@@ -73,6 +78,9 @@ class MainWindow(QMainWindow):
     # event handler
     def exit_program(self):
         self.close()
+
+    def change_home_screen(self):
+        self.ui.centralStackWidget.setCurrentWidget(self.home_screen)
 
     def change_detection_screen(self):
         self.ui.centralStackWidget.setCurrentWidget(self.detection_screen)
