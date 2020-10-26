@@ -12,12 +12,7 @@ class DetectionConfigScreen(QWidget):
         QWidget.__init__(self)
         self.ui = Ui_DetectionConfigScreen()
         self.ui.setupUi(self)
-        self.label_w = 0
-        self.label_h = 0
         self.binding(nextscreen=nextscreen)
-
-       
-        
 
     # binding
     def binding(self, nextscreen: ()):

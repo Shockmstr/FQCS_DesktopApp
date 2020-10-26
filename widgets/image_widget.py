@@ -10,7 +10,7 @@ class ImageWidget(QWidget):
         self.ui = Ui_ImageWidget()
         self.ui.setupUi(self)
 
-    def imshow(self, image, size=None):
+    def imshow(self, image):
         image = QImage(image.data, image.shape[1], image.shape[0], image.shape[2] * image.shape[1],
                              QImage.Format_RGB888).rgbSwapped() # 1: width, 0:height, 2:channel
         self.ui.lblImage.setPixmap(QPixmap.fromImage(image))
