@@ -40,7 +40,7 @@
      <property name="autoFillBackground">
       <bool>false</bool>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="gridLayout" rowstretch="1,1" columnstretch="1,1">
       <item row="0" column="0">
        <widget class="QLabel" name="screen1">
         <property name="styleSheet">

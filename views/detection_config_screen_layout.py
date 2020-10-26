@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'detection_config_screen_layoutZaLtFU.ui'
+## Form generated from reading UI file 'detection_config_screen_layoutsUktAH.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -50,6 +50,10 @@ class Ui_DetectionConfigScreen(object):
 
         self.gridLayout.addWidget(self.screen3, 1, 0, 1, 1)
 
+        self.gridLayout.setRowStretch(0, 1)
+        self.gridLayout.setRowStretch(1, 1)
+        self.gridLayout.setColumnStretch(0, 1)
+        self.gridLayout.setColumnStretch(1, 1)
 
         self.verticalLayout.addWidget(self.containerScreen)
 
