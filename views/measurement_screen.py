@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'measurement_screenLOhexl.ui'
+## Form generated from reading UI file 'measurement_screenpCXrno.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -17,7 +17,7 @@ class Ui_MeasurementScreen(object):
     def setupUi(self, MeasurementScreen):
         if not MeasurementScreen.objectName():
             MeasurementScreen.setObjectName(u"MeasurementScreen")
-        MeasurementScreen.resize(1440, 900)
+        MeasurementScreen.resize(1440, 786)
         MeasurementScreen.setAutoFillBackground(False)
         MeasurementScreen.setStyleSheet(u"background:#E5E5E5")
         self.verticalLayout = QVBoxLayout(MeasurementScreen)
@@ -103,11 +103,11 @@ class Ui_MeasurementScreen(object):
         self.verticalLayout_11 = QVBoxLayout(self.groupSliderWidth)
         self.verticalLayout_11.setObjectName(u"verticalLayout_11")
         self.verticalLayout_11.setContentsMargins(-1, 0, -1, 0)
-        self.sldMininumWidth = QSlider(self.groupSliderWidth)
-        self.sldMininumWidth.setObjectName(u"sldMininumWidth")
-        self.sldMininumWidth.setOrientation(Qt.Horizontal)
+        self.sldMaxinumWidth = QSlider(self.groupSliderWidth)
+        self.sldMaxinumWidth.setObjectName(u"sldMaxinumWidth")
+        self.sldMaxinumWidth.setOrientation(Qt.Horizontal)
 
-        self.verticalLayout_11.addWidget(self.sldMininumWidth)
+        self.verticalLayout_11.addWidget(self.sldMaxinumWidth)
 
 
         self.gridLayout_2.addWidget(self.groupSliderWidth, 0, 0, 1, 1)
@@ -276,7 +276,7 @@ class Ui_MeasurementScreen(object):
         self.screen3.setText(QCoreApplication.translate("MeasurementScreen", u"SCREEN", None))
         self.screen4.setText(QCoreApplication.translate("MeasurementScreen", u"SCREEN", None))
         self.lblTitle.setText(QCoreApplication.translate("MeasurementScreen", u"DEFINE MEASUREMENT AND MIN AREA", None))
-        self.groupSliderWidth.setTitle(QCoreApplication.translate("MeasurementScreen", u"Mininum width(%)", None))
+        self.groupSliderWidth.setTitle(QCoreApplication.translate("MeasurementScreen", u"Maxinum width(%)", None))
         self.groupLeftActualLength.setTitle(QCoreApplication.translate("MeasurementScreen", u"Left side actual length", None))
         self.inpLeftActualLength.setInputMask("")
         self.inpLeftActualLength.setText(QCoreApplication.translate("MeasurementScreen", u"27", None))

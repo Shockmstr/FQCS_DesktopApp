@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1440</width>
-    <height>900</height>
+    <height>786</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -161,7 +161,7 @@ font-weight:bold;</string>
             <item row="0" column="0">
              <widget class="QGroupBox" name="groupSliderWidth">
               <property name="title">
-               <string>Mininum width(%)</string>
+               <string>Maxinum width(%)</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <property name="topMargin">
@@ -171,7 +171,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSlider" name="sldMininumWidth">
+                <widget class="QSlider" name="sldMaxinumWidth">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>

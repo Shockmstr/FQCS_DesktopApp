@@ -21,17 +21,16 @@ class MeasurementScreen(QWidget):
     def binding(self, backscreen:(), nextscreen: ()):
         self.ui.btnBack.clicked.connect(backscreen)
         self.ui.btnNext.clicked.connect(nextscreen)
-        self.ui.sldMininumHeight.valueChanged.connect(self.draw_rectangle_on_image)
-        self.ui.sldMininumWidth.valueChanged.connect(self.draw_rectangle_on_image)
-        self.ui.sldDectectPosition.valueChanged.connect(self.detect_position_change)
+        self.ui.sldMaxinumHeight.valueChanged.connect(self.draw_rectangle_on_image)
+        self.ui.sldMaxinumWidth.valueChanged.connect(self.draw_rectangle_on_image)
 
     def draw_rectangle_on_image(self):
-        if self.sender() == self.ui.sldMininumWidth:
-            self.width_value = self.ui.sldMininumWidth.value()
-            self.ui.groupSliderWidth.setTitle("Mininum width(%): " + str(self.width_value))
-        if self.sender() == self.ui.sldMininumHeight:
-            self.height_value = self.ui.sldMininumHeight.value()
-            self.ui.groupSliderHeight.setTitle("Mininum height(&): " + str(self.height_value))
+        if self.sender() == self.ui.sldMaxinumWidth:
+            self.width_value = self.ui.sldMaxinumWidth.value()
+            self.ui.groupSliderWidth.setTitle("Maxinum width(%): " + str(self.width_value))
+        if self.sender() == self.ui.sldMaxinumHeight:
+            self.height_value = self.ui.sldMaxinumHeight.value()
+            self.ui.groupSliderHeight.setTitle("Maxinum height(&): " + str(self.height_value))
             
         self.label_width = self.ui.screen1.width()
         self.label_height = self.ui.screen1.height()
