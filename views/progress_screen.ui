@@ -162,6 +162,13 @@
      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,9">
       <item>
        <widget class="QLabel" name="lblTitle">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true">text-align:center;
 font-weight:bold;</string>

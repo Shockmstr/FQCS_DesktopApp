@@ -20,12 +20,8 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        # self.setWindowFlags(Qt.WindowCloseButtonHint)
         self.showFullScreen()
-        self.bind_exit_program()
-
-        self.bind_load_config()
-        self.bind_save_config()
+        self.binding()
 
         # screen 0
         self.home_screen = HomeScreen(configScreen=self.change_detection_screen, progressScreen=self.change_progress_screen, on_exit=self.exit_program)
@@ -74,18 +70,12 @@ class MainWindow(QMainWindow):
         self.ui.centralStackWidget.addWidget(self.progress_screen)
 
     # binding
-
-    def bind_exit_program(self):
+    def binding(self):
         self.ui.actionExit.triggered.connect(self.exit_program)
-
-    def bind_load_config(self):
         self.ui.actionLoadCfg.triggered.connect(self.on_load_config)
-
-    def bind_save_config(self):
         self.ui.actionSaveCfg.triggered.connect(self.on_save_config)
 
     # event handler
-
     def exit_program(self):
         self.close()
 
