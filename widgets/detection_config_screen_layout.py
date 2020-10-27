@@ -3,6 +3,8 @@ from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from views.detection_config_screen_layout import Ui_DetectionConfigScreen
 from widgets.image_widget import ImageWidget
+from FQCS import detector, helper
+from models.detector_config import DetectorConfigSingleton
 from cv2 import cv2
 from app.helpers import *
 
@@ -13,8 +15,10 @@ class DetectionConfigScreen(QWidget):
     THRESHOLD2_STEP = 5
     def __init__(self, backscreen:(), nextscreen: ()):
         QWidget.__init__(self)
+        self.detector_cfg = DetectorConfigSingleton.get_instance().config
         self.ui = Ui_DetectionConfigScreen()
         self.ui.setupUi(self)
+        self.timer = QTimer()
         self.binding(backscreen=backscreen,nextscreen=nextscreen)
 
     # binding
@@ -46,7 +50,6 @@ class DetectionConfigScreen(QWidget):
 
                
         # create a timer
-        self.timer = QTimer()
         # set timer timeout callback function
         
         self.timer.timeout.connect(self.view_cam)
@@ -142,9 +145,11 @@ class DetectionConfigScreen(QWidget):
     def view_cam(self):
         # read image in BGR format       
         _, self.img = self.cap.read()
+        contour = self.process_contours(self.img.copy())
         self.dim = (self.label_w, self.label_h)
         self.img = cv2.resize(self.img, self.dim)
         self.image1.imshow(self.img)
+        self.image2.imshow(contour)
         
     # start/stop timer
     def control_timer(self, index: int):
@@ -163,8 +168,64 @@ class DetectionConfigScreen(QWidget):
     
     def replace_camera_widget(self): #showEvent chay khi nao? Need tim hieu here/ co the thay the bang j nua dc ko?
         self.image1 = ImageWidget()
+        self.image2 = ImageWidget()
+        self.image3 = ImageWidget()
         self.label_w = self.ui.screen1.width()
         self.label_h = self.ui.screen1.height()
         self.imageLayout = self.ui.screen1.parentWidget().layout()     
-        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)      
+        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+        self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+        # self.imageLayout.replaceWidget(self.ui.screen3, self.image3)
         
+    def process_contours(self, image):
+        frame_width, frame_height = self.detector_cfg["frame_width"], self.detector_cfg[
+            "frame_height"]
+        min_width, min_height = self.detector_cfg["min_width_per"], self.detector_cfg[
+            "min_height_per"]
+        min_width, min_height = frame_width * min_width, frame_height * min_height
+        find_contours_func = detector.get_find_contours_func_by_method(
+            self.detector_cfg["detect_method"])
+        d_cfg = self.detector_cfg['d_cfg']
+
+        # adjust thresh
+        if (self.detector_cfg["detect_method"] == "thresh"):
+            adj_bg_thresh = helper.adjust_thresh_by_brightness(
+                image, d_cfg["light_adj_thresh"], d_cfg["bg_thresh"])
+            d_cfg["adj_bg_thresh"] = adj_bg_thresh
+        elif (self.detector_cfg["detect_method"] == "range"):
+            adj_cr_to = helper.adjust_crange_by_brightness(
+                image, d_cfg["light_adj_thresh"], d_cfg["cr_to"])
+            d_cfg["adj_cr_to"] = adj_cr_to
+
+        boxes, cnts, proc = detector.find_contours_and_box(
+            image,
+            find_contours_func,
+            d_cfg,
+            min_width=min_width,
+            min_height=min_height)
+        pair, image, split_left, split_right, boxes = detector.detect_pair_and_size(
+            image,
+            find_contours_func,
+            d_cfg,
+            boxes,
+            cnts,
+            stop_condition=self.detector_cfg['stop_condition'],
+            detect_range=self.detector_cfg['detect_range'])
+
+        # output
+        unit = self.detector_cfg["length_unit"]
+        per_10px = self.detector_cfg["length_per_10px"]
+        sizes = []
+        for b in boxes:
+            rect, lH, lW, box, tl, tr, br, bl = b
+            if (per_10px is not None):
+                lH, lW = helper.calculate_length(   
+                    lH, per_10px), helper.calculate_length(lW, per_10px)
+            sizes.append((lH, lW))
+            cv2.drawContours(image, [box.astype("int")], -1, (0, 255, 0), 2)
+            cv2.putText(image, f"{lW:.1f} {unit}", (tl[0], tl[1]),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
+            cv2.putText(image, f"{lH:.1f} {unit}", (br[0], br[1]),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
+        # cv2.imshow("Contours processed", proc)
+        return image
