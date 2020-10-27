@@ -34,7 +34,7 @@ class MeasurementScreen(QWidget):
             self.ui.groupSliderWidth.setTitle("Maximum width(%): " + str(self.width_value))
         if self.sender() == self.ui.sldMaximumHeight:
             self.height_value = self.ui.sldMaximumHeight.value()
-            self.ui.groupSliderHeight.setTitle("Maximum height(&): " + str(self.height_value))
+            self.ui.groupSliderHeight.setTitle("Maximum height(%): " + str(self.height_value))
             
         self.label_width = self.ui.screen1.width()
         self.label_height = self.ui.screen1.height()
