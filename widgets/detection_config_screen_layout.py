@@ -6,19 +6,22 @@ from widgets.image_widget import ImageWidget
 from cv2 import cv2
 from app.helpers import *
 
-
 class DetectionConfigScreen(QWidget):
-    def __init__(self, nextscreen: ()):
+    BRIGHTNESS_STEP = 0.1
+    CONTRAST_STEP = 5
+    THRESHOLD1_STEP = 5
+    THRESHOLD2_STEP = 5
+    def __init__(self, backscreen:(), nextscreen: ()):
         QWidget.__init__(self)
         self.ui = Ui_DetectionConfigScreen()
         self.ui.setupUi(self)
-        self.binding(nextscreen=nextscreen)
+        self.binding(backscreen=backscreen,nextscreen=nextscreen)
 
     # binding
-    def binding(self, nextscreen: ()):
+    def binding(self, backscreen:(), nextscreen: ()):
         self.ui.cbbWidth.setPlaceholderText("Width")
         self.ui.cbbHeight.setPlaceholderText("Height")
-        self.ui.cbbHeight.setPlaceholderText("Choose Cam")
+        self.ui.cbbCamera.setPlaceholderText("Choose Cam")
         self.ui.cbbWidth.setCurrentIndex(-1)
         self.ui.cbbHeight.setCurrentIndex(-1)
         self.ui.cbbCamera.setCurrentIndex(-1)
@@ -28,15 +31,13 @@ class DetectionConfigScreen(QWidget):
         for camera in cam_array:
             self.ui.cbbCamera.addItem("Camera " + str(camera), userData=camera)
 
+        frame_resize_number = ["160", "240", "320", "400", "480", "660", 
+        "720", "800", "880", "960", "1040", "1120", "1200", "1280"]
         self.ui.cbbHeight.clear()
-        self.ui.cbbHeight.addItem("900")
-        self.ui.cbbHeight.addItem("1024")
-        self.ui.cbbHeight.addItem("1158")
+        self.ui.cbbHeight.addItems(frame_resize_number)
 
         self.ui.cbbWidth.clear()
-        self.ui.cbbWidth.addItem("900")
-        self.ui.cbbWidth.addItem("1024")
-        self.ui.cbbWidth.addItem("1158")
+        self.ui.cbbWidth.addItems(frame_resize_number)
 
         self.ui.cbbMethod.clear()
         self.ui.cbbMethod.addItem("Edge")
@@ -65,26 +66,29 @@ class DetectionConfigScreen(QWidget):
         self.ui.sldLightAdjRange.valueChanged.connect(
             self.light_adj_range_value_change)
         self.ui.cbbCamera.currentIndexChanged.connect(self.cbbCamera_chose)
+        self.ui.btnColorFrom.clicked.connect(self.button_color_from_clicked)
+        self.ui.btnColorTo.clicked.connect(self.button_color_to_clicked)
 
         self.ui.cbbMethod.activated[int].connect(
             self.ui.stackContainerMid.setCurrentIndex)
-        self.bind_next_screen(nextscreen=nextscreen)
+        self.ui.btnNext.clicked.connect(nextscreen)   
+        self.ui.btnBack.clicked.connect(backscreen)
 
     #handler
     def brightness_value_change(self):
-        value = self.ui.sldBrightness.value()
+        value = round(self.ui.sldBrightness.value() * self.BRIGHTNESS_STEP, 1)
         self.ui.grpboxSldBrightness.setTitle("Brightness: " + str(value))
 
     def contrast_value_change(self):
-        value = self.ui.sldContrast.value()
+        value = self.ui.sldContrast.value() * self.CONTRAST_STEP
         self.ui.grbboxSldContrast.setTitle("Contrast: " + str(value))
 
     def threshold1_value_change(self):
-        value = self.ui.sldThreshold1.value()
+        value = self.ui.sldThreshold1.value() * self.THRESHOLD1_STEP
         self.ui.grbboxSldThreshold.setTitle("Threshold 1: " + str(value))
 
     def threshold2_value_change(self):
-        value = self.ui.sldThreshold2.value()
+        value = self.ui.sldThreshold2.value() * self.THRESHOLD2_STEP
         self.ui.grbboxSldThreshold2.setTitle("Threshold 2: " + str(value))
 
     def blur_value_change(self):
@@ -110,14 +114,29 @@ class DetectionConfigScreen(QWidget):
 
     def light_adj_range_value_change(self):
         value = self.ui.sldLightAdjRange.value()
-        self.ui.grpboxLightAdjRange.setTitle("Light Adjustment: " + str(value))
-
-    def bind_next_screen(self, nextscreen: ()):
-        self.ui.btnNext.clicked.connect(nextscreen)   
+        self.ui.grpboxLightAdjRange.setTitle("Light Adjustment: " + str(value))   
 
     def cbbCamera_chose(self):
+        self.replace_camera_widget()
         index = self.ui.cbbCamera.currentData()
         self.control_timer(index)
+            
+    def button_color_from_clicked(self):
+        color = QColorDialog.getColor(parent=self)
+        if color.isValid():            
+            #rgb = color.getRgb() get color as rgb
+            color_hex = color.name()
+            self.ui.btnColorFrom.setStyleSheet("background-color: " + color_hex)            
+
+    def button_color_to_clicked(self):
+        color = QColorDialog.getColor(parent=self)
+        if color.isValid():            
+            #rgb = color.getRgb() get color as rgb
+            color_hex = color.name()
+            self.ui.btnColorTo.setStyleSheet("background-color: " + color_hex)  
+
+    def button_capture_clicked(self):
+        pass
 
     # view camera
     def view_cam(self):
@@ -142,7 +161,7 @@ class DetectionConfigScreen(QWidget):
             # release video capture
             self.cap.release()
     
-    def showEvent(self, event: QShowEvent): #showEvent chay khi nao? Need tim hieu here/ co the thay the bang j nua dc ko?
+    def replace_camera_widget(self): #showEvent chay khi nao? Need tim hieu here/ co the thay the bang j nua dc ko?
         self.image1 = ImageWidget()
         self.label_w = self.ui.screen1.width()
         self.label_h = self.ui.screen1.height()

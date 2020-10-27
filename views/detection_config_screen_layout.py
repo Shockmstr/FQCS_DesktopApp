@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'detection_config_screen_layoutsUktAH.ui'
+## Form generated from reading UI file 'detection_config_screen_layoutESPyFd.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -31,6 +31,11 @@ class Ui_DetectionConfigScreen(object):
         self.gridLayout.setObjectName(u"gridLayout")
         self.screen1 = QLabel(self.containerScreen)
         self.screen1.setObjectName(u"screen1")
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.screen1.sizePolicy().hasHeightForWidth())
+        self.screen1.setSizePolicy(sizePolicy)
         self.screen1.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
         self.screen1.setAlignment(Qt.AlignCenter)
 
@@ -169,6 +174,11 @@ class Ui_DetectionConfigScreen(object):
         self.verticalLayout_12.setContentsMargins(-1, 0, -1, 0)
         self.sldContrast = QSlider(self.grbboxSldContrast)
         self.sldContrast.setObjectName(u"sldContrast")
+        self.sldContrast.setMinimum(-40)
+        self.sldContrast.setMaximum(40)
+        self.sldContrast.setSingleStep(1)
+        self.sldContrast.setPageStep(5)
+        self.sldContrast.setValue(-40)
         self.sldContrast.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_12.addWidget(self.sldContrast)
@@ -183,6 +193,8 @@ class Ui_DetectionConfigScreen(object):
         self.verticalLayout_14.setContentsMargins(-1, 0, -1, 0)
         self.sldErode = QSlider(self.grbboxSldErode)
         self.sldErode.setObjectName(u"sldErode")
+        self.sldErode.setMaximum(10)
+        self.sldErode.setPageStep(2)
         self.sldErode.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_14.addWidget(self.sldErode)
@@ -197,6 +209,8 @@ class Ui_DetectionConfigScreen(object):
         self.verticalLayout_18.setContentsMargins(-1, 0, -1, 0)
         self.sldDilate = QSlider(self.grbboxSldDilate)
         self.sldDilate.setObjectName(u"sldDilate")
+        self.sldDilate.setMaximum(10)
+        self.sldDilate.setPageStep(2)
         self.sldDilate.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_18.addWidget(self.sldDilate)
@@ -211,6 +225,8 @@ class Ui_DetectionConfigScreen(object):
         self.verticalLayout_19.setContentsMargins(-1, 0, -1, 0)
         self.sldBlur = QSlider(self.grpboxSldBlur)
         self.sldBlur.setObjectName(u"sldBlur")
+        self.sldBlur.setMaximum(10)
+        self.sldBlur.setPageStep(2)
         self.sldBlur.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_19.addWidget(self.sldBlur)
@@ -225,6 +241,8 @@ class Ui_DetectionConfigScreen(object):
         self.verticalLayout_20.setContentsMargins(-1, 0, -1, 0)
         self.sldBrightness = QSlider(self.grpboxSldBrightness)
         self.sldBrightness.setObjectName(u"sldBrightness")
+        self.sldBrightness.setMaximum(30)
+        self.sldBrightness.setSingleStep(1)
         self.sldBrightness.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_20.addWidget(self.sldBrightness)
@@ -239,6 +257,9 @@ class Ui_DetectionConfigScreen(object):
         self.verticalLayout_13.setContentsMargins(-1, 0, -1, 0)
         self.sldThreshold1 = QSlider(self.grbboxSldThreshold)
         self.sldThreshold1.setObjectName(u"sldThreshold1")
+        self.sldThreshold1.setMaximum(51)
+        self.sldThreshold1.setSingleStep(1)
+        self.sldThreshold1.setPageStep(5)
         self.sldThreshold1.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_13.addWidget(self.sldThreshold1)
@@ -253,6 +274,9 @@ class Ui_DetectionConfigScreen(object):
         self.verticalLayout_15.setContentsMargins(-1, 0, -1, 0)
         self.sldThreshold2 = QSlider(self.grbboxSldThreshold2)
         self.sldThreshold2.setObjectName(u"sldThreshold2")
+        self.sldThreshold2.setMaximum(51)
+        self.sldThreshold2.setSingleStep(1)
+        self.sldThreshold2.setPageStep(5)
         self.sldThreshold2.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_15.addWidget(self.sldThreshold2)
@@ -277,6 +301,8 @@ class Ui_DetectionConfigScreen(object):
         self.verticalLayout_23.setContentsMargins(-1, 0, -1, 0)
         self.sldLightAdj = QSlider(self.grpboxLightAdj)
         self.sldLightAdj.setObjectName(u"sldLightAdj")
+        self.sldLightAdj.setMaximum(255)
+        self.sldLightAdj.setPageStep(5)
         self.sldLightAdj.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_23.addWidget(self.sldLightAdj)
@@ -286,9 +312,6 @@ class Ui_DetectionConfigScreen(object):
 
         self.grpboxBkgThreshold = QGroupBox(self.subContainer)
         self.grpboxBkgThreshold.setObjectName(u"grpboxBkgThreshold")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.grpboxBkgThreshold.sizePolicy().hasHeightForWidth())
         self.grpboxBkgThreshold.setSizePolicy(sizePolicy)
         self.verticalLayout_11 = QVBoxLayout(self.grpboxBkgThreshold)
@@ -296,6 +319,8 @@ class Ui_DetectionConfigScreen(object):
         self.verticalLayout_11.setContentsMargins(-1, 0, -1, 0)
         self.sldBkgThresh = QSlider(self.grpboxBkgThreshold)
         self.sldBkgThresh.setObjectName(u"sldBkgThresh")
+        self.sldBkgThresh.setMaximum(255)
+        self.sldBkgThresh.setPageStep(5)
         self.sldBkgThresh.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_11.addWidget(self.sldBkgThresh)
@@ -362,6 +387,8 @@ class Ui_DetectionConfigScreen(object):
         self.verticalLayout_24.setContentsMargins(-1, 0, -1, 0)
         self.sldLightAdjRange = QSlider(self.grpboxLightAdjRange)
         self.sldLightAdjRange.setObjectName(u"sldLightAdjRange")
+        self.sldLightAdjRange.setMaximum(255)
+        self.sldLightAdjRange.setPageStep(5)
         self.sldLightAdjRange.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_24.addWidget(self.sldLightAdjRange)
@@ -406,6 +433,11 @@ class Ui_DetectionConfigScreen(object):
         self.horizontalLayout_3 = QHBoxLayout(self.containerNavBtn)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.btnBack = QPushButton(self.containerNavBtn)
+        self.btnBack.setObjectName(u"btnBack")
+
+        self.horizontalLayout_3.addWidget(self.btnBack)
+
         self.btnNext = QPushButton(self.containerNavBtn)
         self.btnNext.setObjectName(u"btnNext")
 
@@ -463,7 +495,7 @@ class Ui_DetectionConfigScreen(object):
         self.cbbMethod.setItemText(1, QCoreApplication.translate("DetectionConfigScreen", u"Item 2", None))
 
         self.cbbMethod.setPlaceholderText(QCoreApplication.translate("DetectionConfigScreen", u"Select Method", None))
-        self.grbboxSldContrast.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Contrast: 0", None))
+        self.grbboxSldContrast.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Contrast: -200", None))
         self.grbboxSldErode.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Erode: 0", None))
         self.grbboxSldDilate.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Dilate: 0", None))
         self.grpboxSldBlur.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Blur: 0", None))
@@ -478,6 +510,7 @@ class Ui_DetectionConfigScreen(object):
         self.btnColorTo.setText("")
         self.grpboxLightAdjRange.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Light Adjustment: 0", None))
         self.btnCapture.setText(QCoreApplication.translate("DetectionConfigScreen", u"CAPTURE", None))
+        self.btnBack.setText(QCoreApplication.translate("DetectionConfigScreen", u"BACK", None))
         self.btnNext.setText(QCoreApplication.translate("DetectionConfigScreen", u"NEXT", None))
     # retranslateUi
 

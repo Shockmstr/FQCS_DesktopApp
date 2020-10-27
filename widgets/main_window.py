@@ -28,6 +28,7 @@ class MainWindow(QMainWindow):
 
         # screen 1
         self.detection_screen = DetectionConfigScreen(
+            backscreen=self.change_home_screen,
             nextscreen=self.change_measurement_screen)
 
         # screen 2
