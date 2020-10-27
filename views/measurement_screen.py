@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'measurement_screenRvUyiZ.ui'
+## Form generated from reading UI file 'measurement_screenGzbuEh.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -17,7 +17,7 @@ class Ui_MeasurementScreen(object):
     def setupUi(self, MeasurementScreen):
         if not MeasurementScreen.objectName():
             MeasurementScreen.setObjectName(u"MeasurementScreen")
-        MeasurementScreen.resize(1440, 786)
+        MeasurementScreen.resize(1440, 784)
         MeasurementScreen.setAutoFillBackground(False)
         MeasurementScreen.setStyleSheet(u"background:#E5E5E5")
         self.verticalLayout = QVBoxLayout(MeasurementScreen)
@@ -105,6 +105,10 @@ class Ui_MeasurementScreen(object):
         self.verticalLayout_11.setContentsMargins(-1, 0, -1, 0)
         self.sldMaximumWidth = QSlider(self.groupSliderWidth)
         self.sldMaximumWidth.setObjectName(u"sldMaximumWidth")
+        self.sldMaximumWidth.setMinimum(0)
+        self.sldMaximumWidth.setMaximum(100)
+        self.sldMaximumWidth.setValue(0)
+        self.sldMaximumWidth.setSliderPosition(0)
         self.sldMaximumWidth.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_11.addWidget(self.sldMaximumWidth)
@@ -117,8 +121,10 @@ class Ui_MeasurementScreen(object):
         self.verticalLayout_14 = QVBoxLayout(self.groupLeftActualLength)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
         self.verticalLayout_14.setContentsMargins(-1, 0, -1, 0)
-        self.inpLeftActualLength = QLineEdit(self.groupLeftActualLength)
+        self.inpLeftActualLength = QDoubleSpinBox(self.groupLeftActualLength)
         self.inpLeftActualLength.setObjectName(u"inpLeftActualLength")
+        self.inpLeftActualLength.setDecimals(2)
+        self.inpLeftActualLength.setMaximum(50.000000000000000)
 
         self.verticalLayout_14.addWidget(self.inpLeftActualLength)
 
@@ -132,6 +138,11 @@ class Ui_MeasurementScreen(object):
         self.verticalLayout_13.setContentsMargins(-1, 0, -1, 0)
         self.sldDectectPosition = QSlider(self.groupSliderPosition)
         self.sldDectectPosition.setObjectName(u"sldDectectPosition")
+        self.sldDectectPosition.setMinimum(1)
+        self.sldDectectPosition.setMaximum(100)
+        self.sldDectectPosition.setSingleStep(5)
+        self.sldDectectPosition.setPageStep(5)
+        self.sldDectectPosition.setValue(50)
         self.sldDectectPosition.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_13.addWidget(self.sldDectectPosition)
@@ -146,6 +157,7 @@ class Ui_MeasurementScreen(object):
         self.verticalLayout_15.setContentsMargins(-1, 0, -1, 0)
         self.inpLeftDetectedLength = QLineEdit(self.groupLeftDetectedLength)
         self.inpLeftDetectedLength.setObjectName(u"inpLeftDetectedLength")
+        self.inpLeftDetectedLength.setReadOnly(True)
 
         self.verticalLayout_15.addWidget(self.inpLeftDetectedLength)
 
@@ -159,6 +171,8 @@ class Ui_MeasurementScreen(object):
         self.verticalLayout_12.setContentsMargins(-1, 0, -1, 0)
         self.sldMaximumHeight = QSlider(self.groupSliderHeight)
         self.sldMaximumHeight.setObjectName(u"sldMaximumHeight")
+        self.sldMaximumHeight.setMaximum(100)
+        self.sldMaximumHeight.setValue(0)
         self.sldMaximumHeight.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_12.addWidget(self.sldMaximumHeight)
@@ -186,7 +200,14 @@ class Ui_MeasurementScreen(object):
         self.verticalLayout_6.setContentsMargins(-1, 0, -1, 0)
         self.sldDetectRange = QSlider(self.groupSliderDetectRange)
         self.sldDetectRange.setObjectName(u"sldDetectRange")
+        self.sldDetectRange.setMinimum(0)
+        self.sldDetectRange.setMaximum(50)
+        self.sldDetectRange.setSingleStep(5)
+        self.sldDetectRange.setValue(0)
+        self.sldDetectRange.setTracking(True)
         self.sldDetectRange.setOrientation(Qt.Horizontal)
+        self.sldDetectRange.setTickPosition(QSlider.TicksBelow)
+        self.sldDetectRange.setTickInterval(5)
 
         self.verticalLayout_6.addWidget(self.sldDetectRange)
 
@@ -198,8 +219,11 @@ class Ui_MeasurementScreen(object):
         self.verticalLayout_7 = QVBoxLayout(self.groupInputAllowDiff)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.verticalLayout_7.setContentsMargins(-1, 0, -1, 0)
-        self.inpAllowDiff = QLineEdit(self.groupInputAllowDiff)
+        self.inpAllowDiff = QDoubleSpinBox(self.groupInputAllowDiff)
         self.inpAllowDiff.setObjectName(u"inpAllowDiff")
+        self.inpAllowDiff.setDecimals(1)
+        self.inpAllowDiff.setMaximum(1.000000000000000)
+        self.inpAllowDiff.setSingleStep(0.100000000000000)
 
         self.verticalLayout_7.addWidget(self.inpAllowDiff)
 
@@ -276,26 +300,20 @@ class Ui_MeasurementScreen(object):
         self.screen3.setText(QCoreApplication.translate("MeasurementScreen", u"SCREEN", None))
         self.screen4.setText(QCoreApplication.translate("MeasurementScreen", u"SCREEN", None))
         self.lblTitle.setText(QCoreApplication.translate("MeasurementScreen", u"DEFINE MEASUREMENT AND MIN AREA", None))
-        self.groupSliderWidth.setTitle(QCoreApplication.translate("MeasurementScreen", u"Maximum width(%)", None))
+        self.groupSliderWidth.setTitle(QCoreApplication.translate("MeasurementScreen", u"Maximum width(%):", None))
         self.groupLeftActualLength.setTitle(QCoreApplication.translate("MeasurementScreen", u"Left side actual length", None))
-        self.inpLeftActualLength.setInputMask("")
-        self.inpLeftActualLength.setText(QCoreApplication.translate("MeasurementScreen", u"27", None))
-        self.inpLeftActualLength.setPlaceholderText(QCoreApplication.translate("MeasurementScreen", u"Input something", None))
-        self.groupSliderPosition.setTitle(QCoreApplication.translate("MeasurementScreen", u"Detect position", None))
+        self.groupSliderPosition.setTitle(QCoreApplication.translate("MeasurementScreen", u"Detect position:", None))
         self.groupLeftDetectedLength.setTitle(QCoreApplication.translate("MeasurementScreen", u"Left side detected length (px)", None))
         self.inpLeftDetectedLength.setInputMask("")
         self.inpLeftDetectedLength.setText(QCoreApplication.translate("MeasurementScreen", u"420", None))
         self.inpLeftDetectedLength.setPlaceholderText(QCoreApplication.translate("MeasurementScreen", u"Input something", None))
-        self.groupSliderHeight.setTitle(QCoreApplication.translate("MeasurementScreen", u"Maximum height(%)", None))
+        self.groupSliderHeight.setTitle(QCoreApplication.translate("MeasurementScreen", u"Maximum height(%):", None))
         self.groupLeftLengthUnit.setTitle(QCoreApplication.translate("MeasurementScreen", u"Length unit", None))
         self.inpLengthUnit.setInputMask("")
         self.inpLengthUnit.setText(QCoreApplication.translate("MeasurementScreen", u"cm", None))
         self.inpLengthUnit.setPlaceholderText(QCoreApplication.translate("MeasurementScreen", u"Input something", None))
-        self.groupSliderDetectRange.setTitle(QCoreApplication.translate("MeasurementScreen", u"Detect range", None))
-        self.groupInputAllowDiff.setTitle(QCoreApplication.translate("MeasurementScreen", u"Allow difference ({unit})", None))
-        self.inpAllowDiff.setInputMask("")
-        self.inpAllowDiff.setText(QCoreApplication.translate("MeasurementScreen", u"0.5", None))
-        self.inpAllowDiff.setPlaceholderText(QCoreApplication.translate("MeasurementScreen", u"Input something", None))
+        self.groupSliderDetectRange.setTitle(QCoreApplication.translate("MeasurementScreen", u"Detect range:", None))
+        self.groupInputAllowDiff.setTitle(QCoreApplication.translate("MeasurementScreen", u"Allow difference ({unit}):", None))
         self.btnCapture.setText(QCoreApplication.translate("MeasurementScreen", u"CAPTURE", None))
         self.btnBack.setText(QCoreApplication.translate("MeasurementScreen", u"BACK", None))
         self.btnNext.setText(QCoreApplication.translate("MeasurementScreen", u"NEXT", None))
