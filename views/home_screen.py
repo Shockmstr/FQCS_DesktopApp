@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'home_screenAcsdeU.ui'
+## Form generated from reading UI file 'home_screenppMoXw.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -17,7 +17,7 @@ class Ui_HomeScreen(object):
     def setupUi(self, HomeScreen):
         if not HomeScreen.objectName():
             HomeScreen.setObjectName(u"HomeScreen")
-        HomeScreen.resize(1600, 900)
+        HomeScreen.resize(1266, 707)
         HomeScreen.setAutoFillBackground(False)
         HomeScreen.setStyleSheet(u"background:#E5E5E5")
         self.verticalLayout = QVBoxLayout(HomeScreen)
@@ -150,7 +150,7 @@ class Ui_HomeScreen(object):
         self.containerButtons.setObjectName(u"containerButtons")
         self.verticalLayout_3 = QVBoxLayout(self.containerButtons)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalLayout_3.setContentsMargins(600, -1, 600, -1)
+        self.verticalLayout_3.setContentsMargins(500, -1, 500, -1)
         self.btnStart = QPushButton(self.containerButtons)
         self.btnStart.setObjectName(u"btnStart")
         self.btnStart.setFont(font1)

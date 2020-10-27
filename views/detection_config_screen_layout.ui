@@ -43,6 +43,12 @@
      <layout class="QGridLayout" name="gridLayout" rowstretch="1,1" columnstretch="1,1">
       <item row="0" column="0">
        <widget class="QLabel" name="screen1">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="styleSheet">
          <string notr="true">background-color: #AFF;font-weight:bold;</string>
         </property>
@@ -292,14 +298,14 @@ font-weight:bold;</string>
 }</string>
            </property>
            <property name="currentIndex">
-            <number>2</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="containerMidEdge">
             <layout class="QGridLayout" name="gridLayout_2">
              <item row="5" column="4">
               <widget class="QGroupBox" name="grbboxSldContrast">
                <property name="title">
-                <string>Contrast: 0</string>
+                <string>Contrast: -200</string>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_12">
                 <property name="topMargin">
@@ -310,6 +316,21 @@ font-weight:bold;</string>
                 </property>
                 <item>
                  <widget class="QSlider" name="sldContrast">
+                  <property name="minimum">
+                   <number>-40</number>
+                  </property>
+                  <property name="maximum">
+                   <number>40</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>1</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>5</number>
+                  </property>
+                  <property name="value">
+                   <number>-40</number>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -332,6 +353,12 @@ font-weight:bold;</string>
                 </property>
                 <item>
                  <widget class="QSlider" name="sldErode">
+                  <property name="maximum">
+                   <number>10</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>2</number>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -354,6 +381,12 @@ font-weight:bold;</string>
                 </property>
                 <item>
                  <widget class="QSlider" name="sldDilate">
+                  <property name="maximum">
+                   <number>10</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>2</number>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -376,6 +409,12 @@ font-weight:bold;</string>
                 </property>
                 <item>
                  <widget class="QSlider" name="sldBlur">
+                  <property name="maximum">
+                   <number>10</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>2</number>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -398,6 +437,12 @@ font-weight:bold;</string>
                 </property>
                 <item>
                  <widget class="QSlider" name="sldBrightness">
+                  <property name="maximum">
+                   <number>30</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>1</number>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -420,6 +465,15 @@ font-weight:bold;</string>
                 </property>
                 <item>
                  <widget class="QSlider" name="sldThreshold1">
+                  <property name="maximum">
+                   <number>51</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>1</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>5</number>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -442,6 +496,15 @@ font-weight:bold;</string>
                 </property>
                 <item>
                  <widget class="QSlider" name="sldThreshold2">
+                  <property name="maximum">
+                   <number>51</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>1</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>5</number>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -474,6 +537,12 @@ font-weight:bold;</string>
                    </property>
                    <item>
                     <widget class="QSlider" name="sldLightAdj">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                     <property name="pageStep">
+                      <number>5</number>
+                     </property>
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -502,6 +571,12 @@ font-weight:bold;</string>
                    </property>
                    <item>
                     <widget class="QSlider" name="sldBkgThresh">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                     <property name="pageStep">
+                      <number>5</number>
+                     </property>
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -608,6 +683,12 @@ font-weight:bold;</string>
                    </property>
                    <item>
                     <widget class="QSlider" name="sldLightAdjRange">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                     <property name="pageStep">
+                      <number>5</number>
+                     </property>
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -684,6 +765,13 @@ font-weight:bold;</string>
                <property name="bottomMargin">
                 <number>0</number>
                </property>
+               <item>
+                <widget class="QPushButton" name="btnBack">
+                 <property name="text">
+                  <string>BACK</string>
+                 </property>
+                </widget>
+               </item>
                <item>
                 <widget class="QPushButton" name="btnNext">
                  <property name="text">
