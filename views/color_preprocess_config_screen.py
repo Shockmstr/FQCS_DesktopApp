@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'color_preprocess_config_screendJJfLo.ui'
+## Form generated from reading UI file 'color_preprocess_config_screenchwxtm.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -124,6 +124,7 @@ class Ui_color_preprocess_config_screen(object):
         self.verticalLayout_12.setContentsMargins(-1, 0, -1, 0)
         self.sldBrightLeft = QSlider(self.groupSldBrightLeft)
         self.sldBrightLeft.setObjectName(u"sldBrightLeft")
+        self.sldBrightLeft.setMaximum(30)
         self.sldBrightLeft.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_12.addWidget(self.sldBrightLeft)
@@ -138,6 +139,9 @@ class Ui_color_preprocess_config_screen(object):
         self.verticalLayout_6.setContentsMargins(-1, 0, -1, 0)
         self.sldConstrastLeft = QSlider(self.groupSldConstrastLeft)
         self.sldConstrastLeft.setObjectName(u"sldConstrastLeft")
+        self.sldConstrastLeft.setMinimum(-40)
+        self.sldConstrastLeft.setMaximum(40)
+        self.sldConstrastLeft.setValue(-40)
         self.sldConstrastLeft.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_6.addWidget(self.sldConstrastLeft)
@@ -152,6 +156,7 @@ class Ui_color_preprocess_config_screen(object):
         self.verticalLayout_13.setContentsMargins(-1, 0, -1, 0)
         self.sldBrightRight = QSlider(self.groupSldBrightRight)
         self.sldBrightRight.setObjectName(u"sldBrightRight")
+        self.sldBrightRight.setMaximum(30)
         self.sldBrightRight.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_13.addWidget(self.sldBrightRight)
@@ -166,6 +171,7 @@ class Ui_color_preprocess_config_screen(object):
         self.verticalLayout_3.setContentsMargins(-1, 0, -1, 0)
         self.sldBlur = QSlider(self.groupSldBlur)
         self.sldBlur.setObjectName(u"sldBlur")
+        self.sldBlur.setMaximum(100)
         self.sldBlur.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_3.addWidget(self.sldBlur)
@@ -180,6 +186,8 @@ class Ui_color_preprocess_config_screen(object):
         self.verticalLayout_4.setContentsMargins(-1, 0, -1, 0)
         self.sldSaturation = QSlider(self.groupSldSaturation)
         self.sldSaturation.setObjectName(u"sldSaturation")
+        self.sldSaturation.setMaximum(10)
+        self.sldSaturation.setPageStep(2)
         self.sldSaturation.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_4.addWidget(self.sldSaturation)
@@ -194,6 +202,9 @@ class Ui_color_preprocess_config_screen(object):
         self.verticalLayout_7.setContentsMargins(-1, 0, -1, 0)
         self.sldConstrastRight = QSlider(self.groupSldConstrastRight)
         self.sldConstrastRight.setObjectName(u"sldConstrastRight")
+        self.sldConstrastRight.setMinimum(-40)
+        self.sldConstrastRight.setMaximum(40)
+        self.sldConstrastRight.setValue(-40)
         self.sldConstrastRight.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_7.addWidget(self.sldConstrastRight)
@@ -264,19 +275,19 @@ class Ui_color_preprocess_config_screen(object):
         self.screen1.setText(QCoreApplication.translate("color_preprocess_config_screen", u"SCREEN", None))
         self.screen2.setText(QCoreApplication.translate("color_preprocess_config_screen", u"SCREEN", None))
         self.lblTitle.setText(QCoreApplication.translate("color_preprocess_config_screen", u"COLOR COMPARISION - PREPROCESS", None))
-        self.groupCbbResize.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Resize", None))
+        self.groupCbbResize.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Resize (Width - Height)", None))
         self.cbbResizeHeight.setItemText(0, QCoreApplication.translate("color_preprocess_config_screen", u"Item 1", None))
         self.cbbResizeHeight.setItemText(1, QCoreApplication.translate("color_preprocess_config_screen", u"Item 2", None))
 
         self.cbbResizeWidth.setItemText(0, QCoreApplication.translate("color_preprocess_config_screen", u"Item 1", None))
         self.cbbResizeWidth.setItemText(1, QCoreApplication.translate("color_preprocess_config_screen", u"Item 2", None))
 
-        self.groupSldBrightLeft.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Brightness left", None))
-        self.groupSldConstrastLeft.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Contrast left", None))
-        self.groupSldBrightRight.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Brightness right", None))
-        self.groupSldBlur.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Blur", None))
-        self.groupSldSaturation.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Saturation", None))
-        self.groupSldConstrastRight.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Contrast right", None))
+        self.groupSldBrightLeft.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Brightness left: 0", None))
+        self.groupSldConstrastLeft.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Contrast left: -200", None))
+        self.groupSldBrightRight.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Brightness right: 0", None))
+        self.groupSldBlur.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Blur: 0", None))
+        self.groupSldSaturation.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Saturation: 0", None))
+        self.groupSldConstrastRight.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Contrast right: -200", None))
         self.btnBack.setText(QCoreApplication.translate("color_preprocess_config_screen", u"BACK", None))
         self.btnNext.setText(QCoreApplication.translate("color_preprocess_config_screen", u"NEXT", None))
     # retranslateUi
