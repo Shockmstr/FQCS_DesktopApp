@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1440</width>
-    <height>786</height>
+    <height>784</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -161,7 +161,7 @@ font-weight:bold;</string>
             <item row="0" column="0">
              <widget class="QGroupBox" name="groupSliderWidth">
               <property name="title">
-               <string>Maximum width(%)</string>
+               <string>Maximum width(%):</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <property name="topMargin">
@@ -172,6 +172,18 @@ font-weight:bold;</string>
                </property>
                <item>
                 <widget class="QSlider" name="sldMaximumWidth">
+                 <property name="minimum">
+                  <number>0</number>
+                 </property>
+                 <property name="maximum">
+                  <number>100</number>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                 <property name="sliderPosition">
+                  <number>0</number>
+                 </property>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -193,15 +205,12 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpLeftActualLength">
-                 <property name="inputMask">
-                  <string/>
+                <widget class="QDoubleSpinBox" name="inpLeftActualLength">
+                 <property name="decimals">
+                  <number>2</number>
                  </property>
-                 <property name="text">
-                  <string>27</string>
-                 </property>
-                 <property name="placeholderText">
-                  <string>Input something</string>
+                 <property name="maximum">
+                  <double>50.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -211,7 +220,7 @@ font-weight:bold;</string>
             <item row="0" column="2">
              <widget class="QGroupBox" name="groupSliderPosition">
               <property name="title">
-               <string>Detect position</string>
+               <string>Detect position:</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
                <property name="topMargin">
@@ -222,6 +231,21 @@ font-weight:bold;</string>
                </property>
                <item>
                 <widget class="QSlider" name="sldDectectPosition">
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>100</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>5</number>
+                 </property>
+                 <property name="pageStep">
+                  <number>5</number>
+                 </property>
+                 <property name="value">
+                  <number>50</number>
+                 </property>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -250,6 +274,9 @@ font-weight:bold;</string>
                  <property name="text">
                   <string>420</string>
                  </property>
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
                  <property name="placeholderText">
                   <string>Input something</string>
                  </property>
@@ -261,7 +288,7 @@ font-weight:bold;</string>
             <item row="1" column="0">
              <widget class="QGroupBox" name="groupSliderHeight">
               <property name="title">
-               <string>Maximum height(%)</string>
+               <string>Maximum height(%):</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_12">
                <property name="topMargin">
@@ -272,6 +299,12 @@ font-weight:bold;</string>
                </property>
                <item>
                 <widget class="QSlider" name="sldMaximumHeight">
+                 <property name="maximum">
+                  <number>100</number>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -311,7 +344,7 @@ font-weight:bold;</string>
             <item row="1" column="2">
              <widget class="QGroupBox" name="groupSliderDetectRange">
               <property name="title">
-               <string>Detect range</string>
+               <string>Detect range:</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_6">
                <property name="topMargin">
@@ -322,8 +355,29 @@ font-weight:bold;</string>
                </property>
                <item>
                 <widget class="QSlider" name="sldDetectRange">
+                 <property name="minimum">
+                  <number>0</number>
+                 </property>
+                 <property name="maximum">
+                  <number>50</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>5</number>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                 <property name="tracking">
+                  <bool>true</bool>
+                 </property>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="tickPosition">
+                  <enum>QSlider::TicksBelow</enum>
+                 </property>
+                 <property name="tickInterval">
+                  <number>5</number>
                  </property>
                 </widget>
                </item>
@@ -333,7 +387,7 @@ font-weight:bold;</string>
             <item row="2" column="2">
              <widget class="QGroupBox" name="groupInputAllowDiff">
               <property name="title">
-               <string>Allow difference ({unit})</string>
+               <string>Allow difference ({unit}):</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_7">
                <property name="topMargin">
@@ -343,15 +397,15 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpAllowDiff">
-                 <property name="inputMask">
-                  <string/>
+                <widget class="QDoubleSpinBox" name="inpAllowDiff">
+                 <property name="decimals">
+                  <number>1</number>
                  </property>
-                 <property name="text">
-                  <string>0.5</string>
+                 <property name="maximum">
+                  <double>1.000000000000000</double>
                  </property>
-                 <property name="placeholderText">
-                  <string>Input something</string>
+                 <property name="singleStep">
+                  <double>0.100000000000000</double>
                  </property>
                 </widget>
                </item>
