@@ -30,8 +30,6 @@ class ColorParamCalibrationScreen(QWidget):
         self.control_timer(index)
 
     def replace_camera_widget(self): #showEvent chay khi nao? Need tim hieu here/ co the thay the bang j nua dc ko?
-        
-
         self.image1 = ImageWidget()
         self.label_w = self.ui.screen1.width()
         self.label_h = self.ui.screen1.height()
