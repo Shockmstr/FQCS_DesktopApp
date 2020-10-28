@@ -4,7 +4,7 @@ from PySide2.QtCore import *
 from views.detection_config_screen_layout import Ui_DetectionConfigScreen
 from widgets.image_widget import ImageWidget
 from FQCS import detector, helper
-from models.detector_config import DetectorConfigSingleton
+from models.detector_config import DetectorConfigSingleton, DetectorConfig
 from cv2 import cv2
 from app.helpers import *
 
@@ -77,6 +77,10 @@ class DetectionConfigScreen(QWidget):
         self.ui.btnNext.clicked.connect(nextscreen)   
         self.ui.btnBack.clicked.connect(backscreen)
 
+    #subscribe to subject
+    # def subscribe():
+        
+
     #handler
     def brightness_value_change(self):
         value = round(self.ui.sldBrightness.value() * self.BRIGHTNESS_STEP, 1)
@@ -108,6 +112,7 @@ class DetectionConfigScreen(QWidget):
 
     def bkg_value_change(self):
         value = self.ui.sldBkgThresh.value()
+        self.detector_cfg[""]
         self.ui.grpboxBkgThreshold.setTitle("Background Threshold: " +
                                             str(value))
 
@@ -145,11 +150,14 @@ class DetectionConfigScreen(QWidget):
     def view_cam(self):
         # read image in BGR format       
         _, self.img = self.cap.read()
-        contour = self.process_contours(self.img.copy())
+        contour, proc = self.process_contours(self.img.copy())
         self.dim = (self.label_w, self.label_h)
         self.img = cv2.resize(self.img, self.dim)
+        contour = cv2.resize(contour, self.dim)
+        proc = cv2.resize(proc, self.dim)
         self.image1.imshow(self.img)
         self.image2.imshow(contour)
+        self.image3.imshow(proc)
         
     # start/stop timer
     def control_timer(self, index: int):
@@ -175,7 +183,7 @@ class DetectionConfigScreen(QWidget):
         self.imageLayout = self.ui.screen1.parentWidget().layout()     
         self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
         self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
-        # self.imageLayout.replaceWidget(self.ui.screen3, self.image3)
+        self.imageLayout.replaceWidget(self.ui.screen3, self.image3)
         
     def process_contours(self, image):
         frame_width, frame_height = self.detector_cfg["frame_width"], self.detector_cfg[
@@ -228,4 +236,4 @@ class DetectionConfigScreen(QWidget):
             cv2.putText(image, f"{lH:.1f} {unit}", (br[0], br[1]),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
         # cv2.imshow("Contours processed", proc)
-        return image
+        return image, proc
