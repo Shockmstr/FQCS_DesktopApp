@@ -24,4 +24,4 @@ class DetectorConfigSingleton():
     def get_instance():  #-> DetectorConfig:
         if DetectorConfigSingleton.__instance == None:
             DetectorConfigSingleton.__instance = DetectorConfig()
-        return DetectorConfig.__instance
+        return DetectorConfigSingleton.__instance
