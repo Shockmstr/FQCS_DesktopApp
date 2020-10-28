@@ -1,7 +1,7 @@
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
-from views.detection_config_screen_layout import Ui_DetectionConfigScreen
+from views.detection_config_screen import Ui_DetectionConfigScreen
 from widgets.image_widget import ImageWidget
 from cv2 import cv2
 from app.helpers import *
@@ -161,7 +161,7 @@ class DetectionConfigScreen(QWidget):
             # release video capture
             self.cap.release()
     
-    def replace_camera_widget(self): #showEvent chay khi nao? Need tim hieu here/ co the thay the bang j nua dc ko?
+    def replace_camera_widget(self):
         self.image1 = ImageWidget()
         self.label_w = self.ui.screen1.width()
         self.label_h = self.ui.screen1.height()

@@ -77,7 +77,7 @@ class MeasurementScreen(QWidget):
         # convert 0 - 50 to scale of 0.0 to 0.5 (step 0.01)
         # return value 
         detect_range_value = str(self.ui.sldDetectRange.value() / 100)
-        self.ui.groupSliderDetectRange.setTitle("Detect range: " + range_value)
+        self.ui.groupSliderDetectRange.setTitle("Detect range: " + detect_range_value)
 
         self.label_height = self.ui.screen1.height()
         self.label_width = self.ui.screen1.width()

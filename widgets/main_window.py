@@ -9,7 +9,7 @@ from widgets.measurement_screen import MeasurementScreen
 from widgets.home_screen import HomeScreen
 from widgets.test_detect_pair_screen import TestDetectPairScreen
 from widgets.color_preprocess_config_screen import ColorPreprocessConfigScreen
-from widgets.detection_config_screen_layout import DetectionConfigScreen
+from widgets.detection_config_screen import DetectionConfigScreen
 from widgets.color_param_calibration_screen import ColorParamCalibrationScreen
 from widgets.error_detect_screen import ErrorDetectScreen
 from widgets.progress_screen import ProgressScreen
