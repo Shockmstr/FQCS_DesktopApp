@@ -34,7 +34,7 @@ class MeasurementScreen(QWidget):
             self.ui.groupSliderWidth.setTitle("Maximum width(%): " + str(self.width_value))
         if self.sender() == self.ui.sldMaximumHeight:
             self.height_value = self.ui.sldMaximumHeight.value()
-            self.ui.groupSliderHeight.setTitle("Maximum height(&): " + str(self.height_value))
+            self.ui.groupSliderHeight.setTitle("Maximum height(%): " + str(self.height_value))
             
         self.label_width = self.ui.screen1.width()
         self.label_height = self.ui.screen1.height()
@@ -75,8 +75,27 @@ class MeasurementScreen(QWidget):
 
     def detect_range_change(self):
         # convert 0 - 50 to scale of 0.0 to 0.5 (step 0.01)
-        range_value = str(self.ui.sldDetectRange.value() / 100)
-        self.ui.groupSliderDetectRange.setTitle("Detect range: " + range_value)
+        # return value 
+        detect_range_value = str(self.ui.sldDetectRange.value() / 100)
+        self.ui.groupSliderDetectRange.setTitle("Detect range: " + detect_range_value)
+
+        self.label_height = self.ui.screen1.height()
+        self.label_width = self.ui.screen1.width()
+
+        left_line_ratio = float(detect_range_value) / 1
+        right_line_ratio = 1 - left_line_ratio
+
+        left_line_point = int(left_line_ratio * self.label_width)
+        right_line_point = int(right_line_ratio * self.label_width)
+
+        img = np.zeros((self.label_height,self.label_width,3), np.uint8)
+
+        cv.line(img, (left_line_point,0), (left_line_point, self.label_height), (0, 255, 0), 3)
+        cv.line(img, (right_line_point,0), (right_line_point, self.label_height), (0, 255, 0), 3)
+        if img is None:
+            sys.exit("Could not read the image")
+            
+        cv.imshow("Display window", img)
 
     def actual_length_change(self, text):
         actual_length_value = float(self.ui.inpLeftActualLength.text())
