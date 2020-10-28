@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'color_param_calibration_screenOehDRv.ui'
+## Form generated from reading UI file 'color_param_calibration_screenmLfYYP.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -17,7 +17,7 @@ class Ui_ColorParamCalibScreen(object):
     def setupUi(self, ColorParamCalibScreen):
         if not ColorParamCalibScreen.objectName():
             ColorParamCalibScreen.setObjectName(u"ColorParamCalibScreen")
-        ColorParamCalibScreen.resize(1355, 805)
+        ColorParamCalibScreen.resize(1440, 900)
         ColorParamCalibScreen.setAutoFillBackground(False)
         ColorParamCalibScreen.setStyleSheet(u"background:#E5E5E5")
         self.verticalLayout = QVBoxLayout(ColorParamCalibScreen)
@@ -43,14 +43,14 @@ class Ui_ColorParamCalibScreen(object):
         self.verticalLayout_3 = QVBoxLayout(self.grpboxDisplayType)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(-1, 0, -1, 0)
-        self.cbbDisplayType = QComboBox(self.grpboxDisplayType)
-        self.cbbDisplayType.addItem("")
-        self.cbbDisplayType.addItem("")
-        self.cbbDisplayType.setObjectName(u"cbbDisplayType")
-        self.cbbDisplayType.setAutoFillBackground(False)
-        self.cbbDisplayType.setStyleSheet(u"height:22px")
+        self.cbbCamera = QComboBox(self.grpboxDisplayType)
+        self.cbbCamera.addItem("")
+        self.cbbCamera.addItem("")
+        self.cbbCamera.setObjectName(u"cbbCamera")
+        self.cbbCamera.setAutoFillBackground(False)
+        self.cbbCamera.setStyleSheet(u"height:22px")
 
-        self.verticalLayout_3.addWidget(self.cbbDisplayType)
+        self.verticalLayout_3.addWidget(self.cbbCamera)
 
 
         self.horizontalLayout_4.addWidget(self.grpboxDisplayType, 0, Qt.AlignTop)
@@ -273,8 +273,8 @@ class Ui_ColorParamCalibScreen(object):
         ColorParamCalibScreen.setWindowTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Form", None))
         self.screen1.setText(QCoreApplication.translate("ColorParamCalibScreen", u"SCREEN", None))
         self.grpboxDisplayType.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Display Type", None))
-        self.cbbDisplayType.setItemText(0, QCoreApplication.translate("ColorParamCalibScreen", u"Item 1", None))
-        self.cbbDisplayType.setItemText(1, QCoreApplication.translate("ColorParamCalibScreen", u"Item 2", None))
+        self.cbbCamera.setItemText(0, QCoreApplication.translate("ColorParamCalibScreen", u"Item 1", None))
+        self.cbbCamera.setItemText(1, QCoreApplication.translate("ColorParamCalibScreen", u"Item 2", None))
 
         self.screen2.setText(QCoreApplication.translate("ColorParamCalibScreen", u"SCREEN", None))
         self.screen4.setText(QCoreApplication.translate("ColorParamCalibScreen", u"SCREEN", None))
