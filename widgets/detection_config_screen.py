@@ -143,8 +143,13 @@ class DetectionConfigScreen(QWidget):
 
 
     def button_color_from_clicked(self):
-        hsv = self.detector_cfg["d_cfg"]["cr_from"]  
-        init_hsv = QColor.fromHsv(hsv[0] * 2, hsv[1], hsv[2], 255)
+        # get initial color
+        hsv = self.detector_cfg["d_cfg"]["cr_from"]
+        h = 359 if (int(hsv[0] * 2) > 359) else int(hsv[0] * 2)
+        s = int(hsv[1])
+        v = int(hsv[2])
+        init_hsv = QColor.fromHsv(h, s, v, a=255)    
+          
         color = QColorDialog.getColor(parent=self, initial=init_hsv)
         if color.isValid():
             hsv = color.getHsv()
@@ -155,8 +160,13 @@ class DetectionConfigScreen(QWidget):
                                                color_hex)
 
     def button_color_to_clicked(self):
-        hsv = self.detector_cfg["d_cfg"]["cr_from"]  
-        init_hsv = QColor.fromHsv(hsv[0] * 2, hsv[1], hsv[2], 255)
+        #get initial color
+        hsv = self.detector_cfg["d_cfg"]["cr_to"]      
+        h = 359 if (int(hsv[0] * 2) > 359) else int(hsv[0] * 2)
+        s = int(hsv[1])
+        v = int(hsv[2])
+        init_hsv = QColor.fromHsv(h, s, v, a=255)  
+        
         color = QColorDialog.getColor(parent=self, initial=init_hsv)
         if color.isValid():
             hsv = color.getHsv()
