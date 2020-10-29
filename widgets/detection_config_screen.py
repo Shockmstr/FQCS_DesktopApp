@@ -63,11 +63,6 @@ class DetectionConfigScreen(QWidget):
 
     #BINDING
     def binding(self, backscreen: (), nextscreen: ()):
-
-<<<<<<< HEAD
-=======
-
->>>>>>> master
         self.ui.sldBrightness.valueChanged.connect(
             self.brightness_value_change)
         self.ui.sldContrast.valueChanged.connect(self.contrast_value_change)
