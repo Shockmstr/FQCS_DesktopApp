@@ -1,12 +1,15 @@
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
+from widgets.image_widget import ImageWidget
 import numpy as np
 import cv2 as cv
 
 from views.measurement_screen import Ui_MeasurementScreen
 
 class MeasurementScreen(QWidget):
+    CAMERA_LOADED = False
+
     def __init__(self, backscreen: (), nextscreen: ()):
         QWidget.__init__(self)
         self.ui = Ui_MeasurementScreen()
@@ -102,3 +105,21 @@ class MeasurementScreen(QWidget):
 
     def allow_diff_change(self, text):
         allow_diff_value = float(self.ui.inpAllowDiff.text())
+
+    # view camera
+    def view_cam(self, image):
+        # read image in BGR format
+        self.replace_camera_widget()
+        self.img = image
+        self.dim = (self.label_w, self.label_h)
+        img_resized = cv.resize(self.img, self.dim)
+        self.image1.imshow(img_resized)
+
+    def replace_camera_widget(self):
+        if not self.CAMERA_LOADED:
+            self.image1 = ImageWidget()
+            self.label_w = self.ui.screen1.width()
+            self.label_h = self.ui.screen1.height()
+            self.imageLayout = self.ui.screen1.parentWidget().layout()
+            self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+            self.CAMERA_LOADED = True

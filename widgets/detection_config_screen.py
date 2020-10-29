@@ -9,7 +9,6 @@ from models.detector_config import DetectorConfigSingleton, DetectorConfig
 from cv2 import cv2
 from app.helpers import *
 
-
 class DetectionConfigScreen(QWidget):
     BRIGHTNESS_STEP = 0.1
     CONTRAST_STEP = 5
@@ -17,13 +16,13 @@ class DetectionConfigScreen(QWidget):
     THRESHOLD2_STEP = 5
     CAMERA_LOADED = False
 
-    def __init__(self, backscreen: (), nextscreen: ()):
+    def __init__(self, backscreen: (), nextscreen: (), main_window):
         QWidget.__init__(self)
         self.detector_cfg = DetectorConfigSingleton.get_instance().config
         self.ui = Ui_DetectionConfigScreen()
         self.ui.setupUi(self)
         self.init_ui_values()
-        self.timer = QTimer()
+        self.main_window = main_window
         self.binding(backscreen=backscreen, nextscreen=nextscreen)
 
     #init ui values
@@ -60,11 +59,6 @@ class DetectionConfigScreen(QWidget):
     # binding
     def binding(self, backscreen: (), nextscreen: ()):
 
-
-        # create a timer
-        # set timer timeout callback function
-
-        self.timer.timeout.connect(self.view_cam)
 
         self.ui.sldBrightness.valueChanged.connect(
             self.brightness_value_change)
@@ -147,28 +141,37 @@ class DetectionConfigScreen(QWidget):
         self.detector_cfg["d_cfg"]["light_adj_thresh"] = value
         self.ui.grpboxLightAdjRange.setTitle(f"Light Adjustment: {value}")
 
+
     def button_color_from_clicked(self):
-        color = QColorDialog.getColor(parent=self)
+       # init_color = self.detector_cfg["d_cfg"]["cr_from"]
+      #  print(init_color)
+        color = QColorDialog.getColor(parent=self), initial=init_color)
         if color.isValid():
-            rgb = color.getRgb()
-            self.detector_cfg["d_cfg"]["cr_from"] = rgb
+            hsv = color.getHsv()
+            hsv = (hsv[0]/2, hsv[1], hsv[2])
+            print(hsv)
+            self.detector_cfg["d_cfg"]["cr_from"] = hsv
             color_hex = color.name()
             self.ui.btnColorFrom.setStyleSheet("background-color: " +
                                                color_hex)
 
     def button_color_to_clicked(self):
-        color = QColorDialog.getColor(parent=self)
+        # init_color = self.detector_cfg["d_cfg"]["cr_from"]
+        # print(init_color)
+        # color = QColorDialog.getColor(parent=self), initial=init_color)
         if color.isValid():
-            rgb = color.getRgb()
-            self.detector_cfg["d_cfg"]["cr_to"] = rgb
+            hsv = color.getHsv()
+            hsv = (hsv[0]/2, hsv[1], hsv[2])
+            print(hsv)
+            self.detector_cfg["d_cfg"]["cr_to"] = hsv
             color_hex = color.name()
             self.ui.btnColorTo.setStyleSheet("background-color: " + color_hex)
 
     #main controls
     def cbbCamera_chose(self):
-        self.replace_camera_widget()
+        # self.replace_camera_widget()
         index = self.ui.cbbCamera.currentData()
-        self.control_timer(index)
+        self.main_window.video_camera.open(index)
 
     def cbbMethod_changed(self, index: int):
         method = self.ui.cbbMethod.currentData()
@@ -191,12 +194,13 @@ class DetectionConfigScreen(QWidget):
         self.detector_cfg["frame_width"] = value
 
     def button_capture_clicked(self):
-        self.cap.release()
+        self.camera.release()
 
     # view camera
-    def view_cam(self):
+    def view_cam(self, image):
         # read image in BGR format
-        _, self.img = self.cap.read()
+        self.replace_camera_widget()
+        self.img = image
         self.dim = (self.label_w, self.label_h)
         contour, proc = self.process_contours(self.img.copy())
         img_resized = cv2.resize(self.img, self.dim)
@@ -205,21 +209,6 @@ class DetectionConfigScreen(QWidget):
         self.image1.imshow(img_resized)
         self.image2.imshow(contour_resized)
         self.image3.imshow(proc_resized)
-
-    # start/stop timer
-    def control_timer(self, index):
-        # if timer is stopped
-        if not self.timer.isActive():
-            # create video capture
-            self.cap = cv2.VideoCapture(index)
-            # start timer
-            self.timer.start(20)
-        # if timer is started
-        else:
-            # stop timer
-            # release video capture
-            self.cap.release()
-            self.cap = cv2.VideoCapture(index)
 
     def replace_camera_widget(self):
         if not self.CAMERA_LOADED:
@@ -287,3 +276,4 @@ class DetectionConfigScreen(QWidget):
                         cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
         # cv2.imshow("Contours processed", proc)
         return image, proc
+    
