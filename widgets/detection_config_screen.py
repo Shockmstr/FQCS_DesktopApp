@@ -18,12 +18,17 @@ class DetectionConfigScreen(QWidget):
 
     def __init__(self, backscreen: (), nextscreen: (), main_window):
         QWidget.__init__(self)
-        self.detector_cfg = DetectorConfigSingleton.get_instance().config
         self.ui = Ui_DetectionConfigScreen()
+        self.detector_cfg = DetectorConfigSingleton.get_instance().config
+        # hacks waiting for TODO: add more default props to detector.default_detector_config
+        self.detector_cfg["d_cfg"] = dict(detector.default_thresh_config(),
+                                          **detector.default_range_config(),
+                                          **detector.default_edge_config())
         self.ui.setupUi(self)
         self.init_ui_values()
         self.main_window = main_window
         self.binding(backscreen=backscreen, nextscreen=nextscreen)
+        self.load_cfg()
 
     #init ui values
     def init_ui_values(self):
@@ -45,21 +50,19 @@ class DetectionConfigScreen(QWidget):
         ]
         self.ui.cbbHeight.clear()
         for value in frame_resize_values:
-            self.ui.cbbHeight.addItem(value, userData = int(value))
+            self.ui.cbbHeight.addItem(value, userData=int(value))
 
         self.ui.cbbWidth.clear()
         for value in frame_resize_values:
-            self.ui.cbbWidth.addItem(value, userData = int(value))
+            self.ui.cbbWidth.addItem(value, userData=int(value))
 
         self.ui.cbbMethod.clear()
         self.ui.cbbMethod.addItem("Edge", userData="edge")
         self.ui.cbbMethod.addItem("Threshold", userData="thresh")
         self.ui.cbbMethod.addItem("Range", userData="range")
 
-    # binding
+    #BINDING
     def binding(self, backscreen: (), nextscreen: ()):
-
-
         self.ui.sldBrightness.valueChanged.connect(
             self.brightness_value_change)
         self.ui.sldContrast.valueChanged.connect(self.contrast_value_change)
@@ -84,9 +87,7 @@ class DetectionConfigScreen(QWidget):
         self.ui.btnBack.clicked.connect(backscreen)
         self.ui.btnCapture.clicked.connect(self.button_capture_clicked)
 
-    #subscribe to subject
-
-    #handlers
+    #HANDLERS
     #edge detection method
     def brightness_value_change(self):
         value = round(self.ui.sldBrightness.value() * self.BRIGHTNESS_STEP, 1)
@@ -284,4 +285,57 @@ class DetectionConfigScreen(QWidget):
                         cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
         # cv2.imshow("Contours processed", proc)
         return image, proc
-    
+
+    #load init configs
+    def load_cfg(self):
+        #edge
+        brightness = self.detector_cfg["d_cfg"]["alpha"]
+        contrast = self.detector_cfg["d_cfg"]["beta"]
+        thresh1 = self.detector_cfg["d_cfg"]["threshold1"]
+        thresh2 = self.detector_cfg["d_cfg"]["threshold2"]
+        blur = self.detector_cfg["d_cfg"]["kernel"][0]
+        dilate = self.detector_cfg["d_cfg"]["d_kernel"].shape[1]
+        erode = self.detector_cfg["d_cfg"]["e_kernel"] and self.detector_cfg["d_cfg"]["e_kernel"].shape[1]
+        #threshold
+        bkg = self.detector_cfg["d_cfg"]["bg_thresh"]
+        light_thresh = self.detector_cfg["d_cfg"]["light_adj_thresh"]
+        #range
+        light_range = self.detector_cfg["d_cfg"]["light_adj_thresh"]
+        color_to = self.detector_cfg["d_cfg"]["cr_to"]
+        color_from = self.detector_cfg["d_cfg"]["cr_from"]
+        #main controls
+        method = self.detector_cfg["detect_method"]
+        height = self.detector_cfg["frame_height"]
+        width = self.detector_cfg["frame_height"]
+
+        self.ui.sldBrightness.setValue(brightness)
+        self.ui.sldContrast.setValue(contrast)
+        self.ui.sldThreshold1.setValue(thresh1)
+        self.ui.sldThreshold2.setValue(thresh2)
+        self.ui.sldBlur.setValue(blur)
+        self.ui.sldDilate.setValue(dilate)
+        self.ui.sldErode.setValue(erode or 0)
+
+        self.ui.sldBkgThresh.setValue(bkg)
+        self.ui.sldLightAdj.setValue(light_thresh)
+
+        self.ui.sldLightAdjRange.setValue(light_range)
+        hsv_from = self.detector_cfg["d_cfg"]["cr_from"]
+        init_hsv_from = QColor.fromHsv(hsv_from[0] * 2, hsv_from[1],
+                                       hsv_from[2], 255)
+        self.ui.btnColorFrom.setStyleSheet("background-color: " +
+                                           init_hsv_from.name())
+        hsv_to = self.detector_cfg["d_cfg"]["cr_to"]
+        init_hsv_to = QColor.fromHsv(hsv_from[0] * 2, hsv_from[1], hsv_from[2],
+                                     255)
+        self.ui.btnColorFrom.setStyleSheet("background-color: " +
+                                           init_hsv_to.name())
+        
+        method_index = self.ui.cbbMethod.findData(method)
+        self.ui.cbbMethod.setCurrentIndex(method_index)
+        height_index = self.ui.cbbHeight.findData(height)
+        self.ui.cbbHeight.setCurrentIndex(height_index)
+        width_index = self.ui.cbbWidth.findData(width)
+        self.ui.cbbWidth.setCurrentIndex(width_index)
+
+
