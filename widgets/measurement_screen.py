@@ -59,7 +59,6 @@ class MeasurementScreen(QWidget):
         cv.imshow("Display window", img)
         self.detector_cfg["min_width_per"] = self.width_value / 100
         self.detector_cfg["min_height_per"] = self.height_value / 100
-        print(self.detector_cfg["min_width_per"], self.detector_cfg["min_height_per"])
         
     def draw_position_line_on_image(self):
         value = self.ui.sldDectectPosition.value()
@@ -80,8 +79,6 @@ class MeasurementScreen(QWidget):
         cv.imshow("Display window", img)
         
         self.detector_cfg["stop_condition"] = (value - 50) / 50
-        print(self.detector_cfg["stop_condition"])
-       
         
     def calculate_length_per10px(total_px, total_length):
         return total_length / total_px * 10
@@ -89,7 +86,6 @@ class MeasurementScreen(QWidget):
     def length_unit_change(self):
         value = str(self.ui.inpLengthUnit.text())
         self.detector_cfg["length_unit"] = value
-        print(self.detector_cfg["length_unit"])
         
     def detect_range_change(self):
         # convert 0 - 50 to scale of 0.0 to 0.5 (step 0.01)
@@ -114,7 +110,6 @@ class MeasurementScreen(QWidget):
             sys.exit("Could not read the image")
         cv.imshow("Display window", img)
         self.detector_cfg["detect_range"] = (float(value), float(1 - float(value)))
-        print(self.detector_cfg["detect_range"])
 
     def actual_length_change(self, text):
         value = float(self.ui.inpLeftActualLength.text())
@@ -129,7 +124,6 @@ class MeasurementScreen(QWidget):
                 raise 'Please enter number only'
         
         self.detector_cfg["max_size_diff"] = value
-        print(self.detector_cfg["max_size_diff"])
 
     # view camera
     def view_cam(self, image):
