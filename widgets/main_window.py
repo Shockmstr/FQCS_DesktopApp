@@ -5,6 +5,7 @@ from views.main_window import Ui_MainWindow
 from FQCS import detector
 from models.detector_config import *
 from app.helpers import *
+import cv2
 from widgets.measurement_screen import MeasurementScreen
 from widgets.home_screen import HomeScreen
 from widgets.test_detect_pair_screen import TestDetectPairScreen
@@ -21,6 +22,9 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.showFullScreen()
+        self.video_camera = cv2.VideoCapture()
+        self.timer = QTimer()
+        self.process_cam = None
         self.binding()
 
         # screen 0
@@ -29,7 +33,8 @@ class MainWindow(QMainWindow):
         # screen 1
         self.detection_screen = DetectionConfigScreen(
             backscreen=self.change_home_screen,
-            nextscreen=self.change_measurement_screen)
+            nextscreen=self.change_measurement_screen,
+            main_window = self)
 
         # screen 2
         self.measurement_screen = MeasurementScreen(
@@ -75,6 +80,24 @@ class MainWindow(QMainWindow):
         self.ui.actionExit.triggered.connect(self.exit_program)
         self.ui.actionLoadCfg.triggered.connect(self.on_load_config)
         self.ui.actionSaveCfg.triggered.connect(self.on_save_config)
+        self.timer.timeout.connect(self.show_cam)
+        self.ui.centralStackWidget.currentChanged.connect(self.widget_change)
+
+    def show_cam(self):
+        if (self.video_camera.isOpened() and self.process_cam is not None):
+            _, image = self.video_camera.read()
+            self.process_cam(image)
+
+    # start/stop timer
+    def control_timer(self, active):
+        # if timer is stopped
+        if active:
+            if (not self.timer.isActive()):
+                # start timer
+                self.timer.start(20)
+        # if timer is started
+        else:
+            self.timer.stop()
 
     # event handler
     def exit_program(self):
@@ -106,6 +129,16 @@ class MainWindow(QMainWindow):
 
     def change_progress_screen(self):
         self.ui.centralStackWidget.setCurrentWidget(self.progress_screen)
+
+    def widget_change(self):
+        if (self.ui.centralStackWidget.currentWidget() == self.detection_screen):
+            self.process_cam = self.detection_screen.view_cam
+            self.control_timer(True)
+        elif (self.ui.centralStackWidget.currentWidget() == self.measurement_screen):
+            self.process_cam = self.measurement_screen.view_cam
+            self.control_timer(True)    
+        else:
+            self.control_timer(False)
 
     def on_load_config(self):
         file_path = file_chooser_open_directory(self)
