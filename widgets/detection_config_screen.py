@@ -143,26 +143,24 @@ class DetectionConfigScreen(QWidget):
 
 
     def button_color_from_clicked(self):
-       # init_color = self.detector_cfg["d_cfg"]["cr_from"]
-      #  print(init_color)
-        color = QColorDialog.getColor(parent=self), initial=init_color)
+        hsv = self.detector_cfg["d_cfg"]["cr_from"]  
+        init_hsv = QColor.fromHsv(hsv[0] * 2, hsv[1], hsv[2], 255)
+        color = QColorDialog.getColor(parent=self, initial=init_hsv)
         if color.isValid():
             hsv = color.getHsv()
             hsv = (hsv[0]/2, hsv[1], hsv[2])
-            print(hsv)
             self.detector_cfg["d_cfg"]["cr_from"] = hsv
             color_hex = color.name()
             self.ui.btnColorFrom.setStyleSheet("background-color: " +
                                                color_hex)
 
     def button_color_to_clicked(self):
-        # init_color = self.detector_cfg["d_cfg"]["cr_from"]
-        # print(init_color)
-        # color = QColorDialog.getColor(parent=self), initial=init_color)
+        hsv = self.detector_cfg["d_cfg"]["cr_from"]  
+        init_hsv = QColor.fromHsv(hsv[0] * 2, hsv[1], hsv[2], 255)
+        color = QColorDialog.getColor(parent=self, initial=init_hsv)
         if color.isValid():
             hsv = color.getHsv()
             hsv = (hsv[0]/2, hsv[1], hsv[2])
-            print(hsv)
             self.detector_cfg["d_cfg"]["cr_to"] = hsv
             color_hex = color.name()
             self.ui.btnColorTo.setStyleSheet("background-color: " + color_hex)
