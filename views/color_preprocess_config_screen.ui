@@ -152,7 +152,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QComboBox" name="cbbResizeHeight">
+                <widget class="QComboBox" name="cbbResizeWidth">
                  <property name="autoFillBackground">
                   <bool>false</bool>
                  </property>
@@ -175,7 +175,7 @@ font-weight:bold;</string>
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="cbbResizeWidth">
+                <widget class="QComboBox" name="cbbResizeHeight">
                  <property name="autoFillBackground">
                   <bool>false</bool>
                  </property>
