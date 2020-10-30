@@ -203,7 +203,7 @@ font-weight:bold;</string>
 	border: 1px solid #A5A5A5
 }</string>
            </property>
-           <layout class="QGridLayout" name="gridLayout_2" rowstretch="1,1,1,0" columnstretch="1,1">
+           <layout class="QGridLayout" name="gridLayout_2" rowstretch="1,1,1,0" columnstretch="1,2">
             <item row="0" column="0">
              <widget class="QGroupBox" name="grpSldSupThresh">
               <property name="title">
@@ -217,11 +217,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSlider" name="sldSupThresh">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
+                <widget class="QSpinBox" name="inpSuppThreshold"/>
                </item>
               </layout>
              </widget>
@@ -238,7 +234,7 @@ font-weight:bold;</string>
                   <string notr="true">background-color: rgba(255, 0, 0, 100);</string>
                  </property>
                  <property name="specialValueText">
-                  <string>Red</string>
+                  <string/>
                  </property>
                  <property name="accelerated">
                   <bool>true</bool>
@@ -254,7 +250,7 @@ font-weight:bold;</string>
                   <string notr="true">background-color: rgba(0, 203, 0, 100);</string>
                  </property>
                  <property name="specialValueText">
-                  <string>Green</string>
+                  <string/>
                  </property>
                  <property name="accelerated">
                   <bool>true</bool>
@@ -270,7 +266,7 @@ font-weight:bold;</string>
                   <string notr="true">background-color: rgba(0, 85, 255, 100);</string>
                  </property>
                  <property name="specialValueText">
-                  <string>Blue</string>
+                  <string/>
                  </property>
                  <property name="accelerated">
                   <bool>true</bool>
@@ -297,6 +293,12 @@ font-weight:bold;</string>
                </property>
                <item>
                 <widget class="QSlider" name="sldAllowDiff">
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>50</number>
+                 </property>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -319,6 +321,12 @@ font-weight:bold;</string>
                </property>
                <item>
                 <widget class="QSlider" name="sldAmpRate">
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>50</number>
+                 </property>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
