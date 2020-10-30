@@ -68,6 +68,7 @@ class ColorParamCalibrationScreen(QWidget):
         self.control_timer(index) 
 
     def load_default_config(self):
+        print(self.detector_cfg)
         # amp_thresh_red_value = self.detector_cfg["color_cfg"]["amplify_thresh"][0]
         # amp_thresh_green_value = self.detector_cfg["color_cfg"]["amplify_thresh"][1]
         # amp_thresh_blue_value = self.detector_cfg["color_cfg"]["amplify_thresh"][2]
@@ -82,8 +83,8 @@ class ColorParamCalibrationScreen(QWidget):
         self.ui.ampThreshGreen.setValue(0) # self-created value
         self.ui.ampThreshRed.setValue(0) # self-created value
 
-        self.ui.grpSldAllowDiff.setTitle(str(max_diff))
-        self.ui.grpSldAmpRate.setTitle(str(amplify_rate))
+        self.ui.grpSldAllowDiff.setTitle(max_diff)
+        self.ui.grpSldAmpRate.setTitle(amplify_rate)
 
     def view_cam(self):
         # read image in BGR format       
