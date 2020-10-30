@@ -39,7 +39,8 @@ class MainWindow(QMainWindow):
         # screen 2
         self.measurement_screen = MeasurementScreen(
             backscreen=self.change_detection_screen,
-            nextscreen=self.change_detect_pair_screen)
+            nextscreen=self.change_detect_pair_screen,
+            main_window = self)
 
         # screen 3
         self.test_detect_pair_screen = TestDetectPairScreen(
