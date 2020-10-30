@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'color_preprocess_config_screenchwxtm.ui'
+## Form generated from reading UI file 'color_preprocess_config_screenBKtSvV.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -17,7 +17,7 @@ class Ui_color_preprocess_config_screen(object):
     def setupUi(self, color_preprocess_config_screen):
         if not color_preprocess_config_screen.objectName():
             color_preprocess_config_screen.setObjectName(u"color_preprocess_config_screen")
-        color_preprocess_config_screen.resize(1440, 789)
+        color_preprocess_config_screen.resize(1440, 900)
         color_preprocess_config_screen.setAutoFillBackground(False)
         color_preprocess_config_screen.setStyleSheet(u"background:#E5E5E5")
         self.verticalLayout = QVBoxLayout(color_preprocess_config_screen)
@@ -94,16 +94,6 @@ class Ui_color_preprocess_config_screen(object):
         self.horizontalLayout_4 = QHBoxLayout(self.groupCbbResize)
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.horizontalLayout_4.setContentsMargins(-1, 0, -1, 0)
-        self.cbbResizeHeight = QComboBox(self.groupCbbResize)
-        self.cbbResizeHeight.addItem("")
-        self.cbbResizeHeight.addItem("")
-        self.cbbResizeHeight.setObjectName(u"cbbResizeHeight")
-        self.cbbResizeHeight.setAutoFillBackground(False)
-        self.cbbResizeHeight.setStyleSheet(u"height:22px")
-        self.cbbResizeHeight.setFrame(True)
-
-        self.horizontalLayout_4.addWidget(self.cbbResizeHeight)
-
         self.cbbResizeWidth = QComboBox(self.groupCbbResize)
         self.cbbResizeWidth.addItem("")
         self.cbbResizeWidth.addItem("")
@@ -113,6 +103,16 @@ class Ui_color_preprocess_config_screen(object):
         self.cbbResizeWidth.setFrame(True)
 
         self.horizontalLayout_4.addWidget(self.cbbResizeWidth)
+
+        self.cbbResizeHeight = QComboBox(self.groupCbbResize)
+        self.cbbResizeHeight.addItem("")
+        self.cbbResizeHeight.addItem("")
+        self.cbbResizeHeight.setObjectName(u"cbbResizeHeight")
+        self.cbbResizeHeight.setAutoFillBackground(False)
+        self.cbbResizeHeight.setStyleSheet(u"height:22px")
+        self.cbbResizeHeight.setFrame(True)
+
+        self.horizontalLayout_4.addWidget(self.cbbResizeHeight)
 
 
         self.gridLayout_2.addWidget(self.groupCbbResize, 0, 0, 1, 1)
@@ -276,11 +276,11 @@ class Ui_color_preprocess_config_screen(object):
         self.screen2.setText(QCoreApplication.translate("color_preprocess_config_screen", u"SCREEN", None))
         self.lblTitle.setText(QCoreApplication.translate("color_preprocess_config_screen", u"COLOR COMPARISION - PREPROCESS", None))
         self.groupCbbResize.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Resize (Width - Height)", None))
-        self.cbbResizeHeight.setItemText(0, QCoreApplication.translate("color_preprocess_config_screen", u"Item 1", None))
-        self.cbbResizeHeight.setItemText(1, QCoreApplication.translate("color_preprocess_config_screen", u"Item 2", None))
-
         self.cbbResizeWidth.setItemText(0, QCoreApplication.translate("color_preprocess_config_screen", u"Item 1", None))
         self.cbbResizeWidth.setItemText(1, QCoreApplication.translate("color_preprocess_config_screen", u"Item 2", None))
+
+        self.cbbResizeHeight.setItemText(0, QCoreApplication.translate("color_preprocess_config_screen", u"Item 1", None))
+        self.cbbResizeHeight.setItemText(1, QCoreApplication.translate("color_preprocess_config_screen", u"Item 2", None))
 
         self.groupSldBrightLeft.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Brightness left: 0", None))
         self.groupSldConstrastLeft.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Contrast left: -200", None))

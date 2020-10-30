@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'color_param_calibration_screenmLfYYP.ui'
+## Form generated from reading UI file 'color_param_calibration_screenvJudTo.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -133,11 +133,10 @@ class Ui_ColorParamCalibScreen(object):
         self.verticalLayout_11 = QVBoxLayout(self.grpSldSupThresh)
         self.verticalLayout_11.setObjectName(u"verticalLayout_11")
         self.verticalLayout_11.setContentsMargins(-1, 0, -1, 0)
-        self.sldSupThresh = QSlider(self.grpSldSupThresh)
-        self.sldSupThresh.setObjectName(u"sldSupThresh")
-        self.sldSupThresh.setOrientation(Qt.Horizontal)
+        self.inpSuppThreshold = QSpinBox(self.grpSldSupThresh)
+        self.inpSuppThreshold.setObjectName(u"inpSuppThreshold")
 
-        self.verticalLayout_11.addWidget(self.sldSupThresh)
+        self.verticalLayout_11.addWidget(self.inpSuppThreshold)
 
 
         self.gridLayout_2.addWidget(self.grpSldSupThresh, 0, 0, 1, 1)
@@ -180,6 +179,8 @@ class Ui_ColorParamCalibScreen(object):
         self.verticalLayout_13.setContentsMargins(-1, 0, -1, 0)
         self.sldAllowDiff = QSlider(self.grpSldAllowDiff)
         self.sldAllowDiff.setObjectName(u"sldAllowDiff")
+        self.sldAllowDiff.setMinimum(1)
+        self.sldAllowDiff.setMaximum(50)
         self.sldAllowDiff.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_13.addWidget(self.sldAllowDiff)
@@ -194,6 +195,8 @@ class Ui_ColorParamCalibScreen(object):
         self.verticalLayout_12.setContentsMargins(-1, 0, -1, 0)
         self.sldAmpRate = QSlider(self.grpSldAmpRate)
         self.sldAmpRate.setObjectName(u"sldAmpRate")
+        self.sldAmpRate.setMinimum(1)
+        self.sldAmpRate.setMaximum(50)
         self.sldAmpRate.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_12.addWidget(self.sldAmpRate)
@@ -205,7 +208,7 @@ class Ui_ColorParamCalibScreen(object):
         self.gridLayout_2.setRowStretch(1, 1)
         self.gridLayout_2.setRowStretch(2, 1)
         self.gridLayout_2.setColumnStretch(0, 1)
-        self.gridLayout_2.setColumnStretch(1, 1)
+        self.gridLayout_2.setColumnStretch(1, 2)
 
         self.horizontalLayout.addWidget(self.containerMid)
 
@@ -281,9 +284,9 @@ class Ui_ColorParamCalibScreen(object):
         self.lblTitle.setText(QCoreApplication.translate("ColorParamCalibScreen", u"COLOR COMPARISON - PARAMETERS CALIBRATION", None))
         self.grpSldSupThresh.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Suppress Threshold: 0", None))
         self.groupInputTemplate_2.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Amplification Threshold", None))
-        self.ampThreshRed.setSpecialValueText(QCoreApplication.translate("ColorParamCalibScreen", u"Red", None))
-        self.ampThreshGreen.setSpecialValueText(QCoreApplication.translate("ColorParamCalibScreen", u"Green", None))
-        self.ampThreshBlue.setSpecialValueText(QCoreApplication.translate("ColorParamCalibScreen", u"Blue", None))
+        self.ampThreshRed.setSpecialValueText("")
+        self.ampThreshGreen.setSpecialValueText("")
+        self.ampThreshBlue.setSpecialValueText("")
         self.grpSldAllowDiff.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Allowed Difference: 0%", None))
         self.grpSldAmpRate.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Amplification Rate: 0", None))
         self.btnCapture.setText(QCoreApplication.translate("ColorParamCalibScreen", u"CAPTURE", None))
