@@ -42,43 +42,37 @@ class MeasurementScreen(QWidget):
             self.height_value = self.ui.sldMaximumHeight.value()
             self.ui.groupSliderHeight.setTitle("Maximum height(%): " + str(self.height_value))
             
-        self.label_width = self.ui.screen1.width()
-        self.label_height = self.ui.screen1.height()
+        self.label_width = self.img.shape[1]
+        self.label_height = self.img.shape[0]
 
         rectange_width = int(self.label_width * self.width_value / 100)
         rectange_height = int(self.label_height * self.height_value / 100)
 
-        # create and read from a demo "black" image - Green boundary lines 
-        img = np.zeros((self.label_height,self.label_width,3), np.uint8)
-
-        # draw Green rectangle image into image
-        cv.rectangle(img,(0,0),(rectange_width,rectange_height),(0,255,0),3)
-        if img is None:
-            sys.exit("Could not read the image")
-        
-        cv.imshow("Display window", img)
         self.detector_cfg["min_width_per"] = self.width_value / 100
         self.detector_cfg["min_height_per"] = self.height_value / 100
+        # draw Green rectangle image into image
+        return cv.rectangle(self.img,(0,0),(rectange_width,rectange_height),(0,255,0),3)
+        # if img is None:
+        #     sys.exit("Could not read the image")
+        
         
     def draw_position_line_on_image(self):
         value = self.ui.sldDectectPosition.value()
         self.ui.groupSliderPosition.setTitle("Detect position: " + str(value))
 
-        self.label_width = self.ui.screen1.width()
-        self.label_height = self.ui.screen1.height()
+        self.label_width = self.img.shape[1]
+        self.label_height = self.img.shape[0]
 
         width = int(self.label_width * value / 100)
 
-        # create and read from a demo "black" image - Green boundary lines 
-        img = np.zeros((self.label_height,self.label_width,3), np.uint8)
-        
-        cv.line(img, (width,0), (width, self.label_height), (0, 255, 0), 3)
-        if img is None:
-            sys.exit("Could not read the image")
-        
-        cv.imshow("Display window", img)
-        
         self.detector_cfg["stop_condition"] = (value - 50) / 50
+        
+        return cv.line(self.img, (width,0), (width, self.label_height), (0, 255, 0), 3)
+        # if img is None:
+        #     sys.exit("Could not read the image")
+        
+        
+        
         
     def calculate_length_per10px(total_px, total_length):
         return total_length / total_px * 10
@@ -93,23 +87,20 @@ class MeasurementScreen(QWidget):
         value = str(self.ui.sldDetectRange.value() / 100)
         self.ui.groupSliderDetectRange.setTitle("Detect range: " + value)
 
-        self.label_height = self.ui.screen1.height()
-        self.label_width = self.ui.screen1.width()
+        self.label_width = self.img.shape[1]
+        self.label_height = self.img.shape[0]
 
         left_line_ratio = float(value) / 1
         right_line_ratio = 1 - left_line_ratio
 
         left_line_point = int(left_line_ratio * self.label_width)
         right_line_point = int(right_line_ratio * self.label_width)
-
-        img = np.zeros((self.label_height,self.label_width,3), np.uint8)
-
-        cv.line(img, (left_line_point,0), (left_line_point, self.label_height), (0, 255, 0), 3)
-        cv.line(img, (right_line_point,0), (right_line_point, self.label_height), (0, 255, 0), 3)
-        if img is None:
-            sys.exit("Could not read the image")
-        cv.imshow("Display window", img)
         self.detector_cfg["detect_range"] = (float(value), float(1 - float(value)))
+
+        image = cv.line(self.img, (left_line_point,0), (left_line_point, self.label_height), (0, 255, 0), 3)
+        image = cv.line(self.img, (right_line_point,0), (right_line_point, self.label_height), (0, 255, 0), 3)
+        return image
+        
 
     def actual_length_change(self, text):
         value = float(self.ui.inpLeftActualLength.text())
@@ -130,9 +121,12 @@ class MeasurementScreen(QWidget):
         # read image in BGR format
         self.replace_camera_widget()
         self.img = image
+        self.img = self.draw_rectangle_on_image()
+        self.img = self.draw_position_line_on_image()
+        self.img = self.detect_range_change()
         self.dim = (self.label_w, self.label_h)
-        img_resized = cv.resize(self.img, self.dim)
-        self.image1.imshow(img_resized)
+        self.img = cv.resize(self.img, self.dim)
+        self.image1.imshow(self.img)
 
     def replace_camera_widget(self):
         if not self.CAMERA_LOADED:
