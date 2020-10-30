@@ -141,6 +141,9 @@ class MainWindow(QMainWindow):
         else:
             self.control_timer(False)
 
+    def capture(self):
+        self.control_timer(False)
+
     def on_load_config(self):
         file_path = file_chooser_open_directory(self)
         if (file_path is not None):
