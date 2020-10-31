@@ -37,6 +37,12 @@
    </property>
    <item>
     <widget class="QWidget" name="containerScreen" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="autoFillBackground">
       <bool>false</bool>
      </property>

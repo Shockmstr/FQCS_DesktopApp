@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'color_preprocess_config_screenBKtSvV.ui'
+## Form generated from reading UI file 'color_preprocess_config_screenVaWQOt.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -26,6 +26,11 @@ class Ui_color_preprocess_config_screen(object):
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.containerScreen = QWidget(color_preprocess_config_screen)
         self.containerScreen.setObjectName(u"containerScreen")
+        sizePolicy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.containerScreen.sizePolicy().hasHeightForWidth())
+        self.containerScreen.setSizePolicy(sizePolicy)
         self.containerScreen.setAutoFillBackground(False)
         self.gridLayout = QGridLayout(self.containerScreen)
         self.gridLayout.setObjectName(u"gridLayout")
