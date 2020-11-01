@@ -307,7 +307,7 @@ class DetectionConfigScreen(QWidget):
         #main controls
         method = self.detector_cfg["detect_method"]
         height = self.detector_cfg["frame_height"]
-        width = self.detector_cfg["frame_height"]
+        width = self.detector_cfg["frame_width"]
 
         self.ui.sldBrightness.setValue(brightness)
         self.ui.sldContrast.setValue(contrast)

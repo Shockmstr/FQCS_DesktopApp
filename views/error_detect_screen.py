@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'error_detect_screenbSfuTJ.ui'
+## Form generated from reading UI file 'error_detect_screennnVMNl.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -207,23 +207,23 @@ class Ui_ErrorDetectScreen(object):
 
         self.gridLayout_2.addWidget(self.groupMaxInstances, 0, 1, 1, 1)
 
-        self.groupInputAllowDiff = QGroupBox(self.containerMid)
-        self.groupInputAllowDiff.setObjectName(u"groupInputAllowDiff")
-        self.horizontalLayout_6 = QHBoxLayout(self.groupInputAllowDiff)
+        self.groupModel = QGroupBox(self.containerMid)
+        self.groupModel.setObjectName(u"groupModel")
+        self.horizontalLayout_6 = QHBoxLayout(self.groupModel)
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
         self.horizontalLayout_6.setContentsMargins(-1, 0, -1, 0)
-        self.inpAllowDiff = QLineEdit(self.groupInputAllowDiff)
-        self.inpAllowDiff.setObjectName(u"inpAllowDiff")
+        self.inpModelChoice = QLineEdit(self.groupModel)
+        self.inpModelChoice.setObjectName(u"inpModelChoice")
 
-        self.horizontalLayout_6.addWidget(self.inpAllowDiff)
+        self.horizontalLayout_6.addWidget(self.inpModelChoice)
 
-        self.btnChooseModel = QPushButton(self.groupInputAllowDiff)
+        self.btnChooseModel = QPushButton(self.groupModel)
         self.btnChooseModel.setObjectName(u"btnChooseModel")
 
         self.horizontalLayout_6.addWidget(self.btnChooseModel)
 
 
-        self.gridLayout_2.addWidget(self.groupInputAllowDiff, 0, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.groupModel, 0, 2, 1, 1)
 
         self.groupClasses = QGroupBox(self.containerMid)
         self.groupClasses.setObjectName(u"groupClasses")
@@ -339,10 +339,10 @@ class Ui_ErrorDetectScreen(object):
         self.cbbHeight.setCurrentText(QCoreApplication.translate("ErrorDetectScreen", u"Height", None))
         self.cbbHeight.setPlaceholderText(QCoreApplication.translate("ErrorDetectScreen", u"Height", None))
         self.groupMaxInstances.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Max Instances", None))
-        self.groupInputAllowDiff.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Model", None))
-        self.inpAllowDiff.setInputMask("")
-        self.inpAllowDiff.setText(QCoreApplication.translate("ErrorDetectScreen", u"yolov4.h5", None))
-        self.inpAllowDiff.setPlaceholderText(QCoreApplication.translate("ErrorDetectScreen", u"Input something", None))
+        self.groupModel.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Model", None))
+        self.inpModelChoice.setInputMask("")
+        self.inpModelChoice.setText(QCoreApplication.translate("ErrorDetectScreen", u"yolov4.h5", None))
+        self.inpModelChoice.setPlaceholderText(QCoreApplication.translate("ErrorDetectScreen", u"Input something", None))
         self.btnChooseModel.setText(QCoreApplication.translate("ErrorDetectScreen", u"...", None))
         self.groupClasses.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Classes", None))
         self.inpClasses.setInputMask("")

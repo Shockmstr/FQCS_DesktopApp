@@ -369,7 +369,7 @@ font-weight:bold;</string>
              </widget>
             </item>
             <item row="0" column="2">
-             <widget class="QGroupBox" name="groupInputAllowDiff">
+             <widget class="QGroupBox" name="groupModel">
               <property name="title">
                <string>Model</string>
               </property>
@@ -381,7 +381,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpAllowDiff">
+                <widget class="QLineEdit" name="inpModelChoice">
                  <property name="inputMask">
                   <string/>
                  </property>
