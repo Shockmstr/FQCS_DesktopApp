@@ -207,7 +207,7 @@ font-weight:bold;</string>
             <item row="0" column="0">
              <widget class="QGroupBox" name="grpSldSupThresh">
               <property name="title">
-               <string>Suppress Threshold: 0</string>
+               <string>Suppress Threshold</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <property name="topMargin">
@@ -282,7 +282,7 @@ font-weight:bold;</string>
             <item row="3" column="0">
              <widget class="QGroupBox" name="grpSldAllowDiff">
               <property name="title">
-               <string>Allowed Difference: 0%</string>
+               <string>Allowed Difference (%): 0</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
                <property name="topMargin">

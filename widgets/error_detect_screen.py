@@ -68,7 +68,7 @@ class ErrorDetectScreen(QWidget):
         self.ui.btnBack.clicked.connect(backscreen)
         self.ui.btnFinish.clicked.connect(nextscreen)
         self.ui.inpMaxInstances.textChanged.connect(self.max_instances_change)
-        self.ui.inpMinimumScore.textChanged.connect(self.min_socre_change)
+        self.ui.inpMinimumScore.textChanged.connect(self.min_score_change)
         self.ui.inpIouThreshold.textChanged.connect(self.iou_threshold_change)
         self.ui.cbbHeight.currentIndexChanged.connect(self.image_resize)
         self.ui.cbbWidth.currentIndexChanged.connect(self.image_resize)
