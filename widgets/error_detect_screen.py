@@ -76,7 +76,7 @@ class ErrorDetectScreen(QWidget):
         self.ui.btnChooseClasses.clicked.connect(self.choose_classes_clicked)
 
     # hander
-    def min_socre_change(self):
+    def min_score_change(self):
         value = self.ui.inpMinimumScore.value()
         self.detector_cfg["err_cfg"]["yolo_score_threshold"] = value / 10
 
