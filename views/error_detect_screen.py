@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'error_detect_screenQtgMeH.ui'
+## Form generated from reading UI file 'error_detect_screenbSfuTJ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -17,7 +17,7 @@ class Ui_ErrorDetectScreen(object):
     def setupUi(self, ErrorDetectScreen):
         if not ErrorDetectScreen.objectName():
             ErrorDetectScreen.setObjectName(u"ErrorDetectScreen")
-        ErrorDetectScreen.resize(1440, 900)
+        ErrorDetectScreen.resize(1440, 784)
         ErrorDetectScreen.setAutoFillBackground(False)
         ErrorDetectScreen.setStyleSheet(u"background:#E5E5E5")
         self.verticalLayout = QVBoxLayout(ErrorDetectScreen)
@@ -139,8 +139,10 @@ class Ui_ErrorDetectScreen(object):
         self.verticalLayout_5 = QVBoxLayout(self.groupMinimumScore)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.verticalLayout_5.setContentsMargins(-1, 0, -1, 0)
-        self.inpMinimumScore = QLineEdit(self.groupMinimumScore)
+        self.inpMinimumScore = QSpinBox(self.groupMinimumScore)
         self.inpMinimumScore.setObjectName(u"inpMinimumScore")
+        self.inpMinimumScore.setMinimum(0)
+        self.inpMinimumScore.setMaximum(100)
 
         self.verticalLayout_5.addWidget(self.inpMinimumScore)
 
@@ -152,8 +154,10 @@ class Ui_ErrorDetectScreen(object):
         self.verticalLayout_14 = QVBoxLayout(self.groupIouThreshold)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
         self.verticalLayout_14.setContentsMargins(-1, 0, -1, 0)
-        self.inpIouThreshold = QLineEdit(self.groupIouThreshold)
+        self.inpIouThreshold = QSpinBox(self.groupIouThreshold)
         self.inpIouThreshold.setObjectName(u"inpIouThreshold")
+        self.inpIouThreshold.setMinimum(0)
+        self.inpIouThreshold.setMaximum(100)
 
         self.verticalLayout_14.addWidget(self.inpIouThreshold)
 
@@ -193,8 +197,10 @@ class Ui_ErrorDetectScreen(object):
         self.verticalLayout_15 = QVBoxLayout(self.groupMaxInstances)
         self.verticalLayout_15.setObjectName(u"verticalLayout_15")
         self.verticalLayout_15.setContentsMargins(-1, 0, -1, 0)
-        self.inpMaxInstances = QLineEdit(self.groupMaxInstances)
+        self.inpMaxInstances = QSpinBox(self.groupMaxInstances)
         self.inpMaxInstances.setObjectName(u"inpMaxInstances")
+        self.inpMaxInstances.setMinimum(1)
+        self.inpMaxInstances.setMaximum(100)
 
         self.verticalLayout_15.addWidget(self.inpMaxInstances)
 
@@ -237,6 +243,9 @@ class Ui_ErrorDetectScreen(object):
 
         self.gridLayout_2.addWidget(self.groupClasses, 1, 0, 1, 1)
 
+        self.gridLayout_2.setColumnStretch(0, 1)
+        self.gridLayout_2.setColumnStretch(1, 1)
+        self.gridLayout_2.setColumnStretch(2, 1)
 
         self.horizontalLayout.addWidget(self.containerMid)
 
@@ -317,26 +326,19 @@ class Ui_ErrorDetectScreen(object):
         self.screen1.setText(QCoreApplication.translate("ErrorDetectScreen", u"SCREEN", None))
         self.lblTitle.setText(QCoreApplication.translate("ErrorDetectScreen", u"DEFECTS DETECTION - PARAMETERS CONFIGURATION", None))
         self.groupMinimumScore.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Minimum score", None))
-        self.inpMinimumScore.setInputMask("")
-        self.inpMinimumScore.setText(QCoreApplication.translate("ErrorDetectScreen", u"0.3", None))
-        self.inpMinimumScore.setPlaceholderText(QCoreApplication.translate("ErrorDetectScreen", u"Input something", None))
         self.groupIouThreshold.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"IoU threshold", None))
-        self.inpIouThreshold.setInputMask("")
-        self.inpIouThreshold.setText(QCoreApplication.translate("ErrorDetectScreen", u"0.5", None))
-        self.inpIouThreshold.setPlaceholderText(QCoreApplication.translate("ErrorDetectScreen", u"Input something", None))
         self.groupCbbResize.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Resize", None))
         self.cbbWidth.setItemText(0, QCoreApplication.translate("ErrorDetectScreen", u"Item 1", None))
         self.cbbWidth.setItemText(1, QCoreApplication.translate("ErrorDetectScreen", u"Item 2", None))
 
-        self.cbbWidth.setCurrentText(QCoreApplication.translate("ErrorDetectScreen", u"Item 1", None))
+        self.cbbWidth.setCurrentText(QCoreApplication.translate("ErrorDetectScreen", u"Width", None))
+        self.cbbWidth.setPlaceholderText(QCoreApplication.translate("ErrorDetectScreen", u"Width", None))
         self.cbbHeight.setItemText(0, QCoreApplication.translate("ErrorDetectScreen", u"Item 1", None))
         self.cbbHeight.setItemText(1, QCoreApplication.translate("ErrorDetectScreen", u"Item 2", None))
 
-        self.cbbHeight.setCurrentText(QCoreApplication.translate("ErrorDetectScreen", u"Item 1", None))
+        self.cbbHeight.setCurrentText(QCoreApplication.translate("ErrorDetectScreen", u"Height", None))
+        self.cbbHeight.setPlaceholderText(QCoreApplication.translate("ErrorDetectScreen", u"Height", None))
         self.groupMaxInstances.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Max Instances", None))
-        self.inpMaxInstances.setInputMask("")
-        self.inpMaxInstances.setText(QCoreApplication.translate("ErrorDetectScreen", u"10", None))
-        self.inpMaxInstances.setPlaceholderText(QCoreApplication.translate("ErrorDetectScreen", u"Input something", None))
         self.groupInputAllowDiff.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Model", None))
         self.inpAllowDiff.setInputMask("")
         self.inpAllowDiff.setText(QCoreApplication.translate("ErrorDetectScreen", u"yolov4.h5", None))

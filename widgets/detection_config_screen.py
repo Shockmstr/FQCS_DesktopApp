@@ -48,6 +48,7 @@ class DetectionConfigScreen(QWidget):
             "160", "240", "320", "400", "480", "660", "720", "800", "880",
             "960", "1040", "1120", "1200", "1280"
         ]
+        
         self.ui.cbbHeight.clear()
         for value in frame_resize_values:
             self.ui.cbbHeight.addItem(value, userData=int(value))
