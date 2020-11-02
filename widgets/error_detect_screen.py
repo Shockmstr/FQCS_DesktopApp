@@ -4,8 +4,14 @@ from PySide2.QtCore import *
 from models.detector_config import DetectorConfigSingleton, DetectorConfig
 from app.helpers import *
 from views.error_detect_screen import Ui_ErrorDetectScreen
+from FQCS import detector
+from FQCS.tf2_yolov4.anchors import YOLOV4_ANCHORS
+from FQCS.tf2_yolov4.model import YOLOv4
+from FQCS.tf2_yolov4.convert_darknet_weights import convert_darknet_weights
+
 import csv
 import os
+import asyncio 
 
 
 class ErrorDetectScreen(QWidget):
@@ -15,8 +21,8 @@ class ErrorDetectScreen(QWidget):
         self.detector_cfg = DetectorConfigSingleton.get_instance().config
         self.ui.setupUi(self)
         self.init_ui_values()
-        self.load_cfg()
         self.binding(backscreen=backscreen, nextscreen=nextscreen)
+        self.load_cfg()
     
     def load_cfg(self):
         img_size = self.detector_cfg["err_cfg"]["img_size"]
@@ -74,6 +80,7 @@ class ErrorDetectScreen(QWidget):
         self.ui.cbbWidth.currentIndexChanged.connect(self.image_resize)
         self.ui.btnChooseModel.clicked.connect(self.choose_model_clicked)
         self.ui.btnChooseClasses.clicked.connect(self.choose_classes_clicked)
+        self.ui.btnCapture.clicked.connect(asyncio.run(self.load_yolov4_model()))
 
     # hander
     def min_score_change(self):
@@ -121,3 +128,67 @@ class ErrorDetectScreen(QWidget):
         _, tail = os.path.split(file_name[0])
 
         self.ui.inpClasses.setText(str(tail))
+
+    async def load_yolov4_model(self):
+        if not os.path.exists("./yolov4.h5"):
+            convert_darknet_weights("./yolov4-custom_best.weights",
+                                    "./yolo4.h5", (416, 416, 3),
+                                    1,
+                                    weights=None)
+            return 
+
+        img_size = self.detector_cfg["err_cfg"]["img_size"]
+        inp_shape = self.detector_cfg["err_cfg"]["inp_shape"]
+        yolo_iou_threshold = self.detector_cfg["err_cfg"]["yolo_iou_threshold"]
+        yolo_max_boxes = self.detector_cfg["err_cfg"]["yolo_max_boxes"]
+        yolo_score_threshold = self.detector_cfg["err_cfg"]["yolo_score_threshold"]
+        weights = self.detector_cfg["err_cfg"]["weights"]
+        classes = self.detector_cfg["err_cfg"]["classes"]
+        num_classes = self.detector_cfg["err_cfg"]["num_classes"]
+        training = False
+
+        print("Test before")
+        model = asyncio.create_task(
+            detector.get_yolov4_model(
+                inp_shape=self.detector_cfg["err_cfg"]["inp_shape"],
+                num_classes=self.detector_cfg["err_cfg"]["num_classes"],
+                training=False,
+                yolo_max_boxes=self.detector_cfg["err_cfg"]["yolo_max_boxes"],
+                yolo_iou_threshold=self.detector_cfg["err_cfg"]["yolo_iou_threshold"],
+                weights=self.detector_cfg["err_cfg"]["weights"],
+                yolo_score_threshold=self.detector_cfg["err_cfg"]["yolo_score_threshold"]))
+            
+        
+        print("Test after")
+
+        CLASSES = self.detector_cfg["err_cfg"]["classes"]
+
+        import matplotlib.pyplot as plt
+        from FQCS.tf2_yolov4 import helper
+        import numpy as np
+
+        model = await model
+        while True:
+            img1 = cv2.imread("/Users/bitumhoang/Downloads/dirty_sorted/dirty_sorted/" +
+                          str(np.random.randint(151, 324)) + ".jpg")
+            img2 = cv2.imread("/Users/bitumhoang/Downloads/dirty_sorted/dirty_sorted/" +
+                          str(np.random.randint(151, 324)) + ".jpg")
+            images = [img1, img2]
+
+            boxes, scores, classes, valid_detections = await asyncio.create_task(
+                detector.detect_errors(model, images, self.detector_cfg["err_cfg"]["img_size"]))
+            print(boxes)
+            helper.draw_results(images,
+                                boxes,
+                                scores,
+                                classes,
+                                CLASSES,
+                                self.detector_cfg["err_cfg"]["img_size"],
+                                min_score=self.detector_cfg["err_cfg"]["yolo_score_threshold"])
+            cv2.imshow("Prediction", images[0])
+            cv2.waitKey()
+            cv2.imshow("Prediction", images[1])
+            if (cv2.waitKey() == ord('e')):
+                break
+
+            

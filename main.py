@@ -2,6 +2,7 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from widgets.main_window import MainWindow
+import asyncio
 import sys
 
 def main():
