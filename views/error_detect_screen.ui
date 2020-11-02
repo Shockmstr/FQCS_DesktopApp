@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1440</width>
-    <height>900</height>
+    <height>784</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -219,7 +219,7 @@ font-weight:bold;</string>
 	border: 1px solid #A5A5A5
 }</string>
            </property>
-           <layout class="QGridLayout" name="gridLayout_2">
+           <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,1,1">
             <item row="2" column="1">
              <widget class="QGroupBox" name="groupMinimumScore">
               <property name="title">
@@ -233,15 +233,12 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpMinimumScore">
-                 <property name="inputMask">
-                  <string/>
+                <widget class="QSpinBox" name="inpMinimumScore">
+                 <property name="minimum">
+                  <number>0</number>
                  </property>
-                 <property name="text">
-                  <string>0.3</string>
-                 </property>
-                 <property name="placeholderText">
-                  <string>Input something</string>
+                 <property name="maximum">
+                  <number>100</number>
                  </property>
                 </widget>
                </item>
@@ -261,15 +258,12 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpIouThreshold">
-                 <property name="inputMask">
-                  <string/>
+                <widget class="QSpinBox" name="inpIouThreshold">
+                 <property name="minimum">
+                  <number>0</number>
                  </property>
-                 <property name="text">
-                  <string>0.5</string>
-                 </property>
-                 <property name="placeholderText">
-                  <string>Input something</string>
+                 <property name="maximum">
+                  <number>100</number>
                  </property>
                 </widget>
                </item>
@@ -300,7 +294,10 @@ font-weight:bold;</string>
                   <bool>true</bool>
                  </property>
                  <property name="currentText">
-                  <string>Item 1</string>
+                  <string>Width</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Width</string>
                  </property>
                  <item>
                   <property name="text">
@@ -326,7 +323,10 @@ font-weight:bold;</string>
                   <bool>true</bool>
                  </property>
                  <property name="currentText">
-                  <string>Item 1</string>
+                  <string>Height</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Height</string>
                  </property>
                  <item>
                   <property name="text">
@@ -356,15 +356,12 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpMaxInstances">
-                 <property name="inputMask">
-                  <string/>
+                <widget class="QSpinBox" name="inpMaxInstances">
+                 <property name="minimum">
+                  <number>1</number>
                  </property>
-                 <property name="text">
-                  <string>10</string>
-                 </property>
-                 <property name="placeholderText">
-                  <string>Input something</string>
+                 <property name="maximum">
+                  <number>100</number>
                  </property>
                 </widget>
                </item>
@@ -372,7 +369,7 @@ font-weight:bold;</string>
              </widget>
             </item>
             <item row="0" column="2">
-             <widget class="QGroupBox" name="groupInputAllowDiff">
+             <widget class="QGroupBox" name="groupModel">
               <property name="title">
                <string>Model</string>
               </property>
@@ -384,7 +381,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpAllowDiff">
+                <widget class="QLineEdit" name="inpModelChoice">
                  <property name="inputMask">
                   <string/>
                  </property>

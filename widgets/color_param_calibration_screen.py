@@ -83,8 +83,8 @@ class ColorParamCalibrationScreen(QWidget):
         self.ui.ampThreshGreen.setValue(0) # self-created value
         self.ui.ampThreshRed.setValue(0) # self-created value
 
-        self.ui.grpSldAllowDiff.setTitle(max_diff)
-        self.ui.grpSldAmpRate.setTitle(amplify_rate)
+        self.ui.grpSldAllowDiff.setTitle(str(max_diff))
+        self.ui.grpSldAmpRate.setTitle(str(amplify_rate))
 
     def view_cam(self):
         # read image in BGR format       

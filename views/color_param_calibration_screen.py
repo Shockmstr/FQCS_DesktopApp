@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'color_param_calibration_screenvJudTo.ui'
+## Form generated from reading UI file 'color_param_calibration_screenoJzzjj.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -282,12 +282,12 @@ class Ui_ColorParamCalibScreen(object):
         self.screen2.setText(QCoreApplication.translate("ColorParamCalibScreen", u"SCREEN", None))
         self.screen4.setText(QCoreApplication.translate("ColorParamCalibScreen", u"SCREEN", None))
         self.lblTitle.setText(QCoreApplication.translate("ColorParamCalibScreen", u"COLOR COMPARISON - PARAMETERS CALIBRATION", None))
-        self.grpSldSupThresh.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Suppress Threshold: 0", None))
+        self.grpSldSupThresh.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Suppress Threshold", None))
         self.groupInputTemplate_2.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Amplification Threshold", None))
         self.ampThreshRed.setSpecialValueText("")
         self.ampThreshGreen.setSpecialValueText("")
         self.ampThreshBlue.setSpecialValueText("")
-        self.grpSldAllowDiff.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Allowed Difference: 0%", None))
+        self.grpSldAllowDiff.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Allowed Difference (%): 0", None))
         self.grpSldAmpRate.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Amplification Rate: 0", None))
         self.btnCapture.setText(QCoreApplication.translate("ColorParamCalibScreen", u"CAPTURE", None))
         self.btnBack.setText(QCoreApplication.translate("ColorParamCalibScreen", u"BACK", None))
