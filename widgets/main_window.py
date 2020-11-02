@@ -137,6 +137,9 @@ class MainWindow(QMainWindow):
         elif (self.ui.centralStackWidget.currentWidget() == self.measurement_screen):
             self.process_cam = self.measurement_screen.view_cam
             self.control_timer(True)    
+        elif (self.ui.centralStackWidget.currentWidget() == self.color_param_calib_screen):
+            self.process_cam = self.color_param_calib_screen.view_cam
+            self.control_timer(True)    
         else:
             self.control_timer(False)
 

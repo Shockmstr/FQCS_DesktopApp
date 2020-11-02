@@ -5,10 +5,13 @@ from app.helpers import *
 from widgets.image_widget import ImageWidget
 from models.detector_config import DetectorConfig, DetectorConfigSingleton
 from cv2 import cv2
+from FQCS import detector
 from views.color_param_calibration_screen import Ui_ColorParamCalibScreen
 
 
 class ColorParamCalibrationScreen(QWidget):
+    CAMERA_LOADED = False
+
     def __init__(self, backscreen: (), nextscreen: ()):
         QWidget.__init__(self)
         self.detector_cfg = DetectorConfigSingleton.get_instance().config
@@ -59,7 +62,7 @@ class ColorParamCalibrationScreen(QWidget):
 
     def allow_diff_change(self):
         value = self.ui.sldAllowDiff.value() / 100
-        self.ui.grpSldAllowDiff.setTitle("Allowed Difference: " + str(value))
+        self.ui.grpSldAllowDiff.setTitle("Allowed Difference (%): " + str(value))
         self.detector_cfg["color_cfg"]["max_diff"] = value
 
     def cbbCamera_chose(self):
@@ -68,7 +71,7 @@ class ColorParamCalibrationScreen(QWidget):
         self.control_timer(index) 
 
     def load_default_config(self):
-        print(self.detector_cfg)
+        #print(self.detector_cfg)
         # amp_thresh_red_value = self.detector_cfg["color_cfg"]["amplify_thresh"][0]
         # amp_thresh_green_value = self.detector_cfg["color_cfg"]["amplify_thresh"][1]
         # amp_thresh_blue_value = self.detector_cfg["color_cfg"]["amplify_thresh"][2]
@@ -83,34 +86,70 @@ class ColorParamCalibrationScreen(QWidget):
         self.ui.ampThreshGreen.setValue(0) # self-created value
         self.ui.ampThreshRed.setValue(0) # self-created value
 
-        self.ui.grpSldAllowDiff.setTitle(str(max_diff))
-        self.ui.grpSldAmpRate.setTitle(str(amplify_rate))
+        self.ui.grpSldAllowDiff.setTitle("Amplification Rate: " + str(max_diff))
+        self.ui.grpSldAmpRate.setTitle("Allowed Difference (%): " + str(amplify_rate))
 
-    def view_cam(self):
+    def view_image(self):
+        left = cv2.imread("sample_left.jpg")
+        right = cv2.imread("sample_right.jpg")
+        m_left, m_right = self.preprocess_color(left, right)       
+        img_size = (128,256)
+        m_left = cv2.resize(m_left, img_size, interpolation=cv2.INTER_AREA)
+        m_right = cv2.resize(m_right, img_size, interpolation=cv2.INTER_AREA)
+        self.image_sample_left.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.image_sample_right.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.image_sample_left.imshow(m_left)
+        self.image_sample_right.imshow(m_right)
+
+    def view_cam(self, image):
         # read image in BGR format       
-        _, self.img = self.cap.read()
+        self.replace_camera_widget()
+        self.img = image
         self.dim = (self.label_w, self.label_h)
         self.img = cv2.resize(self.img, self.dim)
         self.image1.imshow(self.img)
 
-    # start/stop timer
-    def control_timer(self, index: int):
-        # if timer is stopped
-        if not self.timer.isActive():
-            # create video capture
-            self.cap = cv2.VideoCapture(index)
-            # start timer
-            self.timer.start(20)
-        # if timer is started
-        else:
-            # stop timer
-            self.timer.stop()
-            # release video capture
-            self.cap.release()
+    def showEvent(self, event):
+        self.replace_camera_widget()
+        self.view_image()
 
     def replace_camera_widget(self):
-        self.image1 = ImageWidget()
-        self.label_w = self.ui.screen1.width()
-        self.label_h = self.ui.screen1.height()
-        self.imageLayout = self.ui.screen1.parentWidget().layout()
-        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+        if not self.CAMERA_LOADED:
+            self.image1 = ImageWidget()
+            self.image_detect_left = ImageWidget()
+            self.image_detect_right = ImageWidget()
+            self.image_sample_left = ImageWidget()
+            self.image_sample_right = ImageWidget()
+            self.label_w = self.ui.screen1.width()
+            self.label_h = self.ui.screen1.height()
+            self.imageLayout = self.ui.screen1.parentWidget().layout()
+            self.imageLayout.replaceWidget(self.ui.screen1, self.image1)       
+
+            self.screen2_layout = self.ui.screen2.layout()
+            self.screen2_layout.replaceWidget(self.ui.screen2Left, self.image_detect_left)
+            self.screen2_layout.replaceWidget(self.ui.screen2Right, self.image_detect_right)
+
+            self.screen3_layout = self.ui.screen3.layout()
+            self.screen3_layout.replaceWidget(self.ui.screen3Left, self.image_sample_left)
+            self.screen3_layout.replaceWidget(self.ui.screen3Right, self.image_sample_right)
+            self.CAMERA_LOADED = True
+
+    async def detect_color_different(self):
+        left_task, right_task = detector.detect_color_difference(
+            pre_left, pre_right, pre_sample_left, pre_sample_right,
+            c_cfg['amplify_thresh'], c_cfg['supp_thresh'],
+            c_cfg['amplify_rate'], c_cfg['max_diff'])
+
+        left_results = await left_task
+        right_results = await right_task    
+
+    def preprocess_color(self, sample_left, sample_right):
+        c_cfg = self.detector_cfg['color_cfg']
+        #print(c_cfg)
+        pre_sample_left = detector.preprocess_for_color_diff(
+            sample_left, c_cfg['img_size'], c_cfg['blur_val'],
+            c_cfg['alpha_l'], c_cfg['beta_l'], c_cfg['sat_adj'])
+        pre_sample_right = detector.preprocess_for_color_diff(
+            sample_right, c_cfg['img_size'], c_cfg['blur_val'],
+            c_cfg['alpha_r'], c_cfg['beta_r'], c_cfg['sat_adj'])
+        return pre_sample_left, pre_sample_right    

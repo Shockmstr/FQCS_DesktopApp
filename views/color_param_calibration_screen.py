@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'color_param_calibration_screenoJzzjj.ui'
+## Form generated from reading UI file 'color_param_calibration_screenYCILNN.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -64,19 +64,41 @@ class Ui_ColorParamCalibScreen(object):
 
         self.gridLayout.addLayout(self.horizontalLayout_4, 1, 0, 1, 1)
 
-        self.screen2 = QLabel(self.containerScreen)
+        self.screen2 = QWidget(self.containerScreen)
         self.screen2.setObjectName(u"screen2")
-        self.screen2.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
-        self.screen2.setAlignment(Qt.AlignCenter)
+        self.horizontalLayout_5 = QHBoxLayout(self.screen2)
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.screen2Left = QPushButton(self.screen2)
+        self.screen2Left.setObjectName(u"screen2Left")
+
+        self.horizontalLayout_5.addWidget(self.screen2Left)
+
+        self.screen2Right = QPushButton(self.screen2)
+        self.screen2Right.setObjectName(u"screen2Right")
+
+        self.horizontalLayout_5.addWidget(self.screen2Right)
+
+        self.horizontalLayout_5.setStretch(0, 1)
+        self.horizontalLayout_5.setStretch(1, 1)
 
         self.gridLayout.addWidget(self.screen2, 0, 1, 1, 1)
 
-        self.screen4 = QLabel(self.containerScreen)
-        self.screen4.setObjectName(u"screen4")
-        self.screen4.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
-        self.screen4.setAlignment(Qt.AlignCenter)
+        self.screen3 = QWidget(self.containerScreen)
+        self.screen3.setObjectName(u"screen3")
+        self.horizontalLayout_6 = QHBoxLayout(self.screen3)
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.screen3Left = QPushButton(self.screen3)
+        self.screen3Left.setObjectName(u"screen3Left")
 
-        self.gridLayout.addWidget(self.screen4, 1, 1, 1, 1)
+        self.horizontalLayout_6.addWidget(self.screen3Left)
+
+        self.screen3Right = QPushButton(self.screen3)
+        self.screen3Right.setObjectName(u"screen3Right")
+
+        self.horizontalLayout_6.addWidget(self.screen3Right)
+
+
+        self.gridLayout.addWidget(self.screen3, 1, 1, 1, 1)
 
         self.gridLayout.setRowStretch(0, 1)
         self.gridLayout.setRowStretch(1, 1)
@@ -279,8 +301,10 @@ class Ui_ColorParamCalibScreen(object):
         self.cbbCamera.setItemText(0, QCoreApplication.translate("ColorParamCalibScreen", u"Item 1", None))
         self.cbbCamera.setItemText(1, QCoreApplication.translate("ColorParamCalibScreen", u"Item 2", None))
 
-        self.screen2.setText(QCoreApplication.translate("ColorParamCalibScreen", u"SCREEN", None))
-        self.screen4.setText(QCoreApplication.translate("ColorParamCalibScreen", u"SCREEN", None))
+        self.screen2Left.setText(QCoreApplication.translate("ColorParamCalibScreen", u"PushButton", None))
+        self.screen2Right.setText(QCoreApplication.translate("ColorParamCalibScreen", u"PushButton", None))
+        self.screen3Left.setText(QCoreApplication.translate("ColorParamCalibScreen", u"PushButton", None))
+        self.screen3Right.setText(QCoreApplication.translate("ColorParamCalibScreen", u"PushButton", None))
         self.lblTitle.setText(QCoreApplication.translate("ColorParamCalibScreen", u"COLOR COMPARISON - PARAMETERS CALIBRATION", None))
         self.grpSldSupThresh.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Suppress Threshold", None))
         self.groupInputTemplate_2.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Amplification Threshold", None))
