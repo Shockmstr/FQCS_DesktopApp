@@ -9,7 +9,11 @@ def file_chooser_open_directory(self):
     dialog.setFileMode(QFileDialog.Directory)
     dialog.setOption(QFileDialog.ShowDirsOnly, True)
     filename = dialog.getExistingDirectory()
-    print(filename)
+    return filename
+
+def file_chooser_open_file(self):
+    dialog = QFileDialog(self)
+    filename = dialog.getOpenFileName()
     return filename
 
 def get_all_camera_index(self):

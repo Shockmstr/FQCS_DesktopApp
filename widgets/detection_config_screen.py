@@ -20,10 +20,6 @@ class DetectionConfigScreen(QWidget):
         QWidget.__init__(self)
         self.ui = Ui_DetectionConfigScreen()
         self.detector_cfg = DetectorConfigSingleton.get_instance().config
-        # hacks waiting for TODO: add more default props to detector.default_detector_config
-        self.detector_cfg["d_cfg"] = dict(detector.default_thresh_config(),
-                                          **detector.default_range_config(),
-                                          **detector.default_edge_config())
         self.ui.setupUi(self)
         self.init_ui_values()
         self.main_window = main_window
@@ -204,7 +200,7 @@ class DetectionConfigScreen(QWidget):
         self.detector_cfg["frame_width"] = value
 
     def button_capture_clicked(self):
-        self.camera.release()
+        self.main_window.capture()
 
     # view camera
     def view_cam(self, image):
@@ -305,9 +301,9 @@ class DetectionConfigScreen(QWidget):
         color_to = self.detector_cfg["d_cfg"]["cr_to"]
         color_from = self.detector_cfg["d_cfg"]["cr_from"]
         #main controls
-        method = self.detector_cfg["detect_method"]
-        height = self.detector_cfg["frame_height"]
-        width = self.detector_cfg["frame_width"]
+        method_index = self.ui.cbbMethod.findData(self.detector_cfg["detect_method"])
+        height_index = self.ui.cbbHeight.findData(self.detector_cfg["frame_height"])
+        width_index = self.ui.cbbWidth.findData(self.detector_cfg["frame_width"])
 
         self.ui.sldBrightness.setValue(brightness)
         self.ui.sldContrast.setValue(contrast)
@@ -332,11 +328,8 @@ class DetectionConfigScreen(QWidget):
         self.ui.btnColorFrom.setStyleSheet("background-color: " +
                                            init_hsv_to.name())
         
-        method_index = self.ui.cbbMethod.findData(method)
         self.ui.cbbMethod.setCurrentIndex(method_index)
-        height_index = self.ui.cbbHeight.findData(height)
         self.ui.cbbHeight.setCurrentIndex(height_index)
-        width_index = self.ui.cbbWidth.findData(width)
         self.ui.cbbWidth.setCurrentIndex(width_index)
 
 
