@@ -28,6 +28,7 @@ class TestDetectPairScreen(QWidget):
         self.ui.btnBack.clicked.connect(backscreen)
         self.ui.btnNext.clicked.connect(nextscreen)
         self.ui.btnSaveSample.clicked.connect(self.save_sample)
+        self.ui.btnRetakeSample.clicked.connect(self.reset_sample)
 
     def view_cam(self, image):
         # read image in BGR format
@@ -39,7 +40,7 @@ class TestDetectPairScreen(QWidget):
         contour_resized = cv2.resize(contour, self.dim)
         self.image1.imshow(img_resized)
         self.image2.imshow(contour_resized)
-        if detected is not None:
+        if detected is not None and self.detected_pair is None:
             detected_resized = cv2.resize(detected, self.dim)
             self.image3.imshow(detected_resized)
             self.detected_pair = detected_pair
@@ -138,4 +139,7 @@ class TestDetectPairScreen(QWidget):
                 cv2.imwrite(folder_path + r"/" + detector.SAMPLE_LEFT_FILE, left)
                 cv2.imwrite(folder_path + r"/" + detector.SAMPLE_RIGHT_FILE, right)
                 print(f"save successful at {folder_path}")
-            
+    
+    def reset_sample(self):
+        self.detected_pair = None
+        self.image3.imreset()

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'test_detect_pair_screenBsfSNQ.ui'
+## Form generated from reading UI file 'test_detect_pair_screenIoiQgH.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -153,7 +153,12 @@ class Ui_test_detect_pair_screen(object):
         self.btnSaveSample = QPushButton(self.containerVerticalBtn)
         self.btnSaveSample.setObjectName(u"btnSaveSample")
 
-        self.verticalLayout_17.addWidget(self.btnSaveSample, 0, Qt.AlignTop)
+        self.verticalLayout_17.addWidget(self.btnSaveSample)
+
+        self.btnRetakeSample = QPushButton(self.containerVerticalBtn)
+        self.btnRetakeSample.setObjectName(u"btnRetakeSample")
+
+        self.verticalLayout_17.addWidget(self.btnRetakeSample, 0, Qt.AlignTop)
 
 
         self.verticalLayout_16.addWidget(self.containerVerticalBtn, 0, Qt.AlignTop)
@@ -209,6 +214,7 @@ class Ui_test_detect_pair_screen(object):
 
         self.lblTitle.setText(QCoreApplication.translate("test_detect_pair_screen", u"TEST AND DEFINE SAMPLE", None))
         self.btnSaveSample.setText(QCoreApplication.translate("test_detect_pair_screen", u"SAVE SAMPLE", None))
+        self.btnRetakeSample.setText(QCoreApplication.translate("test_detect_pair_screen", u"RETAKE SAMPLE", None))
         self.btnBack.setText(QCoreApplication.translate("test_detect_pair_screen", u"BACK", None))
         self.btnNext.setText(QCoreApplication.translate("test_detect_pair_screen", u"NEXT", None))
     # retranslateUi
