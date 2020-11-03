@@ -91,6 +91,7 @@ class MeasurementScreen(QWidget):
     def replace_camera_widget(self):
         if not self.CAMERA_LOADED:
             self.image1 = ImageWidget()
+            self.image2 = ImageWidget()
             self.label_w = self.ui.screen1.width()
             self.label_h = self.ui.screen1.height()
             self.imageLayout = self.ui.screen1.parentWidget().layout()

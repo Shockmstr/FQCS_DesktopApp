@@ -22,6 +22,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.showFullScreen()
+        self.detector_cfg = DetectorConfigSingleton.get_instance()
         self.video_camera = cv2.VideoCapture()
         self.timer = QTimer()
         self.process_cam = None
@@ -132,12 +133,16 @@ class MainWindow(QMainWindow):
         self.ui.centralStackWidget.setCurrentWidget(self.progress_screen)
 
     def widget_change(self):
-        if (self.ui.centralStackWidget.currentWidget() == self.detection_screen):
+        currentWidget = self.ui.centralStackWidget.currentWidget()
+        if (currentWidget == self.detection_screen):
             self.process_cam = self.detection_screen.view_cam
             self.control_timer(True)
-        elif (self.ui.centralStackWidget.currentWidget() == self.measurement_screen):
+        elif (currentWidget == self.measurement_screen):
             self.process_cam = self.measurement_screen.view_cam
-            self.control_timer(True)    
+            self.control_timer(True)
+        elif (currentWidget == self.test_detect_pair_screen):
+            self.process_cam = self.test_detect_pair_screen.view_cam
+            self.control_timer(True)
         else:
             self.control_timer(False)
 
@@ -146,20 +151,19 @@ class MainWindow(QMainWindow):
 
     def on_load_config(self):
         file_path = file_chooser_open_directory(self)
-        if (file_path is not None):
+        if file_path is not None:
             temp_cfg = detector.load_json_cfg(file_path)
-            print(temp_cfg)
-            DetectorConfig.getInstance().load_config(temp_cfg)
+            self.detector_cfg.load_config(temp_cfg)
+            self.detector_cfg.current_path = file_path
         else:
             print("Error loading config")
 
     def on_save_config(self):
-        configs = DetectorConfig.getInstance().config
-        print(configs)
+        configs = self.detector_cfg.config
         if configs is not None:
-            configs["min_area"] = 1
             file_path = file_chooser_open_directory(self)
             if (file_path):
                 detector.save_json_cfg(configs, file_path)
+                self.detector_cfg.current_path = file_path
         else:
             print("No config provided")

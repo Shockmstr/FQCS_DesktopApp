@@ -2,7 +2,7 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from views.image_widget import Ui_ImageWidget
-
+import numpy as np
 
 class ImageWidget(QWidget):
     def __init__(self):
@@ -17,3 +17,5 @@ class ImageWidget(QWidget):
                              imformat).rgbSwapped() # 1: width, 0:height, 2:channel
         self.ui.lblImage.setPixmap(QPixmap.fromImage(image))
 
+    def imreset(self):
+        self.ui.lblImage.clear()

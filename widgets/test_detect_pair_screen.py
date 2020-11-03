@@ -3,11 +3,18 @@ from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from models.detector_config import DetectorConfigSingleton, DetectorConfig
 
+import cv2
+import os
+import imutils
+import numpy as np
+from FQCS import detector, helper
+from widgets.image_widget import ImageWidget
+from app.helpers import file_chooser_open_directory
 from views.test_detect_pair_screen import Ui_test_detect_pair_screen
 
 class TestDetectPairScreen(QWidget):
     CAMERA_LOADED = False
-
+    detected_pair = None
 
     def __init__(self, backscreen: (), nextscreen: ()):
         QWidget.__init__(self)
@@ -20,17 +27,40 @@ class TestDetectPairScreen(QWidget):
     def binding(self, backscreen:(), nextscreen: ()):
         self.ui.btnBack.clicked.connect(backscreen)
         self.ui.btnNext.clicked.connect(nextscreen)
+        self.ui.btnSaveSample.clicked.connect(self.save_sample)
+        self.ui.btnRetakeSample.clicked.connect(self.reset_sample)
+
+    def view_cam(self, image):
+        # read image in BGR format
+        self.replace_camera_widget()
+        self.img = image
+        self.dim = (self.label_w, self.label_h)
+        contour, detected, detected_pair = self.process_image(self.img.copy())
+        img_resized = cv2.resize(self.img, self.dim)
+        contour_resized = cv2.resize(contour, self.dim)
+        self.image1.imshow(img_resized)
+        self.image2.imshow(contour_resized)
+        if detected is not None and self.detected_pair is None:
+            detected_resized = cv2.resize(detected, self.dim)
+            self.image3.imshow(detected_resized)
+            self.detected_pair = detected_pair
 
     def replace_camera_widget(self):
         if not self.CAMERA_LOADED:
             self.image1 = ImageWidget()
+            self.image2 = ImageWidget()
+            self.image3 = ImageWidget()
             self.label_w = self.ui.screen1.width()
             self.label_h = self.ui.screen1.height()
             self.imageLayout = self.ui.screen1.parentWidget().layout()
             self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+            self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+            self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
             self.CAMERA_LOADED = True
 
-    def process_contours(self, image):
+    def process_image(self, image):
+        detected = None
+
         frame_width, frame_height = self.detector_cfg[
             "frame_width"], self.detector_cfg["frame_height"]
         min_width, min_height = self.detector_cfg[
@@ -82,4 +112,34 @@ class TestDetectPairScreen(QWidget):
             cv2.putText(image, f"{lH:.1f} {unit}", (br[0], br[1]),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
         # cv2.imshow("Contours processed", proc)
-        return image, proc
+        if pair is not None:
+            left, right = pair
+            left, right = left[0], right[0]
+            h_diff, w_diff = detector.compare_size(sizes[0], sizes[1],
+                                                   self.detector_cfg)
+
+            # if split_left is not None:
+            #     detected = np.concatenate((split_left, split_right), axis=1)
+            max_width = max((left.shape[0], right.shape[0]))
+            temp_left = imutils.resize(left, height = max_width)
+            temp_right = imutils.resize(right, height = max_width)
+            detected = np.concatenate((temp_left, temp_right), axis=1)
+            return image, detected, (left, right)
+
+        return image, None, None
+
+    def save_sample(self):
+        if self.detected_pair is not None:
+            left, right = self.detected_pair
+            folder_path = DetectorConfigSingleton.get_instance().current_path
+            if folder_path is None:
+                folder_path = file_chooser_open_directory(self)
+            left = cv2.flip(left, 1)
+            if not os.path.exists(folder_path + r"/" + detector.SAMPLE_LEFT_FILE):
+                cv2.imwrite(folder_path + r"/" + detector.SAMPLE_LEFT_FILE, left)
+                cv2.imwrite(folder_path + r"/" + detector.SAMPLE_RIGHT_FILE, right)
+                print(f"save successful at {folder_path}")
+    
+    def reset_sample(self):
+        self.detected_pair = None
+        self.image3.imreset()
