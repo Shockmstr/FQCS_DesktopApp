@@ -230,10 +230,17 @@ font-weight:bold;</string>
                <property name="bottomMargin">
                 <number>0</number>
                </property>
-               <item alignment="Qt::AlignTop">
+               <item>
                 <widget class="QPushButton" name="btnSaveSample">
                  <property name="text">
                   <string>SAVE SAMPLE</string>
+                 </property>
+                </widget>
+               </item>
+               <item alignment="Qt::AlignTop">
+                <widget class="QPushButton" name="btnRetakeSample">
+                 <property name="text">
+                  <string>RETAKE SAMPLE</string>
                  </property>
                 </widget>
                </item>

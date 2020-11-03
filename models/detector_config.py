@@ -13,6 +13,7 @@ class DetectorConfig(Subject):
     def load_config(self, detector_config=None):
         if detector_config is None:
             self.config = detector.default_detector_config()
+            self.current_path = None
         else:
             self.config = detector_config
 

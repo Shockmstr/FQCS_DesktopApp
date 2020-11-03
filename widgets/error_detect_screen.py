@@ -15,10 +15,10 @@ class ErrorDetectScreen(QWidget):
         self.detector_cfg = DetectorConfigSingleton.get_instance().config
         self.ui.setupUi(self)
         self.init_ui_values()
-        self.load_default_config()
+        self.load_cfg()
         self.binding(backscreen=backscreen, nextscreen=nextscreen)
     
-    def load_default_config(self):
+    def load_cfg(self):
         img_size = self.detector_cfg["err_cfg"]["img_size"]
         inp_shape = self.detector_cfg["err_cfg"]["inp_shape"]
         yolo_iou_threshold = self.detector_cfg["err_cfg"]["yolo_iou_threshold"]
@@ -99,8 +99,8 @@ class ErrorDetectScreen(QWidget):
         self.detector_cfg["err_cfg"]["inp_shape"] = (self.height_value, self.width_value, 3)
 
     def choose_model_clicked(self):
-       file_name = file_chooser_open_directory(self)
-       self.ui.inpModelChoice.setText(file_name)
+       file_name, _ = file_chooser_open_file(self)
+       self.ui.inpModelChoice.setText(file_name.split(r"/")[-1])
        self.detector_cfg["err_cfg"]["weights"] = file_name
 
     def choose_classes_clicked(self):
