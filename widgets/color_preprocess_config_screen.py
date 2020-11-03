@@ -143,6 +143,8 @@ class ColorPreprocessConfigScreen(QWidget):
             self.imageLayout = self.ui.screen1.parentWidget().layout()
             self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
             self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+            self.image1.ui.lblImage.setAlignment(Qt.AlignCenter)
+            self.image2.ui.lblImage.setAlignment(Qt.AlignCenter)
             self.CAMERA_LOADED = True
         
     def showEvent(self, event):
