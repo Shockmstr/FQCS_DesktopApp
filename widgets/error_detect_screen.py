@@ -57,8 +57,8 @@ class ErrorDetectScreen(QWidget):
         self.ui.cbbHeight.setCurrentIndex(-1)
 
         frame_resize_values = [
-            "160", "240", "320", "400", "480", "660", "720", "800", "880",
-            "960", "1040", "1120", "1200", "1280"
+            "160", "240", "256", "480", "660", "720", "800",
+            "960", "1024", "1216", "1280"
         ]
         self.ui.cbbHeight.clear()
         for value in frame_resize_values:
@@ -80,7 +80,11 @@ class ErrorDetectScreen(QWidget):
         self.ui.cbbWidth.currentIndexChanged.connect(self.image_resize)
         self.ui.btnChooseModel.clicked.connect(self.choose_model_clicked)
         self.ui.btnChooseClasses.clicked.connect(self.choose_classes_clicked)
-        self.ui.btnCapture.clicked.connect(asyncio.run(self.load_yolov4_model()))
+        self.ui.btnCapture.clicked.connect(self.trigger_yolo_process)
+
+    def trigger_yolo_process(self):
+        if self.sender() == self.ui.btnCapture:
+            asyncio.run(self.load_yolov4_model())
 
     # hander
     def min_score_change(self):
@@ -147,7 +151,6 @@ class ErrorDetectScreen(QWidget):
         num_classes = self.detector_cfg["err_cfg"]["num_classes"]
         training = False
 
-        print("Test before")
         model = asyncio.create_task(
             detector.get_yolov4_model(
                 inp_shape=self.detector_cfg["err_cfg"]["inp_shape"],
@@ -157,10 +160,6 @@ class ErrorDetectScreen(QWidget):
                 yolo_iou_threshold=self.detector_cfg["err_cfg"]["yolo_iou_threshold"],
                 weights=self.detector_cfg["err_cfg"]["weights"],
                 yolo_score_threshold=self.detector_cfg["err_cfg"]["yolo_score_threshold"]))
-            
-        
-        print("Test after")
-
         CLASSES = self.detector_cfg["err_cfg"]["classes"]
 
         import matplotlib.pyplot as plt
@@ -175,8 +174,12 @@ class ErrorDetectScreen(QWidget):
                           str(np.random.randint(151, 324)) + ".jpg")
             images = [img1, img2]
 
-            boxes, scores, classes, valid_detections = await asyncio.create_task(
+            err_task = asyncio.create_task(
                 detector.detect_errors(model, images, self.detector_cfg["err_cfg"]["img_size"]))
+            await asyncio.sleep(0)
+
+            boxes, scores, classes, valid_detections = await err_task 
+
             print(boxes)
             helper.draw_results(images,
                                 boxes,
@@ -188,7 +191,7 @@ class ErrorDetectScreen(QWidget):
             cv2.imshow("Prediction", images[0])
             cv2.waitKey()
             cv2.imshow("Prediction", images[1])
-            if (cv2.waitKey() == ord('e')):
+            if (cv2.waitKey() == 27):
                 break
 
             
