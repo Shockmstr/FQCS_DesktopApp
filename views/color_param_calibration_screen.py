@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'color_param_calibration_screenYCILNN.ui'
+## Form generated from reading UI file 'color_param_calibration_screenMUtYbL.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
