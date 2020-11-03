@@ -21,6 +21,8 @@ class ColorPreprocessConfigScreen(QWidget):
         self.detector_cfg = DetectorConfigSingleton.get_instance().config
         self.ui = Ui_color_preprocess_config_screen()
         self.ui.setupUi(self)
+        self.image1 = None
+        self.image2 = None
         self.binding(backscreen=backscreen, nextscreen=nextscreen)
         self.load_cfg()
 
@@ -54,6 +56,8 @@ class ColorPreprocessConfigScreen(QWidget):
 
         self.ui.cbbResizeWidth.activated.connect(self.cbbResize_chosen)
         self.ui.cbbResizeHeight.activated.connect(self.cbbResize_chosen)
+
+       # self.ui.btnNext.clicked.connect(self.save_image)
     # handler
     def blur_value_change(self):
         value = round(self.ui.sldBlur.value() * self.BLUR_STEP, 2)
@@ -100,6 +104,11 @@ class ColorPreprocessConfigScreen(QWidget):
             self.detector_cfg["color_cfg"]["img_size"] = img_size
             self.view_image()
 
+    # def save_image(self):
+    #     if self.IMAGE_MODIFIED:
+    #         cv2.imwrite("sample_left.jpg", self.modified_left)
+    #         cv2.imwrite("sample_right.jpg", self.modified_right)
+
     def view_initial_image(self):
         width = self.ui.screen1.width()
         height = self.ui.screen1.height()
@@ -112,16 +121,17 @@ class ColorPreprocessConfigScreen(QWidget):
         self.image2.imshow(right)
 
     def view_image(self):
-        width = self.ui.screen1.width()
-        height = self.ui.screen1.height()
-        left = cv2.imread("sample_left.jpg")
-        right = cv2.imread("sample_right.jpg")
-        m_left, m_right = self.preprocess_color(left, right)       
-        img_size = (256,512)
-        m_left = cv2.resize(m_left, img_size, interpolation=cv2.INTER_AREA)
-        m_right = cv2.resize(m_right, img_size, interpolation=cv2.INTER_AREA)
-        self.image1.imshow(m_left)
-        self.image2.imshow(m_right)
+        if (self.image1 is not None and self.image2 is not None):
+            left = cv2.imread("sample_left.jpg")
+            right = cv2.imread("sample_right.jpg")
+            m_left, m_right = self.preprocess_color(left, right)       
+            img_size = (256,512)
+            m_left = cv2.resize(m_left, img_size, interpolation=cv2.INTER_AREA)
+            m_right = cv2.resize(m_right, img_size, interpolation=cv2.INTER_AREA)
+            self.modified_left = m_left
+            self.modified_right = m_right
+            self.image1.imshow(m_left)
+            self.image2.imshow(m_right)
         
         
     def replace_camera_widget(self):
@@ -133,15 +143,18 @@ class ColorPreprocessConfigScreen(QWidget):
             self.imageLayout = self.ui.screen1.parentWidget().layout()
             self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
             self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+            self.image1.ui.lblImage.setAlignment(Qt.AlignCenter)
+            self.image2.ui.lblImage.setAlignment(Qt.AlignCenter)
             self.CAMERA_LOADED = True
         
     def showEvent(self, event):
         self.replace_camera_widget()
-        self.view_initial_image()
+        #self.view_initial_image()
+        self.view_image()
 
     def preprocess_color(self, sample_left, sample_right):
         c_cfg = self.detector_cfg['color_cfg']
-        print(c_cfg)
+        #print(c_cfg)
         pre_sample_left = detector.preprocess_for_color_diff(
             sample_left, c_cfg['img_size'], c_cfg['blur_val'],
             c_cfg['alpha_l'], c_cfg['beta_l'], c_cfg['sat_adj'])

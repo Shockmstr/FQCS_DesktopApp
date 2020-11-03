@@ -139,6 +139,9 @@ class MainWindow(QMainWindow):
             self.control_timer(True)
         elif (currentWidget == self.measurement_screen):
             self.process_cam = self.measurement_screen.view_cam
+            self.control_timer(True)    
+        elif (currentWidget == self.color_param_calib_screen):
+            self.process_cam = self.color_param_calib_screen.view_cam 
             self.control_timer(True)
         elif (currentWidget == self.test_detect_pair_screen):
             self.process_cam = self.test_detect_pair_screen.view_cam
