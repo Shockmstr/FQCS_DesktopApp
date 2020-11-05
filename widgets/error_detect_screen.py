@@ -1,8 +1,7 @@
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
-from app_models.detector_config import DetectorConfig, DetectorConfig
-from app.helpers import *
+from PySide2.QtWidgets import QWidget
+from PySide2.QtCore import Signal
+from app_models.detector_config import DetectorConfig
+from app import helpers
 from views.error_detect_screen import Ui_ErrorDetectScreen
 from FQCS import detector
 from FQCS.tf2_yolov4.anchors import YOLOV4_ANCHORS
@@ -115,7 +114,7 @@ class ErrorDetectScreen(QWidget):
                                                      self.width_value, 3)
 
     def choose_model_clicked(self):
-        file_name, _ = file_chooser_open_file(self)
+        file_name, _ = helpers.file_chooser_open_file(self)
         self.ui.inpModelChoice.setText(file_name.split(r"/")[-1])
         self.detector_cfg["err_cfg"]["weights"] = file_name
 

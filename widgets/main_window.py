@@ -4,7 +4,7 @@ from PySide2.QtCore import *
 from views.main_window import Ui_MainWindow
 from FQCS import detector
 from app_models.detector_config import *
-from app.helpers import *
+from app import helpers
 import cv2
 from widgets.measurement_screen import MeasurementScreen
 from widgets.home_screen import HomeScreen
@@ -163,7 +163,7 @@ class MainWindow(QMainWindow):
         self.control_timer(False)
 
     def on_load_config(self):
-        file_path = file_chooser_open_directory(self)
+        file_path = helpers.file_chooser_open_directory(self)
         if file_path is not None:
             temp_cfg = detector.load_json_cfg(file_path)
             self.detector_cfg.load_config(temp_cfg)
@@ -174,7 +174,7 @@ class MainWindow(QMainWindow):
     def on_save_config(self):
         configs = self.detector_cfg.config
         if configs is not None:
-            file_path = file_chooser_open_directory(self)
+            file_path = helpers.file_chooser_open_directory(self)
             if (file_path):
                 detector.save_json_cfg(configs, file_path)
                 self.detector_cfg.current_path = file_path

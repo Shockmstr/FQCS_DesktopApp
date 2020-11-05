@@ -1,6 +1,5 @@
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
+from PySide2.QtWidgets import QWidget
+from PySide2.QtCore import Signal
 from services.login_service import LoginService
 from views.login_screen import Ui_LoginScreen
 import trio

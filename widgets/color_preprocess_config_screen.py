@@ -1,10 +1,9 @@
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
+from PySide2.QtWidgets import QWidget
+from PySide2.QtCore import Signal
 
 from views.color_preprocess_config_screen import Ui_color_preprocess_config_screen
 from widgets.image_widget import ImageWidget
-from app_models.detector_config import DetectorConfig, DetectorConfig
+from app_models.detector_config import DetectorConfig
 from FQCS import detector, helper
 import numpy as np
 import cv2

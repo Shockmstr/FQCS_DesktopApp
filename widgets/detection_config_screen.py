@@ -1,13 +1,12 @@
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
+from PySide2.QtWidgets import QWidget
+from PySide2.QtCore import Signal
 import numpy as np
 from views.detection_config_screen import Ui_DetectionConfigScreen
 from widgets.image_widget import ImageWidget
 from FQCS import detector, helper
-from app_models.detector_config import DetectorConfig, DetectorConfig
+from app_models.detector_config import DetectorConfig
 from cv2 import cv2
-from app.helpers import *
+from app import helpers
 
 
 class DetectionConfigScreen(QWidget):
@@ -42,7 +41,7 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbHeight.setCurrentIndex(-1)
         self.ui.cbbCamera.setCurrentIndex(-1)
 
-        cam_array = get_all_camera_index()
+        cam_array = helpers.get_all_camera_index()
         self.ui.cbbCamera.clear()
         for camera in cam_array:
             self.ui.cbbCamera.addItem("Camera " + str(camera), userData=camera)

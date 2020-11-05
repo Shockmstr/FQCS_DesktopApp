@@ -1,6 +1,6 @@
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
+from PySide2.QtGui import QMouseEvent
+from PySide2.QtWidgets import QWidget
+from PySide2.QtCore import Signal
 
 from views.home_screen import Ui_HomeScreen
 from services.login_service import LoginService
