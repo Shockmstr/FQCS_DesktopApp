@@ -35,7 +35,7 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbHeight.setCurrentIndex(-1)
         self.ui.cbbCamera.setCurrentIndex(-1)
 
-        cam_array = get_all_camera_index(self)
+        cam_array = get_all_camera_index()
         self.ui.cbbCamera.clear()
         for camera in cam_array:
             self.ui.cbbCamera.addItem("Camera " + str(camera), userData=camera)

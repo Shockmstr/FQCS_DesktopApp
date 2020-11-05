@@ -5,18 +5,17 @@ import requests
 import datetime
 import asyncio
 from app.fukin_thread import FukinThread
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
+from PySide2.QtCore import QTimer
 import trio
 import json
 from services.thread_manager import ThreadManager
+from app import helpers
 
 LOGIN_SERVICE_TH_GR_KEY = "LoginService"
 
 
 class LoginService:
-    def __init__(self, app_config, auth_info: AuthInfo):
+    def __init__(self, app_config: dict, auth_info: AuthInfo):
         self.__app_config = app_config
         self.__auth_info = auth_info
 
@@ -43,33 +42,33 @@ class LoginService:
 
             if ('refresh_token' in token):
 
-                def refresh_callback():
-                    try:
-                        print("Refresh callback")
-                        form_data = {}
-                        form_data['grant_type'] = 'refresh_token'
-                        form_data['refresh_token'] = token['refresh_token']
-                        url = "{}/api/users/login".format(
-                            self.__app_config['api_url'])
-                        resp = requests.post(url, data=form_data)
-                        if (resp.status_code >= 200
-                                and resp.status_code < 300):
-                            data = resp.json()
-                            self.save_token_json(data)
-                            trio.run(self.check_token)
-                        else:
-                            raise Exception("Resp error")
-                    except:
-                        print("Error refresh callback")
-                        self.log_out()
-                    finally:
-                        rf_thread.quit()
-                    return
+                def start_timer(th: QThread):
+                    def refresh_callback():
+                        try:
+                            print("Refresh callback")
+                            form_data = {}
+                            form_data['grant_type'] = 'refresh_token'
+                            form_data['refresh_token'] = token['refresh_token']
+                            url = "{}/api/users/login".format(
+                                self.__app_config['api_url'])
+                            resp = requests.post(url, data=form_data)
+                            if (resp.status_code >= 200
+                                    and resp.status_code < 300):
+                                data = resp.json()
+                                self.save_token_json(data)
+                                trio.run(self.check_token)
+                            else:
+                                raise Exception("Resp error")
+                        except:
+                            print("Error refresh callback")
+                            self.log_out()
+                        finally:
+                            th.quit()
+                        return
 
-                def start_timer():
                     refresh_timer = QTimer()
-                    rf_thread.refresh_timer = refresh_timer
-                    rf_thread.finished.connect(lambda: refresh_timer.stop())
+                    th.refresh_timer = refresh_timer
+                    th.finished.connect(lambda: refresh_timer.stop())
                     refresh_timer.timeout.connect(refresh_callback)
                     refresh_timer.setSingleShot(True)
                     refresh_timer.start(min_ref_diff * 60 * 1000)
@@ -82,19 +81,19 @@ class LoginService:
                                                     LOGIN_SERVICE_TH_GR_KEY)
             else:
 
-                def logout_callback():
-                    try:
-                        self.log_out()
-                    except:
-                        print("Log out error")
-                    finally:
-                        lo_thread.quit()
-                    return
+                def start_timer(th: QThread):
+                    def logout_callback():
+                        try:
+                            self.log_out()
+                        except:
+                            print("Log out error")
+                        finally:
+                            th.quit()
+                        return
 
-                def start_timer():
                     logout_timer = QTimer()
-                    lo_thread.logout_timer = logout_timer
-                    lo_thread.finished.connect(lambda: logout_timer.stop())
+                    th.logout_timer = logout_timer
+                    th.finished.connect(lambda: logout_timer.stop())
                     logout_timer.timeout.connect(logout_callback)
                     logout_timer.setSingleShot(True)
                     logout_timer.start(min_diff * 60 * 1000)
@@ -119,19 +118,14 @@ class LoginService:
                 self.save_token_json(data)
                 await self.check_token()
                 if success is not None:
-                    if asyncio.iscoroutinefunction(success):
-                        await success(data)
-                    else:
-                        success(data)
+                    helpers.sync_func(success, data)
             else:
                 if error is not None:
-                    if asyncio.iscoroutinefunction(error): await error(resp)
-                    else: error(resp)
+                    helpers.sync_func(error, resp)
         except Exception as ex:
             print(ex)
             if error is not None:
-                if asyncio.iscoroutinefunction(error): await error(None)
-                else: error(None)
+                helpers.sync_func(error, None)
         return
 
     def save_token_json(self, token):

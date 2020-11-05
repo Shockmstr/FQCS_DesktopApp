@@ -27,11 +27,7 @@ class ColorParamCalibrationScreen(QWidget):
     def binding(self, backscreen: (), nextscreen: ()):
         self.ui.cbbCamera.setPlaceholderText("Choose Cam")
         self.ui.cbbCamera.setCurrentIndex(-1)
-        # cam_array = get_all_camera_index(self)       
-        # self.ui.cbbCamera.clear()
-        # for camera in cam_array:
-        #     self.ui.cbbCamera.addItem("Camera " + str(camera), userData=camera)
-
+        
         # create a timer
         self.timer = QTimer()
         # set timer timeout call back function
