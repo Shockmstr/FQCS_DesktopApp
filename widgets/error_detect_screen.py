@@ -14,10 +14,14 @@ import csv
 import os
 import cv2
 import asyncio 
+import matplotlib.pyplot as plt
+from FQCS.tf2_yolov4 import helper
+import numpy as np
 
 
 class ErrorDetectScreen(QWidget):
     CAMERA_LOADED = False
+    SAVED = False
     def __init__(self, backscreen: (), nextscreen: ()):
         QWidget.__init__(self)
         self.ui = Ui_ErrorDetectScreen()
@@ -26,6 +30,7 @@ class ErrorDetectScreen(QWidget):
         self.init_ui_values()
         self.binding(backscreen=backscreen, nextscreen=nextscreen)
         self.load_cfg()
+        asyncio.run(self.load_yolov4_model())
     
     def load_cfg(self):
         img_size = self.detector_cfg["err_cfg"]["img_size"]
@@ -83,11 +88,7 @@ class ErrorDetectScreen(QWidget):
         self.ui.cbbWidth.currentIndexChanged.connect(self.image_resize)
         self.ui.btnChooseModel.clicked.connect(self.choose_model_clicked)
         self.ui.btnChooseClasses.clicked.connect(self.choose_classes_clicked)
-        self.ui.btnCapture.clicked.connect(self.trigger_yolo_process)
-
-    def trigger_yolo_process(self):
-        if self.sender() == self.ui.btnCapture:
-            asyncio.run(self.load_yolov4_model())
+        # self.ui.btnCapture.clicked.connect(self.trigger_yolo_process)
 
     # hander
     def min_score_change(self):
@@ -127,7 +128,7 @@ class ErrorDetectScreen(QWidget):
             
             print(class_list)
         self.detector_cfg["err_cfg"]["classes"] = class_list
-        self.detector_cfg["err_cfg"]["num_classes"] = len(class_list)
+        self.detector_cfg["err_cffg"]["num_classes"] = len(class_list)
         print(self.detector_cfg["err_cfg"]["classes"])
         print(self.detector_cfg["err_cfg"]["num_classes"])
 
@@ -141,29 +142,30 @@ class ErrorDetectScreen(QWidget):
         self.replace_camera_widget()
         self.img = image
         self.dim = (self.label_w, self.label_h)
-        result =  asyncio.run(self.load_yolov4_model())
-        cv2.imshow("Prediction", result[0])
-        cv2.waitKey()
-        cv2.imshow("Prediction", result[1])
-        # img_resize = cv2.resize(result, self.dim)
-        # self.image1.imshow(img_resize)
+        asyncio.run(self.show_error())
+
         
     def replace_camera_widget(self):
         if not self.CAMERA_LOADED:
             self.image1 = ImageWidget()
+            self.image2 = ImageWidget()
+            self.image3 = ImageWidget()
             self.label_w = self.ui.screen1.width()
             self.label_h = self.ui.screen1.height()
             self.imageLayout = self.ui.screen1.parentWidget().layout()
             self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+            self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+            self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
             self.CAMERA_LOADED = True 
 
     async def load_yolov4_model(self):
-        if not os.path.exists("./yolov4.h5"):
-            convert_darknet_weights("./yolov4-custom_best.weights",
-                                    "./yolo4.h5", (416, 416, 3),
+        if not os.path.exists(r"F:\Capstone\project\FQCS_DesktopApp\yolo4.h5"):
+            convert_darknet_weights(r"F:\Capstone\project\FQCS_DesktopApp\yolov4-custom_best.weights",
+                                    r"F:\Capstone\project\FQCS_DesktopApp\yolo4.h5", (416, 416, 3),
                                     1,
                                     weights=None)
-            return 
+        #TODO: set absolute path for weights in cfg
+        self.detector_cfg["err_cfg"]["weights"] = r"F:\Capstone\project\FQCS_DesktopApp\yolo4.h5"
 
         model = asyncio.create_task(
             detector.get_yolov4_model(
@@ -174,37 +176,38 @@ class ErrorDetectScreen(QWidget):
                 yolo_iou_threshold=self.detector_cfg["err_cfg"]["yolo_iou_threshold"],
                 weights=self.detector_cfg["err_cfg"]["weights"],
                 yolo_score_threshold=self.detector_cfg["err_cfg"]["yolo_score_threshold"]))
-        CLASSES = self.detector_cfg["err_cfg"]["classes"]
 
-        import matplotlib.pyplot as plt
-        from FQCS.tf2_yolov4 import helper
-        import numpy as np
-
-        model = await model
+        self.model = await model
    
-        img1 = cv2.imread("/Users/bitumhoang/Downloads/dirty_sorted/dirty_sorted/" +
+    async def show_error(self):
+
+        img1 = cv2.imread(r"F:\dirty_sorted\dirty_sorted" "\\" +
                         str(np.random.randint(151, 324)) + ".jpg")
-        img2 = cv2.imread("/Users/bitumhoang/Downloads/dirty_sorted/dirty_sorted/" +
+        img2 = cv2.imread(r"F:\dirty_sorted\dirty_sorted" "\\" +
                         str(np.random.randint(151, 324)) + ".jpg")
         images = [img1, img2]
 
+        CLASSES = self.detector_cfg["err_cfg"]["classes"]
+
         err_task = asyncio.create_task(
-            detector.detect_errors(model, images, self.detector_cfg["err_cfg"]["img_size"]))
+            detector.detect_errors(self.model, images, self.detector_cfg["err_cfg"]["img_size"]))
         await asyncio.sleep(0)
 
         boxes, scores, classes, valid_detections = await err_task 
 
-        helper.draw_results(images,
+        images = helper.draw_results(images,
                             boxes,
                             scores,
                             classes,
                             CLASSES,
                             self.detector_cfg["err_cfg"]["img_size"],
                             min_score=self.detector_cfg["err_cfg"]["yolo_score_threshold"])
-        # cv2.imshow("Prediction", images[0])
-        # cv2.waitKey()
-        # cv2.imshow("Prediction", images[1])
-        # if (cv2.waitKey() == 27):
-        #     break
-        return images
-            
+        
+        images[0]*=255.
+        images[1]*=255.
+        images[0]=np.asarray(images[0], np.uint8)
+        images[0]=np.asarray(images[0], np.uint8)
+        self.image1.imshow(images[0])
+
+    async def process_image(self):
+        

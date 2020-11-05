@@ -41,7 +41,7 @@ class DetectionConfigScreen(QWidget):
             self.ui.cbbCamera.addItem("Camera " + str(camera), userData=camera)
 
         frame_resize_values = [
-            "160", "240", "320", "400", "480", "660", "720", "800", "880",
+            "160", "240", "320", "400", "480", "560", "640", "720", "800", "880",
             "960", "1040", "1120", "1200", "1280"
         ]
         
