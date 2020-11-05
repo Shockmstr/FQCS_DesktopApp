@@ -6,7 +6,7 @@ from views.progress_screen import Ui_ProgressScreen
 
 
 class ProgressScreen(QWidget):
-    stopped: Signal(QMouseEvent)
+    stopped = Signal(QMouseEvent)
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)

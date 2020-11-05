@@ -6,8 +6,8 @@ import trio
 
 
 class LoginScreen(QWidget):
-    success: Signal(dict)
-    error: Signal(Exception)
+    success = Signal(dict)
+    error = Signal(Exception)
 
     def __init__(self, login_service: LoginService, parent=None):
         QWidget.__init__(self, parent)
