@@ -106,7 +106,7 @@ class LoginService:
                                                     LOGIN_SERVICE_TH_GR_KEY)
         return
 
-    async def log_in(self, username, password, success=None, error=None):
+    async def log_in(self, username, password):
         try:
             form_data = {}
             form_data['username'] = username
@@ -117,16 +117,12 @@ class LoginService:
                 data = resp.json()
                 self.save_token_json(data)
                 await self.check_token()
-                if success is not None:
-                    helpers.sync_func(success, data)
+                return (True, data)
             else:
-                if error is not None:
-                    helpers.sync_func(error, resp)
+                return (False, resp)
         except Exception as ex:
             print(ex)
-            if error is not None:
-                helpers.sync_func(error, None)
-        return
+            return (False, None)
 
     def save_token_json(self, token):
         self.__auth_info.set_token_info(token)

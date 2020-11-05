@@ -7,14 +7,11 @@ import trio
 
 
 class LoginScreen(QWidget):
-    def __init__(self,
-                 login_service: LoginService,
-                 on_success=None,
-                 on_error=None,
-                 parent=None):
+    success: Signal(dict)
+    error: Signal(Exception)
+
+    def __init__(self, login_service: LoginService, parent=None):
         QWidget.__init__(self, parent)
-        self.__on_success = on_success
-        self.__on_error = on_error
         self.__login_service = login_service
         self.ui = Ui_LoginScreen()
         self.ui.setupUi(self)
@@ -29,5 +26,9 @@ class LoginScreen(QWidget):
     def log_in(self):
         username = self.ui.inpAcc.text()
         password = self.ui.inpPass.text()
-        trio.run(self.__login_service.log_in, username, password,
-                 self.__on_success, self.__on_error)
+        is_success, resp = trio.run(self.__login_service.log_in, username,
+                                    password)
+        if is_success:
+            self.success.emit(resp)
+        else:
+            self.error.emit(resp)
