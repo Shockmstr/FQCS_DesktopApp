@@ -1,7 +1,7 @@
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
-from models.detector_config import DetectorConfigSingleton, DetectorConfig
+from app_models.detector_config import DetectorConfigSingleton, DetectorConfig
 from app.helpers import *
 from views.error_detect_screen import Ui_ErrorDetectScreen
 from FQCS import detector

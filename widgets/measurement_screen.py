@@ -4,7 +4,7 @@ from PySide2.QtCore import *
 from widgets.image_widget import ImageWidget
 import numpy as np
 import cv2 as cv
-from models.detector_config import DetectorConfig, DetectorConfigSingleton
+from app_models.detector_config import DetectorConfig, DetectorConfigSingleton
 from views.measurement_screen import Ui_MeasurementScreen
 from views.detection_config_screen import Ui_DetectionConfigScreen
 from FQCS import detector, helper

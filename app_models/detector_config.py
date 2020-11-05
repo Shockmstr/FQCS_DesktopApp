@@ -2,11 +2,10 @@ from app.observer import Subject
 from FQCS import detector
 import cv2
 
-KEY_CAMERA = "camera"
-
 
 class DetectorConfig(Subject):
     def __init__(self):
+        super().__init__()
         self.camera: cv2.VideoCapture
         self.load_config()
 

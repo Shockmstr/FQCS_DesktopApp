@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'login_screenJhUmrd.ui'
+## Form generated from reading UI file 'login_screenTVXyad.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -84,6 +84,7 @@ class Ui_LoginScreen(object):
         self.verticalLayout_8.setContentsMargins(30, 0, 30, 0)
         self.inpPass = QLineEdit(self.groupPass)
         self.inpPass.setObjectName(u"inpPass")
+        self.inpPass.setEchoMode(QLineEdit.Password)
 
         self.verticalLayout_8.addWidget(self.inpPass)
 

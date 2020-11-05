@@ -13,5 +13,6 @@ class Subject:
         self.observers[key].remove(ob)
 
     def notify(self, key: str):
-        for ob in self.observers[key]:
-            ob(self)       
+        if key in self.observers:
+            for ob in self.observers[key]:
+                ob(self)

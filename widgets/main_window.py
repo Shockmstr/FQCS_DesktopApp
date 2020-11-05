@@ -3,7 +3,7 @@ from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from views.main_window import Ui_MainWindow
 from FQCS import detector
-from models.detector_config import *
+from app_models.detector_config import *
 from app.helpers import *
 import cv2
 from widgets.measurement_screen import MeasurementScreen
@@ -14,11 +14,13 @@ from widgets.detection_config_screen import DetectionConfigScreen
 from widgets.color_param_calibration_screen import ColorParamCalibrationScreen
 from widgets.error_detect_screen import ErrorDetectScreen
 from widgets.progress_screen import ProgressScreen
+from services.login_service import LoginService
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, login_service: LoginService, on_log_out):
         QMainWindow.__init__(self)
+        self.__on_log_out = on_log_out
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.showFullScreen()
@@ -29,19 +31,23 @@ class MainWindow(QMainWindow):
         self.binding()
 
         # screen 0
-        self.home_screen = HomeScreen(configScreen=self.change_detection_screen, progressScreen=self.change_progress_screen, on_exit=self.exit_program)
+        self.home_screen = HomeScreen(
+            configScreen=self.change_detection_screen,
+            progressScreen=self.change_progress_screen,
+            on_exit=self.exit_program,
+            on_log_out=self.__on_log_out)
 
         # screen 1
         self.detection_screen = DetectionConfigScreen(
             backscreen=self.change_home_screen,
             nextscreen=self.change_measurement_screen,
-            main_window = self)
+            main_window=self)
 
         # screen 2
         self.measurement_screen = MeasurementScreen(
             backscreen=self.change_detection_screen,
             nextscreen=self.change_detect_pair_screen,
-            main_window = self)
+            main_window=self)
 
         # screen 3
         self.test_detect_pair_screen = TestDetectPairScreen(
@@ -64,7 +70,8 @@ class MainWindow(QMainWindow):
             nextscreen=self.change_progress_screen)
 
         # screen 7
-        self.progress_screen = ProgressScreen(homeScreen = self.change_home_screen)
+        self.progress_screen = ProgressScreen(
+            homeScreen=self.change_home_screen)
 
         # add to Stacked Widget
         self.ui.centralStackWidget.addWidget(self.home_screen)
@@ -139,9 +146,9 @@ class MainWindow(QMainWindow):
             self.control_timer(True)
         elif (currentWidget == self.measurement_screen):
             self.process_cam = self.measurement_screen.view_cam
-            self.control_timer(True)    
+            self.control_timer(True)
         elif (currentWidget == self.color_param_calib_screen):
-            self.process_cam = self.color_param_calib_screen.view_cam 
+            self.process_cam = self.color_param_calib_screen.view_cam
             self.control_timer(True)
         elif (currentWidget == self.test_detect_pair_screen):
             self.process_cam = self.test_detect_pair_screen.view_cam

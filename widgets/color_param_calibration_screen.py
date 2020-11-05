@@ -3,7 +3,7 @@ from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from app.helpers import * 
 from widgets.image_widget import ImageWidget
-from models.detector_config import DetectorConfig, DetectorConfigSingleton
+from app_models.detector_config import DetectorConfig, DetectorConfigSingleton
 from cv2 import cv2
 from FQCS import detector, helper
 import numpy as np
