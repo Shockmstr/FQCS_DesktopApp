@@ -11,6 +11,7 @@ from FQCS.tf2_yolov4.convert_darknet_weights import convert_darknet_weights
 import csv
 import os
 import asyncio
+import trio
 
 
 class ErrorDetectScreen(QWidget):
@@ -86,7 +87,7 @@ class ErrorDetectScreen(QWidget):
 
     def trigger_yolo_process(self):
         if self.sender() == self.ui.btnCapture:
-            asyncio.run(self.load_yolov4_model())
+            trio.run(self.load_yolov4_model)
 
     # hander
     def min_score_change(self):
@@ -186,7 +187,6 @@ class ErrorDetectScreen(QWidget):
             err_task = asyncio.create_task(
                 detector.detect_errors(
                     model, images, self.detector_cfg["err_cfg"]["img_size"]))
-            await asyncio.sleep(0)
 
             boxes, scores, classes, valid_detections = await err_task
 

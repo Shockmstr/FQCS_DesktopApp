@@ -3,7 +3,7 @@ import cv2
 import abc
 
 
-class DetectorConfigAbs(Subject, metaclass=abc.ABCMeta):
+class DetectorConfigAbs(metaclass=abc.ABCMeta):
     camera: cv2.VideoCapture
     config: dict
     current_path: str
@@ -14,7 +14,7 @@ class DetectorConfigAbs(Subject, metaclass=abc.ABCMeta):
 
 
 class DetectorConfig(DetectorConfigAbs):
-    __instance: DetectorConfigAbs
+    __instance: DetectorConfigAbs = None
 
     def __init__(self):
         return

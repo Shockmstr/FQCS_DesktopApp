@@ -12,7 +12,7 @@ class FukinThread(QThread):
     def __init__(self, func, *args, parent=None):
         QThread.__init__(self, parent)
         self.__func = func
-        self.__args = (self) + args
+        self.__args = tuple([self]) + args
 
     def run(self):
         print("Start thread")

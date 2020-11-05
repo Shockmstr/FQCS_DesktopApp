@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QWidget
-from PySide2.QtCore import Signal
+from PySide2.QtCore import Signal, Qt
 
 from views.color_preprocess_config_screen import Ui_color_preprocess_config_screen
 from widgets.image_widget import ImageWidget

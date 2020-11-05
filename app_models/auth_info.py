@@ -22,12 +22,12 @@ class AuthInfo(QObject):
         if val == old_token:
             self.same_token.emit(val)
         elif val is None:
-            if old_token is not None
+            if old_token is not None:
                 self.remove_token.emit(old_token)
         else:
             if old_token is not None:
                 self.refresh_token.emit(val)
-            else self.new_token.emit(val)
+            else: self.new_token.emit(val)
 
     def is_logged_in(self):
         return self.__token_info is not None

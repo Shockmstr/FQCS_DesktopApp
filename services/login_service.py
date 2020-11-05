@@ -5,7 +5,7 @@ import requests
 import datetime
 import asyncio
 from app.fukin_thread import FukinThread
-from PySide2.QtCore import QTimer
+from PySide2.QtCore import QTimer, QThread
 import trio
 import json
 from services.thread_manager import ThreadManager

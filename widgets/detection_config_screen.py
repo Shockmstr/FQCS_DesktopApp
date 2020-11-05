@@ -1,3 +1,4 @@
+from PySide2.QtGui import QColor
 from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Signal
 import numpy as np

@@ -4,15 +4,15 @@ import trio
 import asyncio
 
 
-def sync_func(func, *args):
+def sync_func(func, args):
     if asyncio.iscoroutinefunction(func):
         if (len(args) > 0):
-            return trio.run(func(args))
+            return trio.run(func, *args)
         else:
-            return trio.run(func())
+            return trio.run(func)
     else:
         if (len(args) > 0):
-            return func(args)
+            return func(*args)
         else:
             return func()
 

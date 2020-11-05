@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QWidget
-from PySide2.QtCore import QTimer, Signal
+from PySide2.QtCore import QTimer, Signal, Qt
 from widgets.image_widget import ImageWidget
 from app_models.detector_config import DetectorConfig
 import cv2

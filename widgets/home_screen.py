@@ -1,4 +1,3 @@
-from PySide2.QtGui import QMouseEvent
 from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Signal
 
@@ -10,7 +9,7 @@ class HomeScreen(QWidget):
     action_edit: Signal
     action_start: Signal
     action_exit: Signal
-    action_logout = Signal(QMouseEvent)
+    action_logout = Signal(bool)
 
     def __init__(self, login_service: LoginService, parent=None):
         QWidget.__init__(self, parent)
@@ -27,6 +26,6 @@ class HomeScreen(QWidget):
         self.ui.btnLogout.clicked.connect(self.log_out)
         return
 
-    def log_out(self, event: QMouseEvent):
-        self.__login_service.log_out()
+    def log_out(self, event: bool):
         self.action_logout.emit(event)
+        self.__login_service.log_out()

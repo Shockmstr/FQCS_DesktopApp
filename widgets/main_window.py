@@ -1,4 +1,3 @@
-from PySide2.QtGui import QMouseEvent
 from PySide2.QtWidgets import QMainWindow
 from PySide2.QtCore import Signal, QTimer
 from views.main_window import Ui_MainWindow
@@ -18,7 +17,7 @@ from services.login_service import LoginService
 
 
 class MainWindow(QMainWindow):
-    logged_out = Signal(QMouseEvent)
+    logged_out = Signal(bool)
 
     def __init__(self, login_service: LoginService):
         QMainWindow.__init__(self)
@@ -30,7 +29,6 @@ class MainWindow(QMainWindow):
         self.video_camera = cv2.VideoCapture()
         self.timer = QTimer()
         self.process_cam = None
-        self.binding()
 
         # screen 0
         self.home_screen = HomeScreen(login_service, self)
@@ -48,6 +46,8 @@ class MainWindow(QMainWindow):
         self.error_detect_screen = ErrorDetectScreen(self)
         # screen 7
         self.progress_screen = ProgressScreen(self)
+
+        self.binding()
 
         # add to Stacked Widget
         self.ui.centralStackWidget.addWidget(self.home_screen)
@@ -108,7 +108,7 @@ class MainWindow(QMainWindow):
         self.progress_screen.stopped.connect(self.change_home_screen)
         return
 
-    def on_logged_out(self, event: QMouseEvent):
+    def on_logged_out(self, event: bool):
         # logic
         self.logged_out.emit(event)
 
