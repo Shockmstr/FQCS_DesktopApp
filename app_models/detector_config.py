@@ -1,4 +1,3 @@
-from app.observer import Subject
 from FQCS import detector
 import cv2
 import abc
@@ -28,7 +27,7 @@ class DetectorConfig(DetectorConfigAbs):
             self.config = detector_config
 
     @staticmethod
-    def instance():  #-> DetectorConfig:
+    def instance() -> DetectorConfigAbs:
         if DetectorConfig.__instance == None:
             instance = DetectorConfig()
             instance.load_config()

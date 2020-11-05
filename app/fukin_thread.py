@@ -1,14 +1,12 @@
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
+from PySide2.QtCore import QThread, Signal
 import trio
 import asyncio
 
 
 class FukinThread(QThread):
 
-    error_signal = Signal(Exception)
-    finish_signal = Signal()
+    func_excuted_err = Signal(Exception)
+    func_excuted = Signal()
 
     def __init__(self, func, *args, parent=None):
         QThread.__init__(self, parent)
@@ -28,8 +26,8 @@ class FukinThread(QThread):
                     trio.run(self.__func)
                 else:
                     self.__func()
-            self.finish_signal.emit()
+            self.func_excuted.emit()
         except Exception as ex:
-            self.error_signal.emit(ex)
+            self.func_excuted_err.emit(ex)
         self.exec_()
         print("End thread")

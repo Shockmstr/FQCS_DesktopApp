@@ -1,6 +1,4 @@
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
+from PySide2.QtWidgets import QFileDialog
 import cv2
 
 
@@ -11,10 +9,12 @@ def file_chooser_open_directory(self):
     filename = dialog.getExistingDirectory()
     return filename
 
+
 def file_chooser_open_file(self):
     dialog = QFileDialog(self)
     filename = dialog.getOpenFileName()
     return filename
+
 
 def get_all_camera_index(self):
     # checks the first 10 indexes.
