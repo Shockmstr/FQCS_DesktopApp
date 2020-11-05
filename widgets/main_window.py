@@ -64,7 +64,8 @@ class MainWindow(QMainWindow):
             nextscreen=self.change_progress_screen)
 
         # screen 7
-        self.progress_screen = ProgressScreen(homeScreen = self.change_home_screen)
+        self.progress_screen = ProgressScreen(homeScreen = self.change_home_screen,
+            main_window = self)
 
         # add to Stacked Widget
         self.ui.centralStackWidget.addWidget(self.home_screen)
@@ -146,14 +147,20 @@ class MainWindow(QMainWindow):
         elif (currentWidget == self.test_detect_pair_screen):
             self.process_cam = self.test_detect_pair_screen.view_cam
             self.control_timer(True)
-        elif (currentWidget == self.error_detect_screen):
-            self.process_cam = self.error_detect_screen.view_cam
+        # elif (currentWidget == self.error_detect_screen):
+        #     self.process_cam = self.error_detect_screen.view_cam
+        #     self.control_timer(True)
+        elif (currentWidget == self.progress_screen):
+            self.process_cam = self.progress_screen.view_cam
             self.control_timer(True)
         else:
             self.control_timer(False)
 
-    def capture(self):
+    def stop(self):
         self.control_timer(False)
+
+    def capture(self):
+        self.control_timer(True)
 
     def on_load_config(self):
         file_path = file_chooser_open_directory(self)
