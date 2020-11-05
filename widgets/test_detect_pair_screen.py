@@ -1,7 +1,7 @@
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
-from app_models.detector_config import DetectorConfigSingleton, DetectorConfig
+from app_models.detector_config import DetectorConfig, DetectorConfig
 
 import cv2
 import os
@@ -19,7 +19,7 @@ class TestDetectPairScreen(QWidget):
     def __init__(self, backscreen: (), nextscreen: ()):
         QWidget.__init__(self)
         self.ui = Ui_test_detect_pair_screen()
-        self.detector_cfg = DetectorConfigSingleton.get_instance().config
+        self.detector_cfg = DetectorConfig.instance().config
         self.ui.setupUi(self)
         self.binding(backscreen=backscreen, nextscreen=nextscreen)
 
@@ -131,7 +131,7 @@ class TestDetectPairScreen(QWidget):
     def save_sample(self):
         if self.detected_pair is not None:
             left, right = self.detected_pair
-            folder_path = DetectorConfigSingleton.get_instance().current_path
+            folder_path = DetectorConfig.instance().current_path
             if folder_path is None:
                 folder_path = file_chooser_open_directory(self)
             left = cv2.flip(left, 1)

@@ -1,13 +1,24 @@
 from app.observer import Subject
 from FQCS import detector
 import cv2
+import abc
 
 
-class DetectorConfig(Subject):
+class DetectorConfigAbs(Subject, metaclass=abc.ABCMeta):
+    camera: cv2.VideoCapture
+    config: dict
+    current_path: str
+
+    @abc.abstractmethod
+    def load_config(self, detector_config=None):
+        pass
+
+
+class DetectorConfig(DetectorConfigAbs):
+    __instance: DetectorConfigAbs
+
     def __init__(self):
-        super().__init__()
-        self.camera: cv2.VideoCapture
-        self.load_config()
+        return
 
     def load_config(self, detector_config=None):
         if detector_config is None:
@@ -16,12 +27,11 @@ class DetectorConfig(Subject):
         else:
             self.config = detector_config
 
-
-class DetectorConfigSingleton():
-    __instance: DetectorConfig = None
-
     @staticmethod
-    def get_instance():  #-> DetectorConfig:
-        if DetectorConfigSingleton.__instance == None:
-            DetectorConfigSingleton.__instance = DetectorConfig()
-        return DetectorConfigSingleton.__instance
+    def instance():  #-> DetectorConfig:
+        if DetectorConfig.__instance == None:
+            instance = DetectorConfig()
+            instance.load_config()
+            DetectorConfig.__instance = instance
+
+        return DetectorConfig.__instance

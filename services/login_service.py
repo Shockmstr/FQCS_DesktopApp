@@ -10,14 +10,15 @@ from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 import trio
 import json
+from services.thread_manager import ThreadManager
+
+LOGIN_SERVICE_TH_GR_KEY = "LoginService"
 
 
 class LoginService:
     def __init__(self, app_config, auth_info: AuthInfo):
         self.__app_config = app_config
         self.__auth_info = auth_info
-        self.rf_thread = None
-        self.lo_thread = None
 
     async def init_auth_info(self):
         if os.path.exists(TOKEN_PATH):
@@ -57,23 +58,28 @@ class LoginService:
                             self.save_token_json(data)
                             trio.run(self.check_token)
                         else:
-                            self.log_out()
+                            raise Exception("Resp error")
                     except:
                         print("Error refresh callback")
+                        self.log_out()
                     finally:
-                        self.rf_thread.quit()
+                        rf_thread.quit()
                     return
 
                 def start_timer():
                     refresh_timer = QTimer()
-                    self.rf_thread.refresh_timer = refresh_timer
+                    rf_thread.refresh_timer = refresh_timer
+                    rf_thread.finished.connect(lambda: refresh_timer.stop())
                     refresh_timer.timeout.connect(refresh_callback)
                     refresh_timer.setSingleShot(True)
                     refresh_timer.start(min_ref_diff * 60 * 1000)
 
-                self.__cancel_threads()
-                self.rf_thread = FukinThread(start_timer)
-                self.rf_thread.start()
+                ThreadManager.instance().cancel_threads(
+                    group=LOGIN_SERVICE_TH_GR_KEY)
+                rf_thread = FukinThread(start_timer)
+                rf_thread.start()
+                ThreadManager.instance().add_thread(rf_thread,
+                                                    LOGIN_SERVICE_TH_GR_KEY)
             else:
 
                 def logout_callback():
@@ -82,20 +88,23 @@ class LoginService:
                     except:
                         print("Log out error")
                     finally:
-                        self.lo_thread.quit()
+                        lo_thread.quit()
                     return
 
                 def start_timer():
                     logout_timer = QTimer()
-                    self.lo_thread.logout_timer = logout_timer
+                    lo_thread.logout_timer = logout_timer
+                    lo_thread.finished.connect(lambda: logout_timer.stop())
                     logout_timer.timeout.connect(logout_callback)
                     logout_timer.setSingleShot(True)
                     logout_timer.start(min_diff * 60 * 1000)
 
-                self.__cancel_threads()
-                self.lo_thread = FukinThread(start_timer)
-                self.lo_thread.start()
-
+                ThreadManager.instance().cancel_threads(
+                    group=LOGIN_SERVICE_TH_GR_KEY)
+                lo_thread = FukinThread(start_timer)
+                lo_thread.start()
+                ThreadManager.instance().add_thread(lo_thread,
+                                                    LOGIN_SERVICE_TH_GR_KEY)
         return
 
     async def log_in(self, username, password, success=None, error=None):
@@ -131,22 +140,9 @@ class LoginService:
             json.dump(token, fo, indent=2)
 
     def log_out(self):
-        self.__cancel_threads()
+        ThreadManager.instance().cancel_threads(group=LOGIN_SERVICE_TH_GR_KEY)
         if not self.__auth_info.is_logged_in(): return
         if os.path.exists(TOKEN_PATH):
             os.remove(TOKEN_PATH)
         self.__auth_info.set_token_info(None)
-        return
-
-    def __cancel_threads(self):
-        if self.rf_thread is not None:
-            self.rf_thread.quit()
-        if self.lo_thread is not None:
-            self.lo_thread.quit()
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.__cancel_threads()
         return

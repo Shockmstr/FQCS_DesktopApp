@@ -3,7 +3,7 @@ from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from app.helpers import * 
 from widgets.image_widget import ImageWidget
-from app_models.detector_config import DetectorConfig, DetectorConfigSingleton
+from app_models.detector_config import DetectorConfig, DetectorConfig
 from cv2 import cv2
 from FQCS import detector, helper
 import numpy as np
@@ -17,7 +17,7 @@ class ColorParamCalibrationScreen(QWidget):
 
     def __init__(self, backscreen: (), nextscreen: ()):
         QWidget.__init__(self)
-        self.detector_cfg = DetectorConfigSingleton.get_instance().config
+        self.detector_cfg = DetectorConfig.instance().config
         self.ui = Ui_ColorParamCalibScreen()
         self.ui.setupUi(self)
         self.load_default_config()

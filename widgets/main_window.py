@@ -24,7 +24,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.showFullScreen()
-        self.detector_cfg = DetectorConfigSingleton.get_instance()
+        self.detector_cfg = DetectorConfig.instance()
         self.video_camera = cv2.VideoCapture()
         self.timer = QTimer()
         self.process_cam = None

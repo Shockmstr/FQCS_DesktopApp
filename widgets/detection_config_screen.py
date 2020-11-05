@@ -5,7 +5,7 @@ import numpy as np
 from views.detection_config_screen import Ui_DetectionConfigScreen
 from widgets.image_widget import ImageWidget
 from FQCS import detector, helper
-from app_models.detector_config import DetectorConfigSingleton, DetectorConfig
+from app_models.detector_config import DetectorConfig, DetectorConfig
 from cv2 import cv2
 from app.helpers import *
 
@@ -19,7 +19,7 @@ class DetectionConfigScreen(QWidget):
     def __init__(self, backscreen: (), nextscreen: (), main_window):
         QWidget.__init__(self)
         self.ui = Ui_DetectionConfigScreen()
-        self.detector_cfg = DetectorConfigSingleton.get_instance().config
+        self.detector_cfg = DetectorConfig.instance().config
         self.ui.setupUi(self)
         self.init_ui_values()
         self.main_window = main_window

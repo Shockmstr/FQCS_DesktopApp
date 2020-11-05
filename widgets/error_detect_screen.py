@@ -1,7 +1,7 @@
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
-from app_models.detector_config import DetectorConfigSingleton, DetectorConfig
+from app_models.detector_config import DetectorConfig, DetectorConfig
 from app.helpers import *
 from views.error_detect_screen import Ui_ErrorDetectScreen
 from FQCS import detector
@@ -18,7 +18,7 @@ class ErrorDetectScreen(QWidget):
     def __init__(self, backscreen: (), nextscreen: ()):
         QWidget.__init__(self)
         self.ui = Ui_ErrorDetectScreen()
-        self.detector_cfg = DetectorConfigSingleton.get_instance().config
+        self.detector_cfg = DetectorConfig.instance().config
         self.ui.setupUi(self)
         self.init_ui_values()
         self.binding(backscreen=backscreen, nextscreen=nextscreen)

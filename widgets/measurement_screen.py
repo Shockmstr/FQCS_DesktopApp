@@ -4,7 +4,7 @@ from PySide2.QtCore import *
 from widgets.image_widget import ImageWidget
 import numpy as np
 import cv2 as cv
-from app_models.detector_config import DetectorConfig, DetectorConfigSingleton
+from app_models.detector_config import DetectorConfig, DetectorConfig
 from views.measurement_screen import Ui_MeasurementScreen
 from views.detection_config_screen import Ui_DetectionConfigScreen
 from FQCS import detector, helper
@@ -15,7 +15,7 @@ class MeasurementScreen(QWidget):
 
     def __init__(self, backscreen: (), nextscreen: (), main_window):
         QWidget.__init__(self)
-        self.detector_cfg = DetectorConfigSingleton.get_instance().config
+        self.detector_cfg = DetectorConfig.instance().config
         self.ui = Ui_MeasurementScreen()
         self.ui.setupUi(self)
         self.main_window = main_window

@@ -23,6 +23,7 @@ from app_constants import CONFIG_PATH
 from app_models.auth_info import AuthInfo
 import json
 from app_constants import KEY_AUTH_INFO
+from services.thread_manager import ThreadManager
 
 
 class MainApplication():
@@ -42,11 +43,11 @@ class MainApplication():
         self.auth_info.register(KEY_AUTH_INFO, self.on_auth_info_changed)
         self.login_service = LoginService(self.app_config, self.auth_info)
         await self.login_service.init_auth_info()
-        self.choose_screen()
-        sys.exit(self.app.exec_())
+        # self.choose_screen()
+        return self.app.exec_()
 
     def on_log_in_success(self, token):
-        self.choose_screen()
+        # self.choose_screen()
         return
 
     def on_log_in_error(self, resp):
@@ -63,22 +64,26 @@ class MainApplication():
 
     def on_log_out(self):
         self.login_service.log_out()
-        self.choose_screen()
+        # self.choose_screen()
         return
 
     def on_auth_info_changed(self, obj: AuthInfo):
+        self.choose_screen()
         print("Logged in:", obj.is_logged_in())
         return
 
     def choose_screen(self):
-        if not self.auth_info.is_logged_in():
+        if not self.auth_info.is_logged_in() and (
+                self.login_screen is None
+                or not self.login_screen.isActiveWindow()):
             self.login_screen = LoginScreen(login_service=self.login_service,
                                             on_success=self.on_log_in_success,
                                             on_error=self.on_log_in_error)
             self.login_screen.show()
             if self.main_window is not None:
                 self.main_window.close()
-        else:
+        elif (self.main_window is None
+              or not self.main_window.isActiveWindow()):
             self.main_window = MainWindow(self.login_service, self.on_log_out)
             self.main_window.show()
             if self.login_screen is not None:
@@ -91,7 +96,10 @@ class MainApplication():
 
 
 async def main():
-    await MainApplication().run()
+    with ThreadManager.instance() as tm:
+        status = await MainApplication().run()
+    ThreadManager.instance().wait()
+    sys.exit(status)
 
 
 if __name__ == "__main__":
