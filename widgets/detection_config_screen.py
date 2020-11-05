@@ -200,7 +200,7 @@ class DetectionConfigScreen(QWidget):
         self.detector_cfg["frame_width"] = value
 
     def button_capture_clicked(self):
-        self.main_window.capture()
+        self.main_window.stop()
 
     # view camera
     def view_cam(self, image):
