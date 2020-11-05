@@ -16,8 +16,8 @@ class LoginService:
     def __init__(self, app_config, auth_info: AuthInfo):
         self.__app_config = app_config
         self.__auth_info = auth_info
-        self.__refresh_timer = None
-        self.__logout_timer = None
+        self.rf_thread = None
+        self.lo_thread = None
 
     async def init_auth_info(self):
         if os.path.exists(TOKEN_PATH):
@@ -31,7 +31,7 @@ class LoginService:
         token = self.__auth_info.get_token_info()
         if (token is not None and 'expires_utc' in token):
             cur_exp_str = token['expires_utc']
-            cur = datetime.datetime.now()
+            cur = datetime.datetime.utcnow()
             exp = datetime.datetime.strptime(cur_exp_str, ISO_DATE_FORMAT)
             min_diff_delta = exp - cur
             min_diff = min_diff_delta.total_seconds() / 60
@@ -43,38 +43,56 @@ class LoginService:
             if ('refresh_token' in token):
 
                 def refresh_callback():
-                    self.__refresh_timer = None
-                    form_data = {}
-                    form_data['grant_type'] = 'refresh_token'
-                    form_data['refresh_token'] = token['refresh_token']
-                    url = "{}/api/users/login".format(
-                        self.__app_config['api_url'])
-                    resp = requests.post(url, data=form_data)
-                    if (resp.status_code >= 200 and resp.status_code < 300):
-                        data = resp.json()
-                        self.save_token_json(data)
-                        trio.run(self.check_token)
-                    else:
-                        self.log_out()
+                    try:
+                        print("Refresh callback")
+                        form_data = {}
+                        form_data['grant_type'] = 'refresh_token'
+                        form_data['refresh_token'] = token['refresh_token']
+                        url = "{}/api/users/login".format(
+                            self.__app_config['api_url'])
+                        resp = requests.post(url, data=form_data)
+                        if (resp.status_code >= 200
+                                and resp.status_code < 300):
+                            data = resp.json()
+                            self.save_token_json(data)
+                            trio.run(self.check_token)
+                        else:
+                            self.log_out()
+                    except:
+                        print("Error refresh callback")
+                    finally:
+                        self.rf_thread.quit()
                     return
 
                 def start_timer():
-                    self.__refresh_timer = QTimer()
-                    self.__refresh_timer.singleShot(min_ref_diff * 60,
-                                                    refresh_callback)
+                    refresh_timer = QTimer()
+                    self.rf_thread.refresh_timer = refresh_timer
+                    refresh_timer.timeout.connect(refresh_callback)
+                    refresh_timer.setSingleShot(True)
+                    refresh_timer.start(min_ref_diff * 60 * 1000)
 
-                self.st_thread = FukinThread(start_timer)
-                self.st_thread.start()
+                self.__cancel_threads()
+                self.rf_thread = FukinThread(start_timer)
+                self.rf_thread.start()
             else:
 
                 def logout_callback():
-                    self.log_out()
+                    try:
+                        self.log_out()
+                    except:
+                        print("Log out error")
+                    finally:
+                        self.lo_thread.quit()
+                    return
 
                 def start_timer():
-                    self.__logout_timer = QTimer()
-                    self.__logout_timer.singleShot(min_diff * 60,
-                                                   logout_callback)
+                    logout_timer = QTimer()
+                    self.lo_thread.logout_timer = logout_timer
+                    logout_timer.timeout.connect(logout_callback)
+                    logout_timer.setSingleShot(True)
+                    logout_timer.start(min_diff * 60 * 1000)
 
+                self.__cancel_threads()
                 self.lo_thread = FukinThread(start_timer)
                 self.lo_thread.start()
 
@@ -113,24 +131,22 @@ class LoginService:
             json.dump(token, fo, indent=2)
 
     def log_out(self):
-        self.__cancel_timer()
+        self.__cancel_threads()
         if not self.__auth_info.is_logged_in(): return
         if os.path.exists(TOKEN_PATH):
             os.remove(TOKEN_PATH)
         self.__auth_info.set_token_info(None)
         return
 
+    def __cancel_threads(self):
+        if self.rf_thread is not None:
+            self.rf_thread.quit()
+        if self.lo_thread is not None:
+            self.lo_thread.quit()
+
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.__cancel_timer()
+        self.__cancel_threads()
         return
-
-    def __cancel_timer(self):
-        if self.__logout_timer is not None:
-            self.__logout_timer.stop()
-            self.__logout_timer = None
-        if self.__refresh_timer is not None:
-            self.__refresh_timer.stop()
-            self.__refresh_timer = None

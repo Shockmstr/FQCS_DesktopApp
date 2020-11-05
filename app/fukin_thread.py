@@ -6,14 +6,17 @@ import asyncio
 
 
 class FukinThread(QThread):
+
+    error_signal = Signal(Exception)
+    finish_signal = Signal()
+
     def __init__(self, func, *args, parent=None):
         QThread.__init__(self, parent)
         self.__func = func
         self.__args = args
-        self.error_signal = Signal(Exception, "error_signal")
-        self.finish_signal = Signal("finish_signal")
 
     def run(self):
+        print("Start thread")
         try:
             if (len(self.__args) > 0):
                 if asyncio.iscoroutinefunction(self.__func):
@@ -28,3 +31,5 @@ class FukinThread(QThread):
             self.finish_signal.emit()
         except Exception as ex:
             self.error_signal.emit(ex)
+        self.exec_()
+        print("End thread")

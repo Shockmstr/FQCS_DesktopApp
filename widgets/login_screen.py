@@ -4,7 +4,6 @@ from PySide2.QtCore import *
 from services.login_service import LoginService
 from views.login_screen import Ui_LoginScreen
 import trio
-from app.fukin_thread import FukinThread
 
 
 class LoginScreen(QWidget):
