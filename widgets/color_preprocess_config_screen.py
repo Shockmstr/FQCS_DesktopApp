@@ -6,7 +6,9 @@ from views.color_preprocess_config_screen import Ui_color_preprocess_config_scre
 from widgets.image_widget import ImageWidget
 from models.detector_config import DetectorConfig, DetectorConfigSingleton
 from FQCS import detector, helper
+from app.helpers import *
 import numpy as np
+import os
 import cv2
 
 class ColorPreprocessConfigScreen(QWidget):
@@ -57,7 +59,6 @@ class ColorPreprocessConfigScreen(QWidget):
         self.ui.cbbResizeWidth.activated.connect(self.cbbResize_chosen)
         self.ui.cbbResizeHeight.activated.connect(self.cbbResize_chosen)
 
-       # self.ui.btnNext.clicked.connect(self.save_image)
     # handler
     def blur_value_change(self):
         value = round(self.ui.sldBlur.value() * self.BLUR_STEP, 2)
@@ -104,34 +105,18 @@ class ColorPreprocessConfigScreen(QWidget):
             self.detector_cfg["color_cfg"]["img_size"] = img_size
             self.view_image()
 
-    # def save_image(self):
-    #     if self.IMAGE_MODIFIED:
-    #         cv2.imwrite("sample_left.jpg", self.modified_left)
-    #         cv2.imwrite("sample_right.jpg", self.modified_right)
-
-    def view_initial_image(self):
-        width = self.ui.screen1.width()
-        height = self.ui.screen1.height()
-        left = cv2.imread("sample_left.jpg")
-        right = cv2.imread("sample_right.jpg")
-        img_size = (256,512)
-        left = cv2.resize(left, img_size, interpolation=cv2.INTER_AREA)
-        right = cv2.resize(right, img_size, interpolation=cv2.INTER_AREA)
-        self.image1.imshow(left)
-        self.image2.imshow(right)
-
     def view_image(self):
         if (self.image1 is not None and self.image2 is not None):
-            left = cv2.imread("sample_left.jpg")
-            right = cv2.imread("sample_right.jpg")
-            m_left, m_right = self.preprocess_color(left, right)       
-            img_size = (256,512)
-            m_left = cv2.resize(m_left, img_size, interpolation=cv2.INTER_AREA)
-            m_right = cv2.resize(m_right, img_size, interpolation=cv2.INTER_AREA)
-            self.modified_left = m_left
-            self.modified_right = m_right
-            self.image1.imshow(m_left)
-            self.image2.imshow(m_right)
+            left_path = get_current_sample_image_path(self) + os.sep + detector.SAMPLE_LEFT_FILE
+            right_path = get_current_sample_image_path(self) + os.sep + detector.SAMPLE_RIGHT_FILE
+            left = cv2.imread(left_path)
+            right = cv2.imread(right_path)
+            modified_left, modified_right = self.preprocess_color(left, right)       
+            img_size = (256, self.label_h - 50)
+            modified_left = cv2.resize(modified_left, img_size, interpolation=cv2.INTER_AREA)
+            modified_right = cv2.resize(modified_right, img_size, interpolation=cv2.INTER_AREA)
+            self.image1.imshow(modified_left)
+            self.image2.imshow(modified_right)
         
         
     def replace_camera_widget(self):
@@ -149,7 +134,6 @@ class ColorPreprocessConfigScreen(QWidget):
         
     def showEvent(self, event):
         self.replace_camera_widget()
-        #self.view_initial_image()
         self.view_image()
 
     def preprocess_color(self, sample_left, sample_right):

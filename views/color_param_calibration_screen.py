@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'color_param_calibration_screenMUtYbL.ui'
+## Form generated from reading UI file 'color_param_calibration_screenfEhIpp.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -140,6 +140,15 @@ class Ui_ColorParamCalibScreen(object):
 "}")
         self.verticalLayout_10 = QVBoxLayout(self.containerLeft)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.chkColorCompare = QCheckBox(self.containerLeft)
+        self.chkColorCompare.setObjectName(u"chkColorCompare")
+
+        self.verticalLayout_10.addWidget(self.chkColorCompare)
+
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_10.addItem(self.verticalSpacer)
+
 
         self.horizontalLayout.addWidget(self.containerLeft)
 
@@ -306,6 +315,7 @@ class Ui_ColorParamCalibScreen(object):
         self.screen3Left.setText(QCoreApplication.translate("ColorParamCalibScreen", u"PushButton", None))
         self.screen3Right.setText(QCoreApplication.translate("ColorParamCalibScreen", u"PushButton", None))
         self.lblTitle.setText(QCoreApplication.translate("ColorParamCalibScreen", u"COLOR COMPARISON - PARAMETERS CALIBRATION", None))
+        self.chkColorCompare.setText(QCoreApplication.translate("ColorParamCalibScreen", u"Enable Color Comparison", None))
         self.grpSldSupThresh.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Suppress Threshold", None))
         self.groupInputTemplate_2.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Amplification Threshold", None))
         self.ampThreshRed.setSpecialValueText("")

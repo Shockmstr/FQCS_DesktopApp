@@ -7,7 +7,7 @@ from models.detector_config import DetectorConfig, DetectorConfigSingleton
 from cv2 import cv2
 from FQCS import detector, helper
 import numpy as np
-import time
+import os
 from views.color_param_calibration_screen import Ui_ColorParamCalibScreen
 
 
@@ -91,11 +91,13 @@ class ColorParamCalibrationScreen(QWidget):
         self.ui.ampThreshRed.setValue(0) # self-created value
 
         self.ui.grpSldAllowDiff.setTitle("Amplification Rate: " + str(max_diff))
-        self.ui.grpSldAmpRate.setTitle("Allowed Difference (%): " + str(amplify_rate))
+        self.ui.grpSldAmpRate.setTitle("Allowed Difference (%): " + str(amplify_rate))  
 
     def view_image_sample(self):
-        left = cv2.imread("sample_left.jpg")
-        right = cv2.imread("sample_right.jpg")
+        left_path =  get_current_sample_image_path(self) + os.sep + detector.SAMPLE_LEFT_FILE
+        right_path = get_current_sample_image_path(self) + os.sep + detector.SAMPLE_RIGHT_FILE
+        left = cv2.imread(left_path)
+        right = cv2.imread(right_path)
         m_left, m_right = self.preprocess_color(left, right)       
         img_size = (128, self.label_h - 50)
         m_left = cv2.resize(m_left, img_size, interpolation=cv2.INTER_AREA)
@@ -160,13 +162,17 @@ class ColorParamCalibrationScreen(QWidget):
     def find_amp_threshold(self):
         # index = 1
         # while(index < 3):            
-        image_left = ("app\example_img\d_left_" + str(self.index) + ".jpg")         
-        image_right = ("app\example_img\d_right_" + str(self.index) + ".jpg")      
-        img_left, img_right = self.view_image_detect(image_left, image_right)
+        left_path = (os.sep.join([os.getcwd(), "app", "example_img", "d_left_"]) + str(self.index) + ".jpg")         
+        right_path = (os.sep.join([os.getcwd(), "app", "example_img", "d_right_"]) + str(self.index) + ".jpg")      
+        sample_left_path =  get_current_sample_image_path(self) + os.sep + detector.SAMPLE_LEFT_FILE
+        sample_right_path = get_current_sample_image_path(self) + os.sep + detector.SAMPLE_RIGHT_FILE
+        img_left, img_right = self.view_image_detect(left_path, right_path)
+        sample_left, sample_right = self.preprocess_color(cv2.imread(sample_left_path), cv2.imread(sample_right_path))
         #print(index)
-        self.index += 1
-        self.hist_bgr_list.append(helper.get_hist_bgr(img_left))
-        self.hist_bgr_list.append(helper.get_hist_bgr(img_right))
+        self.index += 1       
+        if (self.index < 4):
+            self.hist_bgr_list.append(np.abs(np.subtract(helper.get_hist_bgr(img_left), helper.get_hist_bgr(sample_left))))
+            self.hist_bgr_list.append(np.abs(np.subtract(helper.get_hist_bgr(img_left), helper.get_hist_bgr(sample_left))))
         if (self.index == 4): 
             self.index = 1
             max_blue = 0
@@ -174,11 +180,11 @@ class ColorParamCalibrationScreen(QWidget):
             max_red = 0
             for hist in self.hist_bgr_list:
                 blue = np.max(hist[0])
-                print("hist blue:", hist[0].reshape(1,-1))
+                #print("hist blue:", hist[0].reshape(1,-1))
                 green = np.max(hist[1])
-                print("hist green:", hist[1].reshape(1,-1))
+                #print("hist green:", hist[1].reshape(1,-1))
                 red = np.max(hist[2])
-                print("hist red:", hist[2].reshape(1,-1))
+                #print("hist red:", hist[2].reshape(1,-1))
                 if (blue > max_blue): max_blue = blue 
                 if (green > max_green): max_green = green 
                 if (red > max_red): max_red = red 

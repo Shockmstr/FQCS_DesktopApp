@@ -2,6 +2,8 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 import cv2
+import os
+from models.detector_config import DetectorConfig, DetectorConfigSingleton
 
 
 def file_chooser_open_directory(self):
@@ -29,3 +31,9 @@ def get_all_camera_index(self):
         index += 1
         i -= 1
     return arr
+
+def get_current_sample_image_path(self):
+    currentPath = DetectorConfigSingleton.get_instance().current_path
+    if (currentPath == None):
+        currentPath = os.getcwd() #default = current working directory
+    return currentPath
