@@ -11,25 +11,31 @@ from FQCS.tf2_yolov4.convert_darknet_weights import convert_darknet_weights
 
 import csv
 import os
-import asyncio 
+import asyncio
 
 
 class ErrorDetectScreen(QWidget):
-    def __init__(self, backscreen: (), nextscreen: ()):
-        QWidget.__init__(self)
+    backscreen: Signal
+    nextscreen: Signal
+
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
         self.ui = Ui_ErrorDetectScreen()
         self.detector_cfg = DetectorConfig.instance().config
         self.ui.setupUi(self)
+        self.backscreen = self.ui.btnBack.clicked
+        self.nextscreen = self.ui.btnFinish.clicked
         self.init_ui_values()
-        self.binding(backscreen=backscreen, nextscreen=nextscreen)
+        self.binding()
         self.load_cfg()
-    
+
     def load_cfg(self):
         img_size = self.detector_cfg["err_cfg"]["img_size"]
         inp_shape = self.detector_cfg["err_cfg"]["inp_shape"]
         yolo_iou_threshold = self.detector_cfg["err_cfg"]["yolo_iou_threshold"]
         yolo_max_boxes = self.detector_cfg["err_cfg"]["yolo_max_boxes"]
-        yolo_score_threshold = self.detector_cfg["err_cfg"]["yolo_score_threshold"]
+        yolo_score_threshold = self.detector_cfg["err_cfg"][
+            "yolo_score_threshold"]
         weights = self.detector_cfg["err_cfg"]["weights"]
         classes = self.detector_cfg["err_cfg"]["classes"]
         num_classes = self.detector_cfg["err_cfg"]["num_classes"]
@@ -47,7 +53,7 @@ class ErrorDetectScreen(QWidget):
         self.ui.inpMaxInstances.setValue(yolo_max_boxes)
         self.ui.inpMinimumScore.setValue(yolo_score_threshold * 10)
         self.ui.inpClasses.setText(str(classes))
-    
+
     def init_ui_values(self):
         self.height_value = 0
         self.width_value = 0
@@ -57,8 +63,8 @@ class ErrorDetectScreen(QWidget):
         self.ui.cbbHeight.setCurrentIndex(-1)
 
         frame_resize_values = [
-            "160", "240", "256", "480", "660", "720", "800",
-            "960", "1024", "1216", "1280"
+            "160", "240", "256", "480", "660", "720", "800", "960", "1024",
+            "1216", "1280"
         ]
         self.ui.cbbHeight.clear()
         for value in frame_resize_values:
@@ -69,10 +75,7 @@ class ErrorDetectScreen(QWidget):
             self.ui.cbbWidth.addItem(value, userData=int(value))
 
     # binding
-    def binding(self, backscreen: (), nextscreen: ()):
-        self.ui.btnFinish.clicked.connect(nextscreen)
-        self.ui.btnBack.clicked.connect(backscreen)
-        self.ui.btnFinish.clicked.connect(nextscreen)
+    def binding(self):
         self.ui.inpMaxInstances.textChanged.connect(self.max_instances_change)
         self.ui.inpMinimumScore.textChanged.connect(self.min_score_change)
         self.ui.inpIouThreshold.textChanged.connect(self.iou_threshold_change)
@@ -104,24 +107,26 @@ class ErrorDetectScreen(QWidget):
             self.height_value = self.ui.cbbHeight.currentData()
         if self.sender() == self.ui.cbbWidth:
             self.width_value = self.ui.cbbWidth.currentData()
-            
+
         print(self.height_value, self.width_value)
-        self.detector_cfg["err_cfg"]["img_size"] = (self.width_value, self.height_value)
-        self.detector_cfg["err_cfg"]["inp_shape"] = (self.height_value, self.width_value, 3)
+        self.detector_cfg["err_cfg"]["img_size"] = (self.width_value,
+                                                    self.height_value)
+        self.detector_cfg["err_cfg"]["inp_shape"] = (self.height_value,
+                                                     self.width_value, 3)
 
     def choose_model_clicked(self):
-       file_name, _ = file_chooser_open_file(self)
-       self.ui.inpModelChoice.setText(file_name.split(r"/")[-1])
-       self.detector_cfg["err_cfg"]["weights"] = file_name
+        file_name, _ = file_chooser_open_file(self)
+        self.ui.inpModelChoice.setText(file_name.split(r"/")[-1])
+        self.detector_cfg["err_cfg"]["weights"] = file_name
 
     def choose_classes_clicked(self):
         class_list = []
-        file_name = QFileDialog.getOpenFileName(self,'open file')
+        file_name = QFileDialog.getOpenFileName(self, 'open file')
         with open(str(file_name[0]), newline='') as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',')
             for row in spamreader:
                 class_list.extend(row)
-            
+
             print(class_list)
         self.detector_cfg["err_cfg"]["classes"] = class_list
         self.detector_cfg["err_cfg"]["num_classes"] = len(class_list)
@@ -139,13 +144,14 @@ class ErrorDetectScreen(QWidget):
                                     "./yolo4.h5", (416, 416, 3),
                                     1,
                                     weights=None)
-            return 
+            return
 
         img_size = self.detector_cfg["err_cfg"]["img_size"]
         inp_shape = self.detector_cfg["err_cfg"]["inp_shape"]
         yolo_iou_threshold = self.detector_cfg["err_cfg"]["yolo_iou_threshold"]
         yolo_max_boxes = self.detector_cfg["err_cfg"]["yolo_max_boxes"]
-        yolo_score_threshold = self.detector_cfg["err_cfg"]["yolo_score_threshold"]
+        yolo_score_threshold = self.detector_cfg["err_cfg"][
+            "yolo_score_threshold"]
         weights = self.detector_cfg["err_cfg"]["weights"]
         classes = self.detector_cfg["err_cfg"]["classes"]
         num_classes = self.detector_cfg["err_cfg"]["num_classes"]
@@ -157,9 +163,11 @@ class ErrorDetectScreen(QWidget):
                 num_classes=self.detector_cfg["err_cfg"]["num_classes"],
                 training=False,
                 yolo_max_boxes=self.detector_cfg["err_cfg"]["yolo_max_boxes"],
-                yolo_iou_threshold=self.detector_cfg["err_cfg"]["yolo_iou_threshold"],
+                yolo_iou_threshold=self.detector_cfg["err_cfg"]
+                ["yolo_iou_threshold"],
                 weights=self.detector_cfg["err_cfg"]["weights"],
-                yolo_score_threshold=self.detector_cfg["err_cfg"]["yolo_score_threshold"]))
+                yolo_score_threshold=self.detector_cfg["err_cfg"]
+                ["yolo_score_threshold"]))
         CLASSES = self.detector_cfg["err_cfg"]["classes"]
 
         import matplotlib.pyplot as plt
@@ -168,30 +176,32 @@ class ErrorDetectScreen(QWidget):
 
         model = await model
         while True:
-            img1 = cv2.imread("/Users/bitumhoang/Downloads/dirty_sorted/dirty_sorted/" +
-                          str(np.random.randint(151, 324)) + ".jpg")
-            img2 = cv2.imread("/Users/bitumhoang/Downloads/dirty_sorted/dirty_sorted/" +
-                          str(np.random.randint(151, 324)) + ".jpg")
+            img1 = cv2.imread(
+                "/Users/bitumhoang/Downloads/dirty_sorted/dirty_sorted/" +
+                str(np.random.randint(151, 324)) + ".jpg")
+            img2 = cv2.imread(
+                "/Users/bitumhoang/Downloads/dirty_sorted/dirty_sorted/" +
+                str(np.random.randint(151, 324)) + ".jpg")
             images = [img1, img2]
 
             err_task = asyncio.create_task(
-                detector.detect_errors(model, images, self.detector_cfg["err_cfg"]["img_size"]))
+                detector.detect_errors(
+                    model, images, self.detector_cfg["err_cfg"]["img_size"]))
             await asyncio.sleep(0)
 
-            boxes, scores, classes, valid_detections = await err_task 
+            boxes, scores, classes, valid_detections = await err_task
 
             print(boxes)
-            helper.draw_results(images,
-                                boxes,
-                                scores,
-                                classes,
-                                CLASSES,
-                                self.detector_cfg["err_cfg"]["img_size"],
-                                min_score=self.detector_cfg["err_cfg"]["yolo_score_threshold"])
+            helper.draw_results(
+                images,
+                boxes,
+                scores,
+                classes,
+                CLASSES,
+                self.detector_cfg["err_cfg"]["img_size"],
+                min_score=self.detector_cfg["err_cfg"]["yolo_score_threshold"])
             cv2.imshow("Prediction", images[0])
             cv2.waitKey()
             cv2.imshow("Prediction", images[1])
             if (cv2.waitKey() == 27):
                 break
-
-            

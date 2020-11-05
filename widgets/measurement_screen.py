@@ -12,20 +12,21 @@ from FQCS import detector, helper
 
 class MeasurementScreen(QWidget):
     CAMERA_LOADED = False
+    backscreen: Signal
+    nextscreen: Signal
 
-    def __init__(self, backscreen: (), nextscreen: (), main_window):
-        QWidget.__init__(self)
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
         self.detector_cfg = DetectorConfig.instance().config
         self.ui = Ui_MeasurementScreen()
         self.ui.setupUi(self)
-        self.main_window = main_window
-        self.binding(backscreen=backscreen, nextscreen=nextscreen)
+        self.backscreen = self.ui.btnBack.clicked
+        self.nextscreen = self.ui.btnNext.clicked
+        self.binding()
         self.load_cfg()
 
     # binding
-    def binding(self, backscreen: (), nextscreen: ()):
-        self.ui.btnBack.clicked.connect(backscreen)
-        self.ui.btnNext.clicked.connect(nextscreen)
+    def binding(self):
         self.ui.sldMaximumHeight.valueChanged.connect(self.min_height_change)
         self.ui.sldMaximumWidth.valueChanged.connect(self.min_width_change)
         self.ui.sldDectectPosition.valueChanged.connect(self.position_change)

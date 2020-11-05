@@ -42,6 +42,9 @@ class MainWindow(QMainWindow):
             backscreen=self.change_home_screen,
             nextscreen=self.change_measurement_screen,
             main_window=self)
+        self.detection_screen.captured.connect(self.capture)
+        self.detection_screen.camera_choosen.connect(
+            lambda index: self.video_camera.open(index))
 
         # screen 2
         self.measurement_screen = MeasurementScreen(

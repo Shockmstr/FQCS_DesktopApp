@@ -7,8 +7,12 @@ import trio
 
 
 class LoginScreen(QWidget):
-    def __init__(self, login_service: LoginService, on_success, on_error):
-        QWidget.__init__(self)
+    def __init__(self,
+                 login_service: LoginService,
+                 on_success=None,
+                 on_error=None,
+                 parent=None):
+        QWidget.__init__(self, parent)
         self.__on_success = on_success
         self.__on_error = on_error
         self.__login_service = login_service
