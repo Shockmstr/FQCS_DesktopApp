@@ -50,5 +50,5 @@ def get_all_camera_index(num=10):
 def get_current_sample_image_path(self):
     currentPath = DetectorConfig.instance().current_path
     if (currentPath == None):
-        currentPath = os.getcwd()  #default = current working directory
+        currentPath = os.sep.join([os.getcwd(), "resources"])  #default = current working directory/resouces
     return currentPath
