@@ -1,3 +1,4 @@
 {
-  "api_url": "http://localhost:60873"
+  "api_url": "http://localhost:60873",
+  "dev": true
 }

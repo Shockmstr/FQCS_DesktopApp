@@ -49,6 +49,9 @@ class MainWindow(QMainWindow):
 
         self.binding()
 
+        # hack
+        self.error_detect_screen.initing.emit()
+
         # add to Stacked Widget
         self.ui.centralStackWidget.addWidget(self.home_screen)
         self.ui.centralStackWidget.addWidget(self.detection_screen)
@@ -104,6 +107,8 @@ class MainWindow(QMainWindow):
             self.change_color_param_calib_screen)
         self.error_detect_screen.nextscreen.connect(
             self.change_progress_screen)
+        self.error_detect_screen.initing.connect(
+            self.error_detect_screen.load_yolov4_model)
 
         self.progress_screen.finished.connect(self.change_home_screen)
         self.progress_screen.captured.connect(self.capture)
