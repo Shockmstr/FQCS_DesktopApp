@@ -1,6 +1,6 @@
 import os
 from app_models.auth_info import AuthInfo
-from app_constants import TOKEN_PATH, ISO_DATE_FORMAT
+from app_constants import TOKEN_PATH, ISO_DATE_FORMAT, DEV_TOKEN_PATH
 import requests
 import datetime
 import asyncio
@@ -28,6 +28,7 @@ class LoginService:
         return
 
     async def check_token(self):
+        if AppConfig.instance().config["dev"]: return
         token = self.__auth_info.get_token_info()
         if (token is not None and 'expires_utc' in token):
             cur_exp_str = token['expires_utc']
@@ -107,11 +108,17 @@ class LoginService:
         return
 
     async def log_in(self, username, password):
+        if AppConfig.instance().config["dev"]:
+            with open(DEV_TOKEN_PATH) as fi:
+                dev_token = json.load(fi)
+                return (True, dev_token)
+
         try:
             form_data = {}
             form_data['username'] = username
             form_data['password'] = password
-            url = "{}/api/users/login".format(AppConfig.instance().config['api_url'])
+            url = "{}/api/users/login".format(
+                AppConfig.instance().config['api_url'])
             resp = requests.post(url, data=form_data)
             if (resp.status_code >= 200 and resp.status_code < 300):
                 data = resp.json()
