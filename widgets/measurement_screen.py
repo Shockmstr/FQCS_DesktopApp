@@ -110,7 +110,7 @@ class MeasurementScreen(QWidget):
         rect_height = int(self.label_height * height_value / 100)
         # draw Green rectangle image into image
         return cv.rectangle(image, (0, 0), (rect_width, rect_height),
-                            (0, 255, 0), 3)
+                            (0, 0, 255), 3)
         # if img is None:
         #     sys.exit("Could not read the image")
 
@@ -149,8 +149,8 @@ class MeasurementScreen(QWidget):
         return image
 
     def load_cfg(self):
-        min_width = self.detector_cfg["min_width_per"]
-        min_height = self.detector_cfg["min_height_per"]
+        min_width = self.detector_cfg["min_width_per"] * 100
+        min_height = self.detector_cfg["min_height_per"] * 100
         # length_per_10px = self.detector_cfg["lenght_per_10px"] #
         length_unit = self.detector_cfg["length_unit"]
         stop_condition = self.detector_cfg["stop_condition"]

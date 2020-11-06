@@ -5,7 +5,7 @@ from models.detector_config import DetectorConfigSingleton, DetectorConfig
 from app.helpers import *
 from widgets.image_widget import ImageWidget
 from views.error_detect_screen import Ui_ErrorDetectScreen
-from FQCS import detector
+from FQCS import detector, helper
 from FQCS.tf2_yolov4.anchors import YOLOV4_ANCHORS
 from FQCS.tf2_yolov4.model import YOLOv4
 from FQCS.tf2_yolov4.convert_darknet_weights import convert_darknet_weights
@@ -14,10 +14,15 @@ import csv
 import os
 import cv2
 import asyncio 
+import matplotlib.pyplot as plt
+from FQCS.tf2_yolov4 import helper as tf_helper
+import numpy as np
+import time
 
 
 class ErrorDetectScreen(QWidget):
     CAMERA_LOADED = False
+    SAVED = False
     def __init__(self, backscreen: (), nextscreen: ()):
         QWidget.__init__(self)
         self.ui = Ui_ErrorDetectScreen()
@@ -26,6 +31,7 @@ class ErrorDetectScreen(QWidget):
         self.init_ui_values()
         self.binding(backscreen=backscreen, nextscreen=nextscreen)
         self.load_cfg()
+        asyncio.run(self.load_yolov4_model())
     
     def load_cfg(self):
         img_size = self.detector_cfg["err_cfg"]["img_size"]
@@ -83,11 +89,7 @@ class ErrorDetectScreen(QWidget):
         self.ui.cbbWidth.currentIndexChanged.connect(self.image_resize)
         self.ui.btnChooseModel.clicked.connect(self.choose_model_clicked)
         self.ui.btnChooseClasses.clicked.connect(self.choose_classes_clicked)
-        self.ui.btnCapture.clicked.connect(self.trigger_yolo_process)
-
-    def trigger_yolo_process(self):
-        if self.sender() == self.ui.btnCapture:
-            asyncio.run(self.load_yolov4_model())
+        # self.ui.btnCapture.clicked.connect(self.trigger_yolo_process)
 
     # hander
     def min_score_change(self):
@@ -127,7 +129,7 @@ class ErrorDetectScreen(QWidget):
             
             print(class_list)
         self.detector_cfg["err_cfg"]["classes"] = class_list
-        self.detector_cfg["err_cfg"]["num_classes"] = len(class_list)
+        self.detector_cfg["err_cffg"]["num_classes"] = len(class_list)
         print(self.detector_cfg["err_cfg"]["classes"])
         print(self.detector_cfg["err_cfg"]["num_classes"])
 
@@ -141,29 +143,31 @@ class ErrorDetectScreen(QWidget):
         self.replace_camera_widget()
         self.img = image
         self.dim = (self.label_w, self.label_h)
-        result =  asyncio.run(self.load_yolov4_model())
-        cv2.imshow("Prediction", result[0])
-        cv2.waitKey()
-        cv2.imshow("Prediction", result[1])
-        # img_resize = cv2.resize(result, self.dim)
-        # self.image1.imshow(img_resize)
+        orig = cv2.resize(self.img, self.dim)
+        self.image1.imshow(orig)
+        asyncio.run(self.process_image(orig))
         
     def replace_camera_widget(self):
         if not self.CAMERA_LOADED:
             self.image1 = ImageWidget()
+            self.image2 = ImageWidget()
+            self.image3 = ImageWidget()
             self.label_w = self.ui.screen1.width()
             self.label_h = self.ui.screen1.height()
             self.imageLayout = self.ui.screen1.parentWidget().layout()
             self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+            self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+            self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
             self.CAMERA_LOADED = True 
 
     async def load_yolov4_model(self):
-        if not os.path.exists("./yolov4.h5"):
-            convert_darknet_weights("./yolov4-custom_best.weights",
-                                    "./yolo4.h5", (416, 416, 3),
+        if not os.path.exists(r"F:\Capstone\project\FQCS_DesktopApp\yolo4.h5"):
+            convert_darknet_weights(r"F:\Capstone\project\FQCS_DesktopApp\yolov4-custom_best.weights",
+                                    r"F:\Capstone\project\FQCS_DesktopApp\yolo4.h5", (416, 416, 3),
                                     1,
                                     weights=None)
-            return 
+        #TODO: set absolute path for weights in cfg
+        self.detector_cfg["err_cfg"]["weights"] = r"F:\Capstone\project\FQCS_DesktopApp\yolo4.h5"
 
         model = asyncio.create_task(
             detector.get_yolov4_model(
@@ -174,37 +178,105 @@ class ErrorDetectScreen(QWidget):
                 yolo_iou_threshold=self.detector_cfg["err_cfg"]["yolo_iou_threshold"],
                 weights=self.detector_cfg["err_cfg"]["weights"],
                 yolo_score_threshold=self.detector_cfg["err_cfg"]["yolo_score_threshold"]))
+
+        self.model = await model
+   
+    async def show_error(self, images):
+
         CLASSES = self.detector_cfg["err_cfg"]["classes"]
 
-        import matplotlib.pyplot as plt
-        from FQCS.tf2_yolov4 import helper
-        import numpy as np
-
-        model = await model
-   
-        img1 = cv2.imread("/Users/bitumhoang/Downloads/dirty_sorted/dirty_sorted/" +
-                        str(np.random.randint(151, 324)) + ".jpg")
-        img2 = cv2.imread("/Users/bitumhoang/Downloads/dirty_sorted/dirty_sorted/" +
-                        str(np.random.randint(151, 324)) + ".jpg")
-        images = [img1, img2]
-
         err_task = asyncio.create_task(
-            detector.detect_errors(model, images, self.detector_cfg["err_cfg"]["img_size"]))
-        await asyncio.sleep(0)
+            detector.detect_errors(self.model, images, self.detector_cfg["err_cfg"]["img_size"]))
 
         boxes, scores, classes, valid_detections = await err_task 
 
-        helper.draw_results(images,
+        images = helper_tf.draw_results(images,
                             boxes,
                             scores,
                             classes,
                             CLASSES,
                             self.detector_cfg["err_cfg"]["img_size"],
                             min_score=self.detector_cfg["err_cfg"]["yolo_score_threshold"])
-        # cv2.imshow("Prediction", images[0])
-        # cv2.waitKey()
-        # cv2.imshow("Prediction", images[1])
-        # if (cv2.waitKey() == 27):
-        #     break
-        return images
+        
+        images[0]*=255.
+        images[1]*=255.
+        images[0]=np.asarray(images[0], np.uint8)
+        images[0]=np.asarray(images[0], np.uint8)
+
+        self.image3.imshow(images[0])
+
+    async def process_pair(self, image):
+        detected = None
+        frame_width, frame_height = self.detector_cfg[
+            "frame_width"], self.detector_cfg["frame_height"]
+        min_width, min_height = self.detector_cfg[
+            "min_width_per"], self.detector_cfg["min_height_per"]
+        min_width, min_height = frame_width * min_width, frame_height * min_height
+        find_contours_func = detector.get_find_contours_func_by_method(
+            self.detector_cfg["detect_method"])
+
+        if (self.detector_cfg["detect_method"] == "thresh"):
+            adj_bg_thresh = helper.adjust_thresh_by_brightness(
+                image, self.detector_cfg["d_cfg"]["light_adj_thresh"],
+                self.detector_cfg["d_cfg"]["bg_thresh"])
+            self.detector_cfg["d_cfg"]["adj_bg_thresh"] = adj_bg_thresh
+        elif (self.detector_cfg["detect_method"] == "range"):
+            adj_cr_to = helper.adjust_crange_by_brightness(
+                image, self.detector_cfg["d_cfg"]["light_adj_thresh"],
+                self.detector_cfg["d_cfg"]["cr_to"])
+            self.detector_cfg["d_cfg"]["adj_cr_to"] = adj_cr_to
+
+        boxes, cnts, proc = detector.find_contours_and_box(
+            image,
+            find_contours_func,
+            self.detector_cfg["d_cfg"],
+            min_width=min_width,
+            min_height=min_height)
+        pair, image, split_left, split_right, boxes = detector.detect_pair_and_size(
+            image,
+            find_contours_func,
+            self.detector_cfg["d_cfg"],
+            boxes,
+            cnts,
+            stop_condition=self.detector_cfg['stop_condition'],
+            detect_range=self.detector_cfg['detect_range'])
+
+        # output
+        unit = self.detector_cfg["length_unit"]
+        per_10px = self.detector_cfg["length_per_10px"]
+        sizes = []
+        for b in boxes:
+            rect, lH, lW, box, tl, tr, br, bl = b
+            if (per_10px is not None):
+                lH, lW = helper.calculate_length(
+                    lH, per_10px), helper.calculate_length(lW, per_10px)
+            sizes.append((lH, lW))
+            cv2.drawContours(image, [box.astype("int")], -1, (0, 255, 0), 2)
+            cv2.putText(image, f"{lW:.1f} {unit}", (tl[0], tl[1]),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
+            cv2.putText(image, f"{lH:.1f} {unit}", (br[0], br[1]),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
+        # cv2.imshow("Contours processed", proc)
+        if pair is not None:
+            left, right = pair
+            left, right = left[0], right[0]
+            h_diff, w_diff = detector.compare_size(sizes[0], sizes[1],
+                                                   self.detector_cfg)
+
+            max_width = max((left.shape[0], right.shape[0]))
+            temp_left = imutils.resize(left, height = max_width)
+            temp_right = imutils.resize(right, height = max_width)
+            detected = np.concatenate((temp_left, temp_right), axis=1)
+
+            # if pair is detected, detected is not None
+            return image, detected, (left, right)
+        # if no pair detected, return None
+        return image, None, None
+
+    async def process_image(self, image):
+        contour, _, detected_pair = await self.process_pair(image)
+        contour = cv2.resize(contour, self.dim)
+        self.image2.imshow(contour)
+        if detected_pair is not None:
+            await self.show_error(detected_pair)
             

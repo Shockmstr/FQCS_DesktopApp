@@ -180,11 +180,3 @@ class MainWindow(QMainWindow):
                 self.detector_cfg.current_path = file_path
         else:
             print("No config provided")
-
-    def init_yolo4_model(self):
-        if not os.path.exists("./yolov4.h5"):
-            convert_darknet_weights("./yolov4-custom_best.weights",
-                                    "./yolo4.h5", (416, 416, 3),
-                                    1,
-                                    weights=None)
-            return 
