@@ -12,6 +12,7 @@ import os
 import imutils
 import cv2
 from widgets.image_widget import ImageWidget
+import imutils
 import matplotlib.pyplot as plt
 from FQCS.tf2_yolov4 import helper as tf_helper
 import numpy as np
