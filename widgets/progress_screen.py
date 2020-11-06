@@ -1,12 +1,11 @@
 from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Signal
-
-from app_models.detector_config import DetectorConfig, DetectorConfigSingleton
+import trio
+from app_models.detector_config import DetectorConfig
 from FQCS import helper
 from FQCS.tf2_yolov4 import helper as y_helper
 import os
 from FQCS import detector
-import asyncio
 
 from views.progress_screen import Ui_ProgressScreen
 from widgets.image_widget import ImageWidget
@@ -23,7 +22,7 @@ class ProgressScreen(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.ui = Ui_ProgressScreen()
-        self.detector_cfg = DetectorConfigSingleton.get_instance().config
+        self.detector_cfg = DetectorConfig.instance().config
         self.ui.setupUi(self)
         self.binding()
 
@@ -35,11 +34,11 @@ class ProgressScreen(QWidget):
     def cam_control(self):
         if self.CAMERA_LOADED == True:
             self.ui.btnCapture.setText("STOP")
-            self.stopped.emit()
+            self.captured.emit()
             self.CAMERA_LOADED = False
         elif self.CAMERA_LOADED == False:
             self.ui.btnCapture.setText("CAPTURE")
-            self.captured.emit()
+            self.stopped.emit()
             self.CAMERA_LOADED = True
 
     def view_cam(self, image):
@@ -64,15 +63,14 @@ class ProgressScreen(QWidget):
         sample_right_path = "/Users/bitumhoang/Desktop/capstone/FQCS_DesktopApp/sample_right.jpg"
 
         err_cfg = self.detector_cfg["err_cfg"]
-        model = asyncio.create_task(
-            detector.get_yolov4_model(
-                inp_shape=err_cfg["inp_shape"],
-                num_classes=err_cfg["num_classes"],
-                training=False,
-                yolo_max_boxes=err_cfg["yolo_max_boxes"],
-                yolo_iou_threshold=err_cfg["yolo_iou_threshold"],
-                weights=err_cfg["weights"],
-                yolo_score_threshold=err_cfg["yolo_score_threshold"]))
+        model = detector.get_yolov4_model(
+            inp_shape=err_cfg["inp_shape"],
+            num_classes=err_cfg["num_classes"],
+            training=False,
+            yolo_max_boxes=err_cfg["yolo_max_boxes"],
+            yolo_iou_threshold=err_cfg["yolo_iou_threshold"],
+            weights=err_cfg["weights"],
+            yolo_score_threshold=err_cfg["yolo_score_threshold"])
 
         uri = "/Users/bitumhoang/Desktop/capstone/FQCS-Research/FQCS.ColorDetection/FQCS_detector/test.mp4"
         cap = cv2.VideoCapture(uri)
@@ -184,10 +182,8 @@ class ProgressScreen(QWidget):
                     cv2.imwrite(sample_right_path, right)
                 else:
                     images = [left, right]
-                    err_task = asyncio.create_task(
-                        detector.detect_errors(model, images,
-                                               err_cfg["img_size"]))
-                    await asyncio.sleep(0)  # hacky way to trigger task
+                    err_task = detector.detect_errors(model, images,
+                                                      err_cfg["img_size"])
 
                     # start
                     c_cfg = self.detector_cfg['color_cfg']
@@ -266,5 +262,5 @@ class ProgressScreen(QWidget):
 
     def btn_finished_clicked(self, event: bool):
         if self.sender() == self.ui.btnStop:
-            trio.run(self.final_process())
+            trio.run(self.final_process)
         self.finished.emit(event)

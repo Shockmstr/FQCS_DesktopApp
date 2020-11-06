@@ -6,7 +6,6 @@ from views.error_detect_screen import Ui_ErrorDetectScreen
 from FQCS import detector, helper
 from FQCS.tf2_yolov4.anchors import YOLOV4_ANCHORS
 from FQCS.tf2_yolov4.model import YOLOv4
-from FQCS.tf2_yolov4.convert_darknet_weights import convert_darknet_weights
 import csv
 import os
 import cv2
@@ -22,6 +21,7 @@ class ErrorDetectScreen(QWidget):
     SAVED = False
     backscreen: Signal
     nextscreen: Signal
+    initing = Signal()
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -33,7 +33,7 @@ class ErrorDetectScreen(QWidget):
         self.init_ui_values()
         self.binding()
         self.load_cfg()
-        trio.run(self.load_yolov4_model())
+        # trio.run(self.load_yolov4_model)
 
     def load_cfg(self):
         img_size = self.detector_cfg["err_cfg"]["img_size"]
@@ -146,7 +146,7 @@ class ErrorDetectScreen(QWidget):
         self.dim = (self.label_w, self.label_h)
         orig = cv2.resize(self.img, self.dim)
         self.image1.imshow(orig)
-        trio.run(self.process_image(orig))
+        trio.run(self.process_image, orig)
 
     def replace_camera_widget(self):
         if not self.CAMERA_LOADED:
@@ -161,13 +161,13 @@ class ErrorDetectScreen(QWidget):
             self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
             self.CAMERA_LOADED = True
 
-    async def load_yolov4_model(self):
+    def load_yolov4_model(self):
+        print("Loaded yolo")
+        trio.run(self.__load_yolov4_model)
+
+    async def __load_yolov4_model(self):
         if not os.path.exists(r"F:\Capstone\project\FQCS_DesktopApp\yolo4.h5"):
-            convert_darknet_weights(
-                r"F:\Capstone\project\FQCS_DesktopApp\yolov4-custom_best.weights",
-                r"F:\Capstone\project\FQCS_DesktopApp\yolo4.h5", (416, 416, 3),
-                1,
-                weights=None)
+            return
         #TODO: set absolute path for weights in cfg
         self.detector_cfg["err_cfg"][
             "weights"] = r"F:\Capstone\project\FQCS_DesktopApp\yolo4.h5"
@@ -187,9 +187,9 @@ class ErrorDetectScreen(QWidget):
         self.model = await model
 
     async def show_error(self, images):
+        if self.model is None: return
 
         CLASSES = self.detector_cfg["err_cfg"]["classes"]
-
         err_task = asyncio.create_task(
             detector.detect_errors(self.model, images,
                                    self.detector_cfg["err_cfg"]["img_size"]))
