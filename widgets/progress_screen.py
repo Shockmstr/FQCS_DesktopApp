@@ -1,7 +1,7 @@
 from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Signal
 
-from app_models.detector_config import DetectorConfig, DetectorConfigSingleton
+from app_models.detector_config import DetectorConfig
 from FQCS import helper
 from FQCS.tf2_yolov4 import helper as y_helper
 import os
