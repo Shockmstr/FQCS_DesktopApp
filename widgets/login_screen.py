@@ -28,6 +28,8 @@ class LoginScreen(QWidget):
         is_success, resp = trio.run(self.__login_service.log_in, username,
                                     password)
         if is_success:
+            self.__login_service.save_token_json(resp)
+            trio.run(self.__login_service.check_token)
             self.success.emit(resp)
         else:
             choice = self.on_logged_in_error(resp)

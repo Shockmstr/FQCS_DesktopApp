@@ -10,13 +10,13 @@ import trio
 import json
 from services.thread_manager import ThreadManager
 from app import helpers
+from app_models.app_config import AppConfig
 
 LOGIN_SERVICE_TH_GR_KEY = "LoginService"
 
 
 class LoginService:
-    def __init__(self, app_config: dict, auth_info: AuthInfo):
-        self.__app_config = app_config
+    def __init__(self, auth_info: AuthInfo):
         self.__auth_info = auth_info
 
     async def init_auth_info(self):
@@ -50,7 +50,7 @@ class LoginService:
                             form_data['grant_type'] = 'refresh_token'
                             form_data['refresh_token'] = token['refresh_token']
                             url = "{}/api/users/login".format(
-                                self.__app_config['api_url'])
+                                AppConfig.instance().config['api_url'])
                             resp = requests.post(url, data=form_data)
                             if (resp.status_code >= 200
                                     and resp.status_code < 300):
@@ -111,12 +111,10 @@ class LoginService:
             form_data = {}
             form_data['username'] = username
             form_data['password'] = password
-            url = "{}/api/users/login".format(self.__app_config['api_url'])
+            url = "{}/api/users/login".format(AppConfig.instance().config['api_url'])
             resp = requests.post(url, data=form_data)
             if (resp.status_code >= 200 and resp.status_code < 300):
                 data = resp.json()
-                self.save_token_json(data)
-                await self.check_token()
                 return (True, data)
             else:
                 return (False, resp)

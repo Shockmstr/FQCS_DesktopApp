@@ -172,17 +172,16 @@ class ErrorDetectScreen(QWidget):
         self.detector_cfg["err_cfg"][
             "weights"] = r"F:\Capstone\project\FQCS_DesktopApp\yolo4.h5"
 
-        model = asyncio.create_task(
-            detector.get_yolov4_model(
-                inp_shape=self.detector_cfg["err_cfg"]["inp_shape"],
-                num_classes=self.detector_cfg["err_cfg"]["num_classes"],
-                training=False,
-                yolo_max_boxes=self.detector_cfg["err_cfg"]["yolo_max_boxes"],
-                yolo_iou_threshold=self.detector_cfg["err_cfg"]
-                ["yolo_iou_threshold"],
-                weights=self.detector_cfg["err_cfg"]["weights"],
-                yolo_score_threshold=self.detector_cfg["err_cfg"]
-                ["yolo_score_threshold"]))
+        model = detector.get_yolov4_model(
+            inp_shape=self.detector_cfg["err_cfg"]["inp_shape"],
+            num_classes=self.detector_cfg["err_cfg"]["num_classes"],
+            training=False,
+            yolo_max_boxes=self.detector_cfg["err_cfg"]["yolo_max_boxes"],
+            yolo_iou_threshold=self.detector_cfg["err_cfg"]
+            ["yolo_iou_threshold"],
+            weights=self.detector_cfg["err_cfg"]["weights"],
+            yolo_score_threshold=self.detector_cfg["err_cfg"]
+            ["yolo_score_threshold"])
 
         self.model = await model
 
@@ -190,9 +189,8 @@ class ErrorDetectScreen(QWidget):
         if self.model is None: return
 
         CLASSES = self.detector_cfg["err_cfg"]["classes"]
-        err_task = asyncio.create_task(
-            detector.detect_errors(self.model, images,
-                                   self.detector_cfg["err_cfg"]["img_size"]))
+        err_task = detector.detect_errors(
+            self.model, images, self.detector_cfg["err_cfg"]["img_size"])
 
         boxes, scores, classes, valid_detections = await err_task
 
