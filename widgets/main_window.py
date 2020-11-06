@@ -13,6 +13,7 @@ from widgets.detection_config_screen import DetectionConfigScreen
 from widgets.color_param_calibration_screen import ColorParamCalibrationScreen
 from widgets.error_detect_screen import ErrorDetectScreen
 from widgets.progress_screen import ProgressScreen
+from widgets.asym_config_screen import AsymConfigScreen
 from services.login_service import LoginService
 
 
@@ -46,6 +47,8 @@ class MainWindow(QMainWindow):
         self.error_detect_screen = ErrorDetectScreen(self)
         # screen 7
         self.progress_screen = ProgressScreen(self)
+        # screen 8
+        self.asym_config_screen = AsymConfigScreen(self)
 
         self.binding()
 
@@ -62,6 +65,7 @@ class MainWindow(QMainWindow):
         self.ui.centralStackWidget.addWidget(self.color_param_calib_screen)
         self.ui.centralStackWidget.addWidget(self.error_detect_screen)
         self.ui.centralStackWidget.addWidget(self.progress_screen)
+        self.ui.centralStackWidget.addWidget(self.asym_config_screen)
 
     # binding
     def binding(self):
@@ -96,10 +100,15 @@ class MainWindow(QMainWindow):
         self.color_preprocess_config_screen.backscreen.connect(
             self.change_detect_pair_screen)
         self.color_preprocess_config_screen.nextscreen.connect(
+            self.change_asym_config_screen)
+
+        self.asym_config_screen.backscreen.connect(
+            self.change_color_preprocess_config_screen)
+        self.asym_config_screen.nextscreen.connect(
             self.change_color_param_calib_screen)
 
         self.color_param_calib_screen.backscreen.connect(
-            self.change_color_preprocess_config_screen)
+            self.change_asym_config_screen)
         self.color_param_calib_screen.nextscreen.connect(
             self.change_error_detect_screen)
 
@@ -166,6 +175,9 @@ class MainWindow(QMainWindow):
     def change_progress_screen(self):
         self.ui.centralStackWidget.setCurrentWidget(self.progress_screen)
 
+    def change_asym_config_screen(self):
+        self.ui.centralStackWidget.setCurrentWidget(self.asym_config_screen)
+
     def widget_change(self):
         currentWidget = self.ui.centralStackWidget.currentWidget()
         if (currentWidget == self.detection_screen):
@@ -185,6 +197,9 @@ class MainWindow(QMainWindow):
         #     self.control_timer(True)
         elif (currentWidget == self.progress_screen):
             self.process_cam = self.progress_screen.view_cam
+            self.control_timer(True)
+        elif (currentWidget == self.asym_config_screen):
+            self.process_cam = self.asym_config_screen.view_cam
             self.control_timer(True)
         else:
             self.control_timer(False)
