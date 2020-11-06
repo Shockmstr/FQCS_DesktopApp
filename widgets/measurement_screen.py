@@ -1,10 +1,9 @@
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
+from PySide2.QtWidgets import QWidget
+from PySide2.QtCore import Signal
 from widgets.image_widget import ImageWidget
 import numpy as np
 import cv2 as cv
-from models.detector_config import DetectorConfig, DetectorConfigSingleton
+from app_models.detector_config import DetectorConfig
 from views.measurement_screen import Ui_MeasurementScreen
 from views.detection_config_screen import Ui_DetectionConfigScreen
 from FQCS import detector, helper
@@ -12,20 +11,21 @@ from FQCS import detector, helper
 
 class MeasurementScreen(QWidget):
     CAMERA_LOADED = False
+    backscreen: Signal
+    nextscreen: Signal
 
-    def __init__(self, backscreen: (), nextscreen: (), main_window):
-        QWidget.__init__(self)
-        self.detector_cfg = DetectorConfigSingleton.get_instance().config
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
+        self.detector_cfg = DetectorConfig.instance().config
         self.ui = Ui_MeasurementScreen()
         self.ui.setupUi(self)
-        self.main_window = main_window
-        self.binding(backscreen=backscreen, nextscreen=nextscreen)
+        self.backscreen = self.ui.btnBack.clicked
+        self.nextscreen = self.ui.btnNext.clicked
+        self.binding()
         self.load_cfg()
 
     # binding
-    def binding(self, backscreen: (), nextscreen: ()):
-        self.ui.btnBack.clicked.connect(backscreen)
-        self.ui.btnNext.clicked.connect(nextscreen)
+    def binding(self):
         self.ui.sldMaximumHeight.valueChanged.connect(self.min_height_change)
         self.ui.sldMaximumWidth.valueChanged.connect(self.min_width_change)
         self.ui.sldDectectPosition.valueChanged.connect(self.position_change)
@@ -110,7 +110,7 @@ class MeasurementScreen(QWidget):
         rect_height = int(self.label_height * height_value / 100)
         # draw Green rectangle image into image
         return cv.rectangle(image, (0, 0), (rect_width, rect_height),
-                            (0, 255, 0), 3)
+                            (0, 0, 255), 3)
         # if img is None:
         #     sys.exit("Could not read the image")
 
@@ -149,8 +149,8 @@ class MeasurementScreen(QWidget):
         return image
 
     def load_cfg(self):
-        min_width = self.detector_cfg["min_width_per"]
-        min_height = self.detector_cfg["min_height_per"]
+        min_width = self.detector_cfg["min_width_per"] * 100
+        min_height = self.detector_cfg["min_height_per"] * 100
         # length_per_10px = self.detector_cfg["lenght_per_10px"] #
         length_unit = self.detector_cfg["length_unit"]
         stop_condition = self.detector_cfg["stop_condition"]

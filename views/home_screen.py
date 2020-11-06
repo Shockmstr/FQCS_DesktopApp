@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'home_screenppMoXw.ui'
+## Form generated from reading UI file 'home_screenTUSPoH.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -17,7 +17,7 @@ class Ui_HomeScreen(object):
     def setupUi(self, HomeScreen):
         if not HomeScreen.objectName():
             HomeScreen.setObjectName(u"HomeScreen")
-        HomeScreen.resize(1266, 707)
+        HomeScreen.resize(1319, 809)
         HomeScreen.setAutoFillBackground(False)
         HomeScreen.setStyleSheet(u"background:#E5E5E5")
         self.verticalLayout = QVBoxLayout(HomeScreen)
@@ -165,12 +165,12 @@ class Ui_HomeScreen(object):
 
         self.verticalLayout_3.addWidget(self.btnEditConfig)
 
-        self.btnResetDefault = QPushButton(self.containerButtons)
-        self.btnResetDefault.setObjectName(u"btnResetDefault")
-        self.btnResetDefault.setFont(font1)
-        self.btnResetDefault.setStyleSheet(u"background-color: grey; height: 45;")
+        self.btnLogout = QPushButton(self.containerButtons)
+        self.btnLogout.setObjectName(u"btnLogout")
+        self.btnLogout.setFont(font1)
+        self.btnLogout.setStyleSheet(u"background-color: grey; height: 45;")
 
-        self.verticalLayout_3.addWidget(self.btnResetDefault)
+        self.verticalLayout_3.addWidget(self.btnLogout)
 
         self.btnExit = QPushButton(self.containerButtons)
         self.btnExit.setObjectName(u"btnExit")
@@ -210,7 +210,7 @@ class Ui_HomeScreen(object):
         self.lblLocalStorage.setText(QCoreApplication.translate("HomeScreen", u"**Local Storage:** {{LocalStorage}}", None))
         self.btnStart.setText(QCoreApplication.translate("HomeScreen", u"START", None))
         self.btnEditConfig.setText(QCoreApplication.translate("HomeScreen", u"EDIT CONFIGURATION", None))
-        self.btnResetDefault.setText(QCoreApplication.translate("HomeScreen", u"RESET DEFAULT", None))
+        self.btnLogout.setText(QCoreApplication.translate("HomeScreen", u"LOG OUT", None))
         self.btnExit.setText(QCoreApplication.translate("HomeScreen", u"EXIT", None))
     # retranslateUi
 

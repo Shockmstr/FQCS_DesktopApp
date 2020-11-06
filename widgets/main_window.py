@@ -1,10 +1,9 @@
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
+from PySide2.QtWidgets import QMainWindow
+from PySide2.QtCore import Signal, QTimer
 from views.main_window import Ui_MainWindow
 from FQCS import detector
-from models.detector_config import *
-from app.helpers import *
+from app_models.detector_config import DetectorConfig
+from app import helpers
 import cv2
 from widgets.measurement_screen import MeasurementScreen
 from widgets.home_screen import HomeScreen
@@ -14,58 +13,41 @@ from widgets.detection_config_screen import DetectionConfigScreen
 from widgets.color_param_calibration_screen import ColorParamCalibrationScreen
 from widgets.error_detect_screen import ErrorDetectScreen
 from widgets.progress_screen import ProgressScreen
+from services.login_service import LoginService
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    logged_out = Signal(bool)
+
+    def __init__(self, login_service: LoginService):
         QMainWindow.__init__(self)
+        self.__login_service = login_service
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.showFullScreen()
-        self.detector_cfg = DetectorConfigSingleton.get_instance()
+        self.detector_cfg = DetectorConfig.instance()
         self.video_camera = cv2.VideoCapture()
         self.timer = QTimer()
         self.process_cam = None
-        self.binding()
 
         # screen 0
-        self.home_screen = HomeScreen(configScreen=self.change_detection_screen, progressScreen=self.change_progress_screen, on_exit=self.exit_program)
-
+        self.home_screen = HomeScreen(login_service, self)
         # screen 1
-        self.detection_screen = DetectionConfigScreen(
-            backscreen=self.change_home_screen,
-            nextscreen=self.change_measurement_screen,
-            main_window = self)
-
+        self.detection_screen = DetectionConfigScreen(self)
         # screen 2
-        self.measurement_screen = MeasurementScreen(
-            backscreen=self.change_detection_screen,
-            nextscreen=self.change_detect_pair_screen,
-            main_window = self)
-
+        self.measurement_screen = MeasurementScreen(self)
         # screen 3
-        self.test_detect_pair_screen = TestDetectPairScreen(
-            backscreen=self.change_measurement_screen,
-            nextscreen=self.change_color_preprocess_config_screen)
-
+        self.test_detect_pair_screen = TestDetectPairScreen(self)
         # screen 4
-        self.color_preprocess_config_screen = ColorPreprocessConfigScreen(
-            backscreen=self.change_detect_pair_screen,
-            nextscreen=self.change_color_param_calib_screen)
-
+        self.color_preprocess_config_screen = ColorPreprocessConfigScreen(self)
         # screen 5
-        self.color_param_calib_screen = ColorParamCalibrationScreen(
-            backscreen=self.change_color_preprocess_config_screen,
-            nextscreen=self.change_error_detect_screen)
-
+        self.color_param_calib_screen = ColorParamCalibrationScreen(self)
         # screen 6
-        self.error_detect_screen = ErrorDetectScreen(
-            backscreen=self.change_color_param_calib_screen,
-            nextscreen=self.change_progress_screen)
-
+        self.error_detect_screen = ErrorDetectScreen(self)
         # screen 7
-        self.progress_screen = ProgressScreen(homeScreen = self.change_home_screen,
-            main_window = self)
+        self.progress_screen = ProgressScreen(self)
+
+        self.binding()
 
         # add to Stacked Widget
         self.ui.centralStackWidget.addWidget(self.home_screen)
@@ -85,6 +67,52 @@ class MainWindow(QMainWindow):
         self.ui.actionSaveCfg.triggered.connect(self.on_save_config)
         self.timer.timeout.connect(self.show_cam)
         self.ui.centralStackWidget.currentChanged.connect(self.widget_change)
+
+        self.home_screen.action_logout.connect(self.on_logged_out)
+        self.home_screen.action_edit.connect(self.change_detection_screen)
+        self.home_screen.action_start.connect(self.change_progress_screen)
+        self.home_screen.action_exit.connect(self.exit_program)
+
+        self.detection_screen.backscreen.connect(self.change_home_screen)
+        self.detection_screen.nextscreen.connect(
+            self.change_measurement_screen)
+        self.detection_screen.captured.connect(self.capture)
+        self.detection_screen.camera_choosen.connect(
+            lambda index: self.video_camera.open(index))
+
+        self.measurement_screen.backscreen.connect(
+            self.change_detection_screen)
+        self.measurement_screen.nextscreen.connect(
+            self.change_detect_pair_screen)
+
+        self.test_detect_pair_screen.backscreen.connect(
+            self.change_measurement_screen)
+        self.test_detect_pair_screen.nextscreen.connect(
+            self.change_color_preprocess_config_screen)
+
+        self.color_preprocess_config_screen.backscreen.connect(
+            self.change_detect_pair_screen)
+        self.color_preprocess_config_screen.nextscreen.connect(
+            self.change_color_param_calib_screen)
+
+        self.color_param_calib_screen.backscreen.connect(
+            self.change_color_preprocess_config_screen)
+        self.color_param_calib_screen.nextscreen.connect(
+            self.change_error_detect_screen)
+
+        self.error_detect_screen.backscreen.connect(
+            self.change_color_param_calib_screen)
+        self.error_detect_screen.nextscreen.connect(
+            self.change_progress_screen)
+
+        self.progress_screen.finished.connect(self.change_home_screen)
+        self.progress_screen.captured.connect(self.capture)
+        self.progress_screen.stopped.connect(self.stop)
+        return
+
+    def on_logged_out(self, event: bool):
+        # logic
+        self.logged_out.emit(event)
 
     def show_cam(self):
         if (self.video_camera.isOpened() and self.process_cam is not None):
@@ -140,9 +168,9 @@ class MainWindow(QMainWindow):
             self.control_timer(True)
         elif (currentWidget == self.measurement_screen):
             self.process_cam = self.measurement_screen.view_cam
-            self.control_timer(True)    
+            self.control_timer(True)
         elif (currentWidget == self.color_param_calib_screen):
-            self.process_cam = self.color_param_calib_screen.view_cam 
+            self.process_cam = self.color_param_calib_screen.view_cam
             self.control_timer(True)
         elif (currentWidget == self.test_detect_pair_screen):
             self.process_cam = self.test_detect_pair_screen.view_cam
@@ -163,7 +191,7 @@ class MainWindow(QMainWindow):
         self.control_timer(True)
 
     def on_load_config(self):
-        file_path = file_chooser_open_directory(self)
+        file_path = helpers.file_chooser_open_directory(self)
         if file_path is not None:
             temp_cfg = detector.load_json_cfg(file_path)
             self.detector_cfg.load_config(temp_cfg)
@@ -174,17 +202,9 @@ class MainWindow(QMainWindow):
     def on_save_config(self):
         configs = self.detector_cfg.config
         if configs is not None:
-            file_path = file_chooser_open_directory(self)
+            file_path = helpers.file_chooser_open_directory(self)
             if (file_path):
                 detector.save_json_cfg(configs, file_path)
                 self.detector_cfg.current_path = file_path
         else:
             print("No config provided")
-
-    def init_yolo4_model(self):
-        if not os.path.exists("./yolov4.h5"):
-            convert_darknet_weights("./yolov4-custom_best.weights",
-                                    "./yolo4.h5", (416, 416, 3),
-                                    1,
-                                    weights=None)
-            return 

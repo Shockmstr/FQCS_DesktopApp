@@ -1,7 +1,6 @@
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
-from models.detector_config import DetectorConfigSingleton, DetectorConfig
+from PySide2.QtWidgets import QWidget
+from PySide2.QtCore import Signal
+from app_models.detector_config import DetectorConfig
 
 import cv2
 import os
@@ -9,24 +8,27 @@ import imutils
 import numpy as np
 from FQCS import detector, helper
 from widgets.image_widget import ImageWidget
-from app.helpers import file_chooser_open_directory
+from app import helpers
 from views.test_detect_pair_screen import Ui_test_detect_pair_screen
+
 
 class TestDetectPairScreen(QWidget):
     CAMERA_LOADED = False
     detected_pair = None
+    backscreen: Signal
+    nextscreen: Signal
 
-    def __init__(self, backscreen: (), nextscreen: ()):
-        QWidget.__init__(self)
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
         self.ui = Ui_test_detect_pair_screen()
-        self.detector_cfg = DetectorConfigSingleton.get_instance().config
+        self.detector_cfg = DetectorConfig.instance().config
         self.ui.setupUi(self)
-        self.binding(backscreen=backscreen, nextscreen=nextscreen)
+        self.backscreen = self.ui.btnBack.clicked
+        self.nextscreen = self.ui.btnNext.clicked
+        self.binding()
 
     # binding
-    def binding(self, backscreen:(), nextscreen: ()):
-        self.ui.btnBack.clicked.connect(backscreen)
-        self.ui.btnNext.clicked.connect(nextscreen)
+    def binding(self):
         self.ui.btnSaveSample.clicked.connect(self.save_sample)
         self.ui.btnRetakeSample.clicked.connect(self.reset_sample)
 
@@ -121,8 +123,8 @@ class TestDetectPairScreen(QWidget):
             # if split_left is not None:
             #     detected = np.concatenate((split_left, split_right), axis=1)
             max_width = max((left.shape[0], right.shape[0]))
-            temp_left = imutils.resize(left, height = max_width)
-            temp_right = imutils.resize(right, height = max_width)
+            temp_left = imutils.resize(left, height=max_width)
+            temp_right = imutils.resize(right, height=max_width)
             detected = np.concatenate((temp_left, temp_right), axis=1)
             return image, detected, (left, right)
 
@@ -131,15 +133,18 @@ class TestDetectPairScreen(QWidget):
     def save_sample(self):
         if self.detected_pair is not None:
             left, right = self.detected_pair
-            folder_path = DetectorConfigSingleton.get_instance().current_path
+            folder_path = DetectorConfig.instance().current_path
             if folder_path is None:
-                folder_path = file_chooser_open_directory(self)
+                folder_path = helpers.file_chooser_open_directory(self)
             left = cv2.flip(left, 1)
-            if not os.path.exists(folder_path + r"/" + detector.SAMPLE_LEFT_FILE):
-                cv2.imwrite(folder_path + r"/" + detector.SAMPLE_LEFT_FILE, left)
-                cv2.imwrite(folder_path + r"/" + detector.SAMPLE_RIGHT_FILE, right)
+            if not os.path.exists(folder_path + r"/" +
+                                  detector.SAMPLE_LEFT_FILE):
+                cv2.imwrite(folder_path + r"/" + detector.SAMPLE_LEFT_FILE,
+                            left)
+                cv2.imwrite(folder_path + r"/" + detector.SAMPLE_RIGHT_FILE,
+                            right)
                 print(f"save successful at {folder_path}")
-    
+
     def reset_sample(self):
         self.detected_pair = None
         self.image3.imreset()

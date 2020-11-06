@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'measurement_screenGzbuEh.ui'
+## Form generated from reading UI file 'measurement_screenQQvGyJ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -105,10 +105,10 @@ class Ui_MeasurementScreen(object):
         self.verticalLayout_11.setContentsMargins(-1, 0, -1, 0)
         self.sldMaximumWidth = QSlider(self.groupSliderWidth)
         self.sldMaximumWidth.setObjectName(u"sldMaximumWidth")
-        self.sldMaximumWidth.setMinimum(0)
+        self.sldMaximumWidth.setMinimum(1)
         self.sldMaximumWidth.setMaximum(100)
-        self.sldMaximumWidth.setValue(0)
-        self.sldMaximumWidth.setSliderPosition(0)
+        self.sldMaximumWidth.setValue(1)
+        self.sldMaximumWidth.setSliderPosition(1)
         self.sldMaximumWidth.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_11.addWidget(self.sldMaximumWidth)
@@ -171,8 +171,9 @@ class Ui_MeasurementScreen(object):
         self.verticalLayout_12.setContentsMargins(-1, 0, -1, 0)
         self.sldMaximumHeight = QSlider(self.groupSliderHeight)
         self.sldMaximumHeight.setObjectName(u"sldMaximumHeight")
+        self.sldMaximumHeight.setMinimum(1)
         self.sldMaximumHeight.setMaximum(100)
-        self.sldMaximumHeight.setValue(0)
+        self.sldMaximumHeight.setValue(1)
         self.sldMaximumHeight.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_12.addWidget(self.sldMaximumHeight)
