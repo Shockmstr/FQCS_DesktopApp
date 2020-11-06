@@ -16,7 +16,7 @@ class MeasurementScreen(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.detector_cfg = DetectorConfig.instance().config
+        self.detector_cfg = DetectorConfig.instance()
         self.ui = Ui_MeasurementScreen()
         self.ui.setupUi(self)
         self.backscreen = self.ui.btnBack.clicked
@@ -37,33 +37,33 @@ class MeasurementScreen(QWidget):
 
     def min_width_change(self):
         self.value = self.ui.sldMaximumWidth.value()
-        self.detector_cfg["min_width_per"] = self.value / 100
+        self.detector_cfg.config["min_width_per"] = self.value / 100
         self.ui.groupSliderWidth.setTitle("Maximum width (%): " +
                                           str(self.value))
 
     def min_height_change(self):
         value = self.ui.sldMaximumHeight.value()
-        self.detector_cfg["min_height_per"] = value / 100
+        self.detector_cfg.config["min_height_per"] = value / 100
         self.ui.groupSliderHeight.setTitle("Maximum height (%): " + str(value))
 
     def position_change(self):
         value = self.ui.sldDectectPosition.value()
-        self.detector_cfg["stop_condition"] = (value - 50) / 50
+        self.detector_cfg.config["stop_condition"] = (value - 50) / 50
         self.ui.groupSliderPosition.setTitle("Detect position: " + str(value))
 
     def length_unit_change(self):
         value = str(self.ui.inpLengthUnit.text())
-        self.detector_cfg["length_unit"] = value
+        self.detector_cfg.config["length_unit"] = value
 
     def detect_range_change(self):
         value = str(self.ui.sldDetectRange.value() / 100)
-        self.detector_cfg["detect_range"] = (float(value),
+        self.detector_cfg.config["detect_range"] = (float(value),
                                              float(1 - float(value)))
         self.ui.groupSliderDetectRange.setTitle("Detect range: " + value)
 
     def actual_length_change(self, text):
         value = float(self.ui.inpLeftActualLength.text())
-        self.detector_cfg["length_per_10px"] = helper.calculate_length_per10px(
+        self.detector_cfg.config["length_per_10px"] = helper.calculate_length_per10px(
             total_px, value)
 
     def allow_diff_change(self, text):
@@ -74,7 +74,7 @@ class MeasurementScreen(QWidget):
         except:
             raise 'Please enter number only'
 
-        self.detector_cfg["max_size_diff"] = value
+        self.detector_cfg.config["max_size_diff"] = value
 
     # view camera
     def view_cam(self, image):
@@ -139,7 +139,7 @@ class MeasurementScreen(QWidget):
 
         left_line_point = int(left_line_ratio * self.label_width)
         right_line_point = int(right_line_ratio * self.label_width)
-        self.detector_cfg["detect_range"] = (float(value),
+        self.detector_cfg.config["detect_range"] = (float(value),
                                              float(1 - float(value)))
 
         image = cv.line(image, (left_line_point, 0),
@@ -149,13 +149,13 @@ class MeasurementScreen(QWidget):
         return image
 
     def load_cfg(self):
-        min_width = self.detector_cfg["min_width_per"] * 100
-        min_height = self.detector_cfg["min_height_per"] * 100
-        # length_per_10px = self.detector_cfg["lenght_per_10px"] #
-        length_unit = self.detector_cfg["length_unit"]
-        stop_condition = self.detector_cfg["stop_condition"]
-        detect_range = self.detector_cfg["detect_range"][0] * 100
-        max_size_diff = self.detector_cfg["max_size_diff"]
+        min_width = self.detector_cfg.config["min_width_per"] * 100
+        min_height = self.detector_cfg.config["min_height_per"] * 100
+        # length_per_10px = self.detector_cfg.config["lenght_per_10px"] #
+        length_unit = self.detector_cfg.config["length_unit"]
+        stop_condition = self.detector_cfg.config["stop_condition"]
+        detect_range = self.detector_cfg.config["detect_range"][0] * 100
+        max_size_diff = self.detector_cfg.config["max_size_diff"]
 
         self.ui.sldMaximumWidth.setValue(min_width)
         self.ui.sldMaximumHeight.setValue(min_height)

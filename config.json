@@ -1,0 +1,102 @@
+{
+  "min_width_per": 0.1,
+  "min_height_per": 0.7,
+  "stop_condition": -0.98,
+  "detect_range": [
+    0.2,
+    0.8
+  ],
+  "length_per_10px": null,
+  "length_unit": "cm",
+  "max_size_diff": 0.3,
+  "frame_width": 640,
+  "frame_height": 480,
+  "color_cfg": {
+    "img_size": [
+      32,
+      64
+    ],
+    "blur_val": 0.05,
+    "alpha_r": 1.0,
+    "alpha_l": 1.0,
+    "beta_r": -150,
+    "beta_l": -150,
+    "sat_adj": 2,
+    "supp_thresh": 10,
+    "amplify_thresh": [
+      null,
+      null,
+      null
+    ],
+    "amplify_rate": 20,
+    "max_diff": 0.2
+  },
+  "sim_cfg": {
+    "C1": 195.07500000000002,
+    "C2": 1755.675,
+    "psnr_trigger": 40,
+    "asym_amp_thresh": null,
+    "asym_amp_rate": 7,
+    "min_similarity": 0.95,
+    "re_calc_factor_left": 1,
+    "re_calc_factor_right": 1,
+    "segments_list": [
+      4,
+      2,
+      1
+    ]
+  },
+  "detect_method": "thresh",
+  "err_cfg": {
+    "inp_shape": [
+      320,
+      160,
+      3
+    ],
+    "img_size": [
+      160,
+      320
+    ],
+    "num_classes": 1,
+    "yolo_max_boxes": 10,
+    "yolo_iou_threshold": 0.5,
+    "weights": "F:\\Capstone\\project\\FQCS_DesktopApp\\yolo4.h5",
+    "yolo_score_threshold": 0.3,
+    "classes": [
+      "dirt"
+    ]
+  },
+  "d_cfg": {
+    "bg_thresh": 110,
+    "adj_bg_thresh": 110,
+    "light_adj_thresh": 65,
+    "alpha": 0.1,
+    "beta": 0,
+    "threshold1": 200,
+    "threshold2": 255,
+    "kernel": [
+      11,
+      11
+    ],
+    "d_kernel": [
+      5,
+      5
+    ],
+    "e_kernel": null,
+    "cr_from": [
+      0,
+      0,
+      0
+    ],
+    "cr_to": [
+      180,
+      127.5,
+      127.5
+    ],
+    "adj_cr_to": [
+      180,
+      127.5,
+      127.5
+    ]
+  }
+}
