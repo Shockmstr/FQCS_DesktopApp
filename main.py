@@ -9,12 +9,11 @@ from app_models.auth_info import AuthInfo
 import json
 from app_constants import KEY_AUTH_INFO
 from services.thread_manager import ThreadManager
-
+from app_models.app_config import AppConfig
 
 class MainApplication():
     def __init__(self):
         self.__login_service = None
-        self.app_config = None
         self.auth_info = None
         self.app = None
         self.main_window = None
@@ -22,14 +21,14 @@ class MainApplication():
         return
 
     async def run(self):
+        AppConfig.instance().load_config()
         self.app = QApplication([])
-        self.app_config = self.load_app_config()
         self.auth_info = AuthInfo()
         self.auth_info.new_token.connect(self.on_logged_in_success)
         self.auth_info.refresh_token.connect(self.on_refresh_token)
         self.auth_info.remove_token.connect(self.on_logged_out)
         self.auth_info.same_token.connect(lambda val: print("Same token"))
-        self.__login_service = LoginService(self.app_config, self.auth_info)
+        self.__login_service = LoginService(self.auth_info)
         await self.__login_service.init_auth_info()
         self.choose_screen()
         return self.app.exec_()
@@ -61,11 +60,6 @@ class MainApplication():
             self.main_window.show()
             if self.login_screen is not None:
                 self.login_screen.close()
-
-    def load_app_config(self):
-        with open(CONFIG_PATH) as fi:
-            app_config = json.load(fi)
-            return app_config
 
 
 async def main():

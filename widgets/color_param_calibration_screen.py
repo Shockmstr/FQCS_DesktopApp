@@ -4,6 +4,7 @@ from widgets.image_widget import ImageWidget
 from app_models.detector_config import DetectorConfig
 import cv2
 from FQCS import detector, helper
+from app import helpers
 import numpy as np
 import os
 from views.color_param_calibration_screen import Ui_ColorParamCalibScreen
@@ -95,9 +96,9 @@ class ColorParamCalibrationScreen(QWidget):
                                        str(amplify_rate))
 
     def view_image_sample(self):
-        left_path = get_current_sample_image_path(
+        left_path = helpers.get_current_sample_image_path(
             self) + os.sep + detector.SAMPLE_LEFT_FILE
-        right_path = get_current_sample_image_path(
+        right_path = helpers.get_current_sample_image_path(
             self) + os.sep + detector.SAMPLE_RIGHT_FILE
         left = cv2.imread(left_path)
         right = cv2.imread(right_path)
@@ -176,9 +177,9 @@ class ColorParamCalibrationScreen(QWidget):
         right_path = (
             os.sep.join([os.getcwd(), "app", "example_img", "d_right_"]) +
             str(self.index) + ".jpg")
-        sample_left_path = get_current_sample_image_path(
+        sample_left_path = helpers.get_current_sample_image_path(
             self) + os.sep + detector.SAMPLE_LEFT_FILE
-        sample_right_path = get_current_sample_image_path(
+        sample_right_path = helpers.get_current_sample_image_path(
             self) + os.sep + detector.SAMPLE_RIGHT_FILE
         img_left, img_right = self.view_image_detect(left_path, right_path)
         sample_left, sample_right = self.preprocess_color(
