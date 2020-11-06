@@ -1,6 +1,7 @@
 from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Signal
-from app_models.detector_config import DetectorConfig
+from app_models.detector_config import DetectorConfig 
+from app_models.app_config import AppConfig 
 from app import helpers
 from views.error_detect_screen import Ui_ErrorDetectScreen
 from FQCS import detector, helper
@@ -8,7 +9,9 @@ from FQCS.tf2_yolov4.anchors import YOLOV4_ANCHORS
 from FQCS.tf2_yolov4.model import YOLOv4
 import csv
 import os
+import imutils
 import cv2
+from widgets.image_widget import ImageWidget
 import matplotlib.pyplot as plt
 from FQCS.tf2_yolov4 import helper as tf_helper
 import numpy as np
@@ -26,7 +29,8 @@ class ErrorDetectScreen(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.ui = Ui_ErrorDetectScreen()
-        self.detector_cfg = DetectorConfig.instance().config
+        self.detector_cfg = DetectorConfig.instance()
+        self.app_cfg = AppConfig.instance().config
         self.ui.setupUi(self)
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnFinish.clicked
@@ -36,18 +40,18 @@ class ErrorDetectScreen(QWidget):
         # trio.run(self.load_yolov4_model)
 
     def load_cfg(self):
-        img_size = self.detector_cfg["err_cfg"]["img_size"]
-        inp_shape = self.detector_cfg["err_cfg"]["inp_shape"]
-        yolo_iou_threshold = self.detector_cfg["err_cfg"]["yolo_iou_threshold"]
-        yolo_max_boxes = self.detector_cfg["err_cfg"]["yolo_max_boxes"]
-        yolo_score_threshold = self.detector_cfg["err_cfg"][
+        img_size = self.detector_cfg.config["err_cfg"]["img_size"]
+        inp_shape = self.detector_cfg.config["err_cfg"]["inp_shape"]
+        yolo_iou_threshold = self.detector_cfg.config["err_cfg"]["yolo_iou_threshold"]
+        yolo_max_boxes = self.detector_cfg.config["err_cfg"]["yolo_max_boxes"]
+        yolo_score_threshold = self.detector_cfg.config["err_cfg"][
             "yolo_score_threshold"]
-        weights = self.detector_cfg["err_cfg"]["weights"]
-        classes = self.detector_cfg["err_cfg"]["classes"]
-        num_classes = self.detector_cfg["err_cfg"]["num_classes"]
+        weights = self.detector_cfg.config["err_cfg"]["weights"]
+        classes = self.detector_cfg.config["err_cfg"]["classes"]
+        num_classes = self.detector_cfg.config["err_cfg"]["num_classes"]
 
-        width = self.detector_cfg["err_cfg"]["img_size"][1]
-        height = self.detector_cfg["err_cfg"]["img_size"][0]
+        width = self.detector_cfg.config["err_cfg"]["img_size"][1]
+        height = self.detector_cfg.config["err_cfg"]["img_size"][0]
 
         width_index = self.ui.cbbWidth.findData(width)
         self.ui.cbbWidth.setCurrentIndex(width_index)
@@ -69,9 +73,10 @@ class ErrorDetectScreen(QWidget):
         self.ui.cbbHeight.setCurrentIndex(-1)
 
         frame_resize_values = [
-            "160", "240", "320", "480", "560", "640", "720", "800", "960",
-            "1024", "1216", "1280"
+            "36", "72", "108", "144", "180", "216", "252", "288", "324",
+            "360", "396", "432", "468", "504", "540", "576", "612", "648", "684", "720"
         ]
+        
         self.ui.cbbHeight.clear()
         for value in frame_resize_values:
             self.ui.cbbHeight.addItem(value, userData=int(value))
@@ -93,15 +98,15 @@ class ErrorDetectScreen(QWidget):
     # hander
     def min_score_change(self):
         value = self.ui.inpMinimumScore.value()
-        self.detector_cfg["err_cfg"]["yolo_score_threshold"] = value / 10
+        self.detector_cfg.config["err_cfg"]["yolo_score_threshold"] = value / 10
 
     def max_instances_change(self):
         value = self.ui.inpMaxInstances.value()
-        self.detector_cfg["err_cfg"]["yolo_max_boxes"] = value
+        self.detector_cfg.config["err_cfg"]["yolo_max_boxes"] = value
 
     def iou_threshold_change(self):
         value = self.ui.inpIouThreshold.value()
-        self.detector_cfg["err_cfg"]["yolo_iou_threshold"] = value / 10
+        self.detector_cfg.config["err_cfg"]["yolo_iou_threshold"] = value / 10
 
     def image_resize(self):
         if self.sender() == self.ui.cbbHeight:
@@ -110,15 +115,15 @@ class ErrorDetectScreen(QWidget):
             self.width_value = self.ui.cbbWidth.currentData()
 
         print(self.height_value, self.width_value)
-        self.detector_cfg["err_cfg"]["img_size"] = (self.width_value,
+        self.detector_cfg.config["err_cfg"]["img_size"] = (self.width_value,
                                                     self.height_value)
-        self.detector_cfg["err_cfg"]["inp_shape"] = (self.height_value,
+        self.detector_cfg.config["err_cfg"]["inp_shape"] = (self.height_value,
                                                      self.width_value, 3)
 
     def choose_model_clicked(self):
         file_name, _ = helpers.file_chooser_open_file(self)
         self.ui.inpModelChoice.setText(file_name.split(r"/")[-1])
-        self.detector_cfg["err_cfg"]["weights"] = file_name
+        self.detector_cfg.config["err_cfg"]["weights"] = file_name
 
     def choose_classes_clicked(self):
         class_list = []
@@ -129,10 +134,10 @@ class ErrorDetectScreen(QWidget):
                 class_list.extend(row)
 
             print(class_list)
-        self.detector_cfg["err_cfg"]["classes"] = class_list
-        self.detector_cfg["err_cffg"]["num_classes"] = len(class_list)
-        print(self.detector_cfg["err_cfg"]["classes"])
-        print(self.detector_cfg["err_cfg"]["num_classes"])
+        self.detector_cfg.config["err_cfg"]["classes"] = class_list
+        self.detector_cfg.config["err_cffg"]["num_classes"] = len(class_list)
+        print(self.detector_cfg.config["err_cfg"]["classes"])
+        print(self.detector_cfg.config["err_cfg"]["num_classes"])
 
         # get file name
         _, tail = os.path.split(file_name[0])
@@ -146,7 +151,7 @@ class ErrorDetectScreen(QWidget):
         self.dim = (self.label_w, self.label_h)
         orig = cv2.resize(self.img, self.dim)
         self.image1.imshow(orig)
-        trio.run(self.process_image, orig)
+        trio.run(self.process_image, self.img)
 
     def replace_camera_widget(self):
         if not self.CAMERA_LOADED:
@@ -166,21 +171,21 @@ class ErrorDetectScreen(QWidget):
         trio.run(self.__load_yolov4_model)
 
     async def __load_yolov4_model(self):
-        if not os.path.exists(r"F:\Capstone\project\FQCS_DesktopApp\yolo4.h5"):
-            return
+        # if not os.path.exists(r"F:\Capstone\project\FQCS_DesktopApp\yolo4.h5"):
+        #     return
         #TODO: set absolute path for weights in cfg
-        self.detector_cfg["err_cfg"][
+        self.detector_cfg.config["err_cfg"][
             "weights"] = r"F:\Capstone\project\FQCS_DesktopApp\yolo4.h5"
 
         model = detector.get_yolov4_model(
-            inp_shape=self.detector_cfg["err_cfg"]["inp_shape"],
-            num_classes=self.detector_cfg["err_cfg"]["num_classes"],
+            inp_shape=self.detector_cfg.config["err_cfg"]["inp_shape"],
+            num_classes=self.detector_cfg.config["err_cfg"]["num_classes"],
             training=False,
-            yolo_max_boxes=self.detector_cfg["err_cfg"]["yolo_max_boxes"],
-            yolo_iou_threshold=self.detector_cfg["err_cfg"]
+            yolo_max_boxes=self.detector_cfg.config["err_cfg"]["yolo_max_boxes"],
+            yolo_iou_threshold=self.detector_cfg.config["err_cfg"]
             ["yolo_iou_threshold"],
-            weights=self.detector_cfg["err_cfg"]["weights"],
-            yolo_score_threshold=self.detector_cfg["err_cfg"]
+            weights=self.detector_cfg.config["err_cfg"]["weights"],
+            yolo_score_threshold=self.detector_cfg.config["err_cfg"]
             ["yolo_score_threshold"])
 
         self.model = await model
@@ -188,20 +193,20 @@ class ErrorDetectScreen(QWidget):
     async def show_error(self, images):
         if self.model is None: return
 
-        CLASSES = self.detector_cfg["err_cfg"]["classes"]
+        CLASSES = self.detector_cfg.config["err_cfg"]["classes"]
         err_task = detector.detect_errors(
-            self.model, images, self.detector_cfg["err_cfg"]["img_size"])
+            self.model, images, self.detector_cfg.config["err_cfg"]["img_size"])
 
         boxes, scores, classes, valid_detections = await err_task
 
-        images = helper_tf.draw_results(
+        images = tf_helper.draw_results(
             images,
             boxes,
             scores,
             classes,
             CLASSES,
-            self.detector_cfg["err_cfg"]["img_size"],
-            min_score=self.detector_cfg["err_cfg"]["yolo_score_threshold"])
+            self.detector_cfg.config["err_cfg"]["img_size"],
+            min_score=self.detector_cfg.config["err_cfg"]["yolo_score_threshold"])
 
         images[0] *= 255.
         images[1] *= 255.
@@ -212,43 +217,43 @@ class ErrorDetectScreen(QWidget):
 
     async def process_pair(self, image):
         detected = None
-        frame_width, frame_height = self.detector_cfg[
-            "frame_width"], self.detector_cfg["frame_height"]
-        min_width, min_height = self.detector_cfg[
-            "min_width_per"], self.detector_cfg["min_height_per"]
+        frame_width, frame_height = self.detector_cfg.config[
+            "frame_width"], self.detector_cfg.config["frame_height"]
+        min_width, min_height = self.detector_cfg.config[
+            "min_width_per"], self.detector_cfg.config["min_height_per"]
         min_width, min_height = frame_width * min_width, frame_height * min_height
         find_contours_func = detector.get_find_contours_func_by_method(
-            self.detector_cfg["detect_method"])
+            self.detector_cfg.config["detect_method"])
 
-        if (self.detector_cfg["detect_method"] == "thresh"):
+        if (self.detector_cfg.config["detect_method"] == "thresh"):
             adj_bg_thresh = helper.adjust_thresh_by_brightness(
-                image, self.detector_cfg["d_cfg"]["light_adj_thresh"],
-                self.detector_cfg["d_cfg"]["bg_thresh"])
-            self.detector_cfg["d_cfg"]["adj_bg_thresh"] = adj_bg_thresh
-        elif (self.detector_cfg["detect_method"] == "range"):
+                image, self.detector_cfg.config["d_cfg"]["light_adj_thresh"],
+                self.detector_cfg.config["d_cfg"]["bg_thresh"])
+            self.detector_cfg.config["d_cfg"]["adj_bg_thresh"] = adj_bg_thresh
+        elif (self.detector_cfg.config["detect_method"] == "range"):
             adj_cr_to = helper.adjust_crange_by_brightness(
-                image, self.detector_cfg["d_cfg"]["light_adj_thresh"],
-                self.detector_cfg["d_cfg"]["cr_to"])
-            self.detector_cfg["d_cfg"]["adj_cr_to"] = adj_cr_to
+                image, self.detector_cfg.config["d_cfg"]["light_adj_thresh"],
+                self.detector_cfg.config["d_cfg"]["cr_to"])
+            self.detector_cfg.config["d_cfg"]["adj_cr_to"] = adj_cr_to
 
         boxes, cnts, proc = detector.find_contours_and_box(
             image,
             find_contours_func,
-            self.detector_cfg["d_cfg"],
+            self.detector_cfg.config["d_cfg"],
             min_width=min_width,
             min_height=min_height)
         pair, image, split_left, split_right, boxes = detector.detect_pair_and_size(
             image,
             find_contours_func,
-            self.detector_cfg["d_cfg"],
+            self.detector_cfg.config["d_cfg"],
             boxes,
             cnts,
-            stop_condition=self.detector_cfg['stop_condition'],
-            detect_range=self.detector_cfg['detect_range'])
+            stop_condition=self.detector_cfg.config['stop_condition'],
+            detect_range=self.detector_cfg.config['detect_range'])
 
         # output
-        unit = self.detector_cfg["length_unit"]
-        per_10px = self.detector_cfg["length_per_10px"]
+        unit = self.detector_cfg.config["length_unit"]
+        per_10px = self.detector_cfg.config["length_per_10px"]
         sizes = []
         for b in boxes:
             rect, lH, lW, box, tl, tr, br, bl = b
@@ -266,7 +271,7 @@ class ErrorDetectScreen(QWidget):
             left, right = pair
             left, right = left[0], right[0]
             h_diff, w_diff = detector.compare_size(sizes[0], sizes[1],
-                                                   self.detector_cfg)
+                                                   self.detector_cfg.config)
 
             max_width = max((left.shape[0], right.shape[0]))
             temp_left = imutils.resize(left, height=max_width)
@@ -274,7 +279,7 @@ class ErrorDetectScreen(QWidget):
             detected = np.concatenate((temp_left, temp_right), axis=1)
 
             # if pair is detected, detected is not None
-            return image, detected, (left, right)
+            return image, detected, [left, right]
         # if no pair detected, return None
         return image, None, None
 

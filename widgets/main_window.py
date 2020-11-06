@@ -18,6 +18,7 @@ from services.login_service import LoginService
 
 class MainWindow(QMainWindow):
     logged_out = Signal(bool)
+    loaded_config = Signal()
 
     def __init__(self, login_service: LoginService):
         QMainWindow.__init__(self)
@@ -113,6 +114,14 @@ class MainWindow(QMainWindow):
         self.progress_screen.finished.connect(self.change_home_screen)
         self.progress_screen.captured.connect(self.capture)
         self.progress_screen.stopped.connect(self.stop)
+
+        self.loaded_config.connect(self.detection_screen.load_cfg)
+        self.loaded_config.connect(self.measurement_screen.load_cfg)
+        # TODO: fix detector_cfg bugs in following screens before 
+        self.loaded_config.connect(self.color_preprocess_config_screen.load_cfg)
+        self.loaded_config.connect(self.color_param_calib_screen.load_default_config)
+        self.loaded_config.connect(self.error_detect_screen.load_cfg)
+
         return
 
     def on_logged_out(self, event: bool):
@@ -180,9 +189,9 @@ class MainWindow(QMainWindow):
         elif (currentWidget == self.test_detect_pair_screen):
             self.process_cam = self.test_detect_pair_screen.view_cam
             self.control_timer(True)
-        # elif (currentWidget == self.error_detect_screen):
-        #     self.process_cam = self.error_detect_screen.view_cam
-        #     self.control_timer(True)
+        elif (currentWidget == self.error_detect_screen):
+            self.process_cam = self.error_detect_screen.view_cam
+            self.control_timer(True)
         elif (currentWidget == self.progress_screen):
             self.process_cam = self.progress_screen.view_cam
             self.control_timer(True)
@@ -201,6 +210,7 @@ class MainWindow(QMainWindow):
             temp_cfg = detector.load_json_cfg(file_path)
             self.detector_cfg.load_config(temp_cfg)
             self.detector_cfg.current_path = file_path
+            self.loaded_config.emit()
         else:
             print("Error loading config")
 

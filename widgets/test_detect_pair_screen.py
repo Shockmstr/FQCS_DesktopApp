@@ -21,7 +21,7 @@ class TestDetectPairScreen(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.ui = Ui_test_detect_pair_screen()
-        self.detector_cfg = DetectorConfig.instance().config
+        self.detector_cfg = DetectorConfig.instance()
         self.ui.setupUi(self)
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnNext.clicked
@@ -63,44 +63,44 @@ class TestDetectPairScreen(QWidget):
     def process_image(self, image):
         detected = None
 
-        frame_width, frame_height = self.detector_cfg[
-            "frame_width"], self.detector_cfg["frame_height"]
-        min_width, min_height = self.detector_cfg[
-            "min_width_per"], self.detector_cfg["min_height_per"]
+        frame_width, frame_height = self.detector_cfg.config[
+            "frame_width"], self.detector_cfg.config["frame_height"]
+        min_width, min_height = self.detector_cfg.config[
+            "min_width_per"], self.detector_cfg.config["min_height_per"]
         min_width, min_height = frame_width * min_width, frame_height * min_height
         find_contours_func = detector.get_find_contours_func_by_method(
-            self.detector_cfg["detect_method"])
+            self.detector_cfg.config["detect_method"])
 
         # adjust thresh
-        if (self.detector_cfg["detect_method"] == "thresh"):
+        if (self.detector_cfg.config["detect_method"] == "thresh"):
             adj_bg_thresh = helper.adjust_thresh_by_brightness(
-                image, self.detector_cfg["d_cfg"]["light_adj_thresh"],
-                self.detector_cfg["d_cfg"]["bg_thresh"])
-            self.detector_cfg["d_cfg"]["adj_bg_thresh"] = adj_bg_thresh
-        elif (self.detector_cfg["detect_method"] == "range"):
+                image, self.detector_cfg.config["d_cfg"]["light_adj_thresh"],
+                self.detector_cfg.config["d_cfg"]["bg_thresh"])
+            self.detector_cfg.config["d_cfg"]["adj_bg_thresh"] = adj_bg_thresh
+        elif (self.detector_cfg.config["detect_method"] == "range"):
             adj_cr_to = helper.adjust_crange_by_brightness(
-                image, self.detector_cfg["d_cfg"]["light_adj_thresh"],
-                self.detector_cfg["d_cfg"]["cr_to"])
-            self.detector_cfg["d_cfg"]["adj_cr_to"] = adj_cr_to
+                image, self.detector_cfg.config["d_cfg"]["light_adj_thresh"],
+                self.detector_cfg.config["d_cfg"]["cr_to"])
+            self.detector_cfg.config["d_cfg"]["adj_cr_to"] = adj_cr_to
 
         boxes, cnts, proc = detector.find_contours_and_box(
             image,
             find_contours_func,
-            self.detector_cfg["d_cfg"],
+            self.detector_cfg.config["d_cfg"],
             min_width=min_width,
             min_height=min_height)
         pair, image, split_left, split_right, boxes = detector.detect_pair_and_size(
             image,
             find_contours_func,
-            self.detector_cfg["d_cfg"],
+            self.detector_cfg.config["d_cfg"],
             boxes,
             cnts,
-            stop_condition=self.detector_cfg['stop_condition'],
-            detect_range=self.detector_cfg['detect_range'])
+            stop_condition=self.detector_cfg.config['stop_condition'],
+            detect_range=self.detector_cfg.config['detect_range'])
 
         # output
-        unit = self.detector_cfg["length_unit"]
-        per_10px = self.detector_cfg["length_per_10px"]
+        unit = self.detector_cfg.config["length_unit"]
+        per_10px = self.detector_cfg.config["length_per_10px"]
         sizes = []
         for b in boxes:
             rect, lH, lW, box, tl, tr, br, bl = b
@@ -118,7 +118,7 @@ class TestDetectPairScreen(QWidget):
             left, right = pair
             left, right = left[0], right[0]
             h_diff, w_diff = detector.compare_size(sizes[0], sizes[1],
-                                                   self.detector_cfg)
+                                                   self.detector_cfg.config)
 
             # if split_left is not None:
             #     detected = np.concatenate((split_left, split_right), axis=1)
@@ -136,6 +136,7 @@ class TestDetectPairScreen(QWidget):
             folder_path = DetectorConfig.instance().current_path
             if folder_path is None:
                 folder_path = helpers.file_chooser_open_directory(self)
+                DetectorConfig.instance().current_path = folder_path
             left = cv2.flip(left, 1)
             if not os.path.exists(folder_path + r"/" +
                                   detector.SAMPLE_LEFT_FILE):

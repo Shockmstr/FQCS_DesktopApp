@@ -1,5 +1,5 @@
 from PySide2.QtGui import QColor
-from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QWidget, QColorDialog
 from PySide2.QtCore import Signal
 import numpy as np
 from views.detection_config_screen import Ui_DetectionConfigScreen
@@ -24,7 +24,7 @@ class DetectionConfigScreen(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.ui = Ui_DetectionConfigScreen()
-        self.detector_cfg = DetectorConfig.instance().config
+        self.detector_cfg = DetectorConfig.instance()
         self.ui.setupUi(self)
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnNext.clicked
@@ -92,60 +92,60 @@ class DetectionConfigScreen(QWidget):
     #edge detection method
     def brightness_value_change(self):
         value = round(self.ui.sldBrightness.value() * self.BRIGHTNESS_STEP, 1)
-        self.detector_cfg["d_cfg"]["alpha"] = value
+        self.detector_cfg.config["d_cfg"]["alpha"] = value
         self.ui.grpboxSldBrightness.setTitle("Brightness: " + str(value))
 
     def contrast_value_change(self):
         value = self.ui.sldContrast.value() * self.CONTRAST_STEP
-        self.detector_cfg["d_cfg"]["beta"] = value
+        self.detector_cfg.config["d_cfg"]["beta"] = value
         self.ui.grbboxSldContrast.setTitle("Contrast: " + str(value))
 
     def threshold1_value_change(self):
         value = self.ui.sldThreshold1.value() * self.THRESHOLD1_STEP
-        self.detector_cfg["d_cfg"]["threshold1"] = value
+        self.detector_cfg.config["d_cfg"]["threshold1"] = value
         self.ui.grbboxSldThreshold.setTitle("Threshold 1: " + str(value))
 
     def threshold2_value_change(self):
         value = self.ui.sldThreshold2.value() * self.THRESHOLD2_STEP
-        self.detector_cfg["d_cfg"]["threshold2"] = value
+        self.detector_cfg.config["d_cfg"]["threshold2"] = value
         self.ui.grbboxSldThreshold2.setTitle("Threshold 2: " + str(value))
 
     def blur_value_change(self):
         value = self.ui.sldBlur.value()
-        self.detector_cfg["d_cfg"]["kernel"] = (2 * value + 1, 2 * value + 1)
+        self.detector_cfg.config["d_cfg"]["kernel"] = (2 * value + 1, 2 * value + 1)
         self.ui.grpboxSldBlur.setTitle("Blur: " + str(value))
 
     def dilate_value_change(self):
         value = self.ui.sldDilate.value()
-        self.detector_cfg["d_cfg"]["d_kernel"] = np.ones((value, value))
+        self.detector_cfg.config["d_cfg"]["d_kernel"] = np.ones((value, value))
         self.ui.grbboxSldDilate.setTitle("Dilate: " + str(value))
 
     def erode_value_change(self):
         value = self.ui.sldErode.value()
-        self.detector_cfg["d_cfg"]["e_kernel"] = np.ones((value, value))
+        self.detector_cfg.config["d_cfg"]["e_kernel"] = np.ones((value, value))
         self.ui.grbboxSldErode.setTitle("Erode: " + str(value))
 
     #threshold detection method
     def bkg_value_change(self):
         value = self.ui.sldBkgThresh.value()
-        self.detector_cfg["d_cfg"]["bg_thresh"] = value
+        self.detector_cfg.config["d_cfg"]["bg_thresh"] = value
         self.ui.grpboxBkgThreshold.setTitle("Background Threshold: " +
                                             str(value))
 
     def light_adj_value_change(self):
         value = self.ui.sldLightAdj.value()
-        self.detector_cfg["d_cfg"]["light_adj_thresh"] = value
+        self.detector_cfg.config["d_cfg"]["light_adj_thresh"] = value
         self.ui.grpboxLightAdj.setTitle("Light Adjustment: " + str(value))
 
     #range detection method
     def light_adj_range_value_change(self):
         value = self.ui.sldLightAdjRange.value()
-        self.detector_cfg["d_cfg"]["light_adj_thresh"] = value
+        self.detector_cfg.config["d_cfg"]["light_adj_thresh"] = value
         self.ui.grpboxLightAdjRange.setTitle(f"Light Adjustment: {value}")
 
     def button_color_from_clicked(self):
         # get initial color
-        hsv = self.detector_cfg["d_cfg"]["cr_from"]
+        hsv = self.detector_cfg.config["d_cfg"]["cr_from"]
         h = 359 if (int(hsv[0] * 2) > 359) else int(hsv[0] * 2)
         s = int(hsv[1])
         v = int(hsv[2])
@@ -155,14 +155,14 @@ class DetectionConfigScreen(QWidget):
         if color.isValid():
             hsv = color.getHsv()
             hsv = (hsv[0] / 2, hsv[1], hsv[2])
-            self.detector_cfg["d_cfg"]["cr_from"] = hsv
+            self.detector_cfg.config["d_cfg"]["cr_from"] = hsv
             color_hex = color.name()
             self.ui.btnColorFrom.setStyleSheet("background-color: " +
                                                color_hex)
 
     def button_color_to_clicked(self):
         #get initial color
-        hsv = self.detector_cfg["d_cfg"]["cr_to"]
+        hsv = self.detector_cfg.config["d_cfg"]["cr_to"]
         h = 359 if (int(hsv[0] * 2) > 359) else int(hsv[0] * 2)
         s = int(hsv[1])
         v = int(hsv[2])
@@ -172,7 +172,7 @@ class DetectionConfigScreen(QWidget):
         if color.isValid():
             hsv = color.getHsv()
             hsv = (hsv[0] / 2, hsv[1], hsv[2])
-            self.detector_cfg["d_cfg"]["cr_to"] = hsv
+            self.detector_cfg.config["d_cfg"]["cr_to"] = hsv
             color_hex = color.name()
             self.ui.btnColorTo.setStyleSheet("background-color: " + color_hex)
 
@@ -184,16 +184,16 @@ class DetectionConfigScreen(QWidget):
 
     def cbbMethod_changed(self, index: int):
         method = self.ui.cbbMethod.currentData()
-        self.detector_cfg["detect_method"] = method
+        self.detector_cfg.config["detect_method"] = method
         self.ui.stackContainerMid.setCurrentIndex(index)
 
     def cbbHeight_changed(self):
         value = self.ui.cbbHeight.currentData()
-        self.detector_cfg["frame_height"] = value
+        self.detector_cfg.config["frame_height"] = value
 
     def cbbWidth_changed(self):
         value = self.ui.cbbWidth.currentData()
-        self.detector_cfg["frame_width"] = value
+        self.detector_cfg.config["frame_width"] = value
 
     # view camera
     def view_cam(self, image):
@@ -223,44 +223,44 @@ class DetectionConfigScreen(QWidget):
             self.CAMERA_LOADED = True
 
     def process_contours(self, image):
-        frame_width, frame_height = self.detector_cfg[
-            "frame_width"], self.detector_cfg["frame_height"]
-        min_width, min_height = self.detector_cfg[
-            "min_width_per"], self.detector_cfg["min_height_per"]
+        frame_width, frame_height = self.detector_cfg.config[
+            "frame_width"], self.detector_cfg.config["frame_height"]
+        min_width, min_height = self.detector_cfg.config[
+            "min_width_per"], self.detector_cfg.config["min_height_per"]
         min_width, min_height = frame_width * min_width, frame_height * min_height
         find_contours_func = detector.get_find_contours_func_by_method(
-            self.detector_cfg["detect_method"])
+            self.detector_cfg.config["detect_method"])
 
         # adjust thresh
-        if (self.detector_cfg["detect_method"] == "thresh"):
+        if (self.detector_cfg.config["detect_method"] == "thresh"):
             adj_bg_thresh = helper.adjust_thresh_by_brightness(
-                image, self.detector_cfg["d_cfg"]["light_adj_thresh"],
-                self.detector_cfg["d_cfg"]["bg_thresh"])
-            self.detector_cfg["d_cfg"]["adj_bg_thresh"] = adj_bg_thresh
-        elif (self.detector_cfg["detect_method"] == "range"):
+                image, self.detector_cfg.config["d_cfg"]["light_adj_thresh"],
+                self.detector_cfg.config["d_cfg"]["bg_thresh"])
+            self.detector_cfg.config["d_cfg"]["adj_bg_thresh"] = adj_bg_thresh
+        elif (self.detector_cfg.config["detect_method"] == "range"):
             adj_cr_to = helper.adjust_crange_by_brightness(
-                image, self.detector_cfg["d_cfg"]["light_adj_thresh"],
-                self.detector_cfg["d_cfg"]["cr_to"])
-            self.detector_cfg["d_cfg"]["adj_cr_to"] = adj_cr_to
+                image, self.detector_cfg.config["d_cfg"]["light_adj_thresh"],
+                self.detector_cfg.config["d_cfg"]["cr_to"])
+            self.detector_cfg.config["d_cfg"]["adj_cr_to"] = adj_cr_to
 
         boxes, cnts, proc = detector.find_contours_and_box(
             image,
             find_contours_func,
-            self.detector_cfg["d_cfg"],
+            self.detector_cfg.config["d_cfg"],
             min_width=min_width,
             min_height=min_height)
         pair, image, split_left, split_right, boxes = detector.detect_pair_and_size(
             image,
             find_contours_func,
-            self.detector_cfg["d_cfg"],
+            self.detector_cfg.config["d_cfg"],
             boxes,
             cnts,
-            stop_condition=self.detector_cfg['stop_condition'],
-            detect_range=self.detector_cfg['detect_range'])
+            stop_condition=self.detector_cfg.config['stop_condition'],
+            detect_range=self.detector_cfg.config['detect_range'])
 
         # output
-        unit = self.detector_cfg["length_unit"]
-        per_10px = self.detector_cfg["length_per_10px"]
+        unit = self.detector_cfg.config["length_unit"]
+        per_10px = self.detector_cfg.config["length_per_10px"]
         sizes = []
         for b in boxes:
             rect, lH, lW, box, tl, tr, br, bl = b
@@ -279,33 +279,33 @@ class DetectionConfigScreen(QWidget):
     #load init configs
     def load_cfg(self):
         #edge
-        brightness = self.detector_cfg["d_cfg"]["alpha"]
-        contrast = self.detector_cfg["d_cfg"]["beta"]
-        thresh1 = self.detector_cfg["d_cfg"]["threshold1"]
-        thresh2 = self.detector_cfg["d_cfg"]["threshold2"]
-        blur = self.detector_cfg["d_cfg"]["kernel"][0]
-        dilate = self.detector_cfg["d_cfg"]["d_kernel"].shape[1]
-        erode = self.detector_cfg["d_cfg"]["e_kernel"] and self.detector_cfg[
+        brightness = self.detector_cfg.config["d_cfg"]["alpha"]
+        contrast = self.detector_cfg.config["d_cfg"]["beta"]
+        thresh1 = self.detector_cfg.config["d_cfg"]["threshold1"]
+        thresh2 = self.detector_cfg.config["d_cfg"]["threshold2"]
+        blur = self.detector_cfg.config["d_cfg"]["kernel"][0]
+        dilate = self.detector_cfg.config["d_cfg"]["d_kernel"].shape[1]
+        erode = self.detector_cfg.config["d_cfg"]["e_kernel"] and self.detector_cfg.config[
             "d_cfg"]["e_kernel"].shape[1]
         #threshold
-        bkg = self.detector_cfg["d_cfg"]["bg_thresh"]
-        light_thresh = self.detector_cfg["d_cfg"]["light_adj_thresh"]
+        bkg = self.detector_cfg.config["d_cfg"]["bg_thresh"]
+        light_thresh = self.detector_cfg.config["d_cfg"]["light_adj_thresh"]
         #range
-        light_range = self.detector_cfg["d_cfg"]["light_adj_thresh"]
-        color_to = self.detector_cfg["d_cfg"]["cr_to"]
-        color_from = self.detector_cfg["d_cfg"]["cr_from"]
+        light_range = self.detector_cfg.config["d_cfg"]["light_adj_thresh"]
+        color_to = self.detector_cfg.config["d_cfg"]["cr_to"]
+        color_from = self.detector_cfg.config["d_cfg"]["cr_from"]
         #main controls
         method_index = self.ui.cbbMethod.findData(
-            self.detector_cfg["detect_method"])
+            self.detector_cfg.config["detect_method"])
         height_index = self.ui.cbbHeight.findData(
-            self.detector_cfg["frame_height"])
+            self.detector_cfg.config["frame_height"])
         width_index = self.ui.cbbWidth.findData(
-            self.detector_cfg["frame_width"])
+            self.detector_cfg.config["frame_width"])
 
-        self.ui.sldBrightness.setValue(brightness)
-        self.ui.sldContrast.setValue(contrast)
-        self.ui.sldThreshold1.setValue(thresh1)
-        self.ui.sldThreshold2.setValue(thresh2)
+        self.ui.sldBrightness.setValue(brightness/self.BRIGHTNESS_STEP)
+        self.ui.sldContrast.setValue(contrast/self.CONTRAST_STEP)
+        self.ui.sldThreshold1.setValue(thresh1/self.THRESHOLD1_STEP)
+        self.ui.sldThreshold2.setValue(thresh2/self.THRESHOLD2_STEP)
         self.ui.sldBlur.setValue(blur)
         self.ui.sldDilate.setValue(dilate)
         self.ui.sldErode.setValue(erode or 0)
@@ -314,12 +314,12 @@ class DetectionConfigScreen(QWidget):
         self.ui.sldLightAdj.setValue(light_thresh)
 
         self.ui.sldLightAdjRange.setValue(light_range)
-        hsv_from = self.detector_cfg["d_cfg"]["cr_from"]
+        hsv_from = self.detector_cfg.config["d_cfg"]["cr_from"]
         init_hsv_from = QColor.fromHsv(hsv_from[0] * 2, hsv_from[1],
                                        hsv_from[2], 255)
         self.ui.btnColorFrom.setStyleSheet("background-color: " +
                                            init_hsv_from.name())
-        hsv_to = self.detector_cfg["d_cfg"]["cr_to"]
+        hsv_to = self.detector_cfg.config["d_cfg"]["cr_to"]
         init_hsv_to = QColor.fromHsv(hsv_from[0] * 2, hsv_from[1], hsv_from[2],
                                      255)
         self.ui.btnColorFrom.setStyleSheet("background-color: " +
