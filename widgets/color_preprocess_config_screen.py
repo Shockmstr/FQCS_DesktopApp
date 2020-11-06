@@ -1,15 +1,15 @@
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
+from PySide2.QtWidgets import QWidget
+from PySide2.QtCore import Signal, Qt
 
 from views.color_preprocess_config_screen import Ui_color_preprocess_config_screen
 from widgets.image_widget import ImageWidget
-from models.detector_config import DetectorConfig, DetectorConfigSingleton
+from app_models.detector_config import DetectorConfig
 from FQCS import detector, helper
-from app.helpers import *
+from app import helpers
 import numpy as np
 import os
 import cv2
+
 
 class ColorPreprocessConfigScreen(QWidget):
     BLUR_STEP = 0.01
@@ -17,22 +17,23 @@ class ColorPreprocessConfigScreen(QWidget):
     BRIGHTNESS_STEP = 0.1
     CONTRAST_STEP = 5
     CAMERA_LOADED = False
+    backscreen: Signal
+    nextscreen: Signal
 
-    def __init__(self, backscreen: (), nextscreen: ()):
-        QWidget.__init__(self)
-        self.detector_cfg = DetectorConfigSingleton.get_instance().config
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
+        self.detector_cfg = DetectorConfig.instance().config
         self.ui = Ui_color_preprocess_config_screen()
         self.ui.setupUi(self)
+        self.backscreen = self.ui.btnBack.clicked
+        self.nextscreen = self.ui.btnNext.clicked
         self.image1 = None
         self.image2 = None
-        self.binding(backscreen=backscreen, nextscreen=nextscreen)
+        self.binding()
         self.load_cfg()
 
     # binding
-    def binding(self, backscreen: (), nextscreen: ()):
-        self.ui.btnBack.clicked.connect(backscreen)
-        self.ui.btnNext.clicked.connect(nextscreen)
-
+    def binding(self):
         self.ui.sldBlur.valueChanged.connect(self.blur_value_change)
         self.ui.sldBrightLeft.valueChanged.connect(
             self.brightness_left_value_change)
@@ -46,7 +47,7 @@ class ColorPreprocessConfigScreen(QWidget):
             self.saturation_value_change)
 
         resize_number = ["32", "64", "128", "256", "512", "1024"]
-        self.ui.cbbResizeWidth.clear()   
+        self.ui.cbbResizeWidth.clear()
         self.ui.cbbResizeWidth.addItems(resize_number)
         self.ui.cbbResizeWidth.setCurrentIndex(-1)
         self.ui.cbbResizeWidth.setPlaceholderText("Width")
@@ -98,7 +99,8 @@ class ColorPreprocessConfigScreen(QWidget):
         self.view_image()
 
     def cbbResize_chosen(self):
-        if (self.ui.cbbResizeHeight.currentIndex() != -1 and self.ui.cbbResizeWidth.currentIndex() != -1):
+        if (self.ui.cbbResizeHeight.currentIndex() != -1
+                and self.ui.cbbResizeWidth.currentIndex() != -1):
             width_value = int(self.ui.cbbResizeWidth.currentText())
             height_value = int(self.ui.cbbResizeHeight.currentText())
             img_size = (width_value, height_value)
@@ -107,18 +109,23 @@ class ColorPreprocessConfigScreen(QWidget):
 
     def view_image(self):
         if (self.image1 is not None and self.image2 is not None):
-            left_path = get_current_sample_image_path(self) + os.sep + detector.SAMPLE_LEFT_FILE
-            right_path = get_current_sample_image_path(self) + os.sep + detector.SAMPLE_RIGHT_FILE
+            left_path = helpers.get_current_sample_image_path(
+                self) + os.sep + detector.SAMPLE_LEFT_FILE
+            right_path = helpers.get_current_sample_image_path(
+                self) + os.sep + detector.SAMPLE_RIGHT_FILE
             left = cv2.imread(left_path)
             right = cv2.imread(right_path)
-            modified_left, modified_right = self.preprocess_color(left, right)       
+            modified_left, modified_right = self.preprocess_color(left, right)
             img_size = (256, self.label_h - 50)
-            modified_left = cv2.resize(modified_left, img_size, interpolation=cv2.INTER_AREA)
-            modified_right = cv2.resize(modified_right, img_size, interpolation=cv2.INTER_AREA)
+            modified_left = cv2.resize(modified_left,
+                                       img_size,
+                                       interpolation=cv2.INTER_AREA)
+            modified_right = cv2.resize(modified_right,
+                                        img_size,
+                                        interpolation=cv2.INTER_AREA)
             self.image1.imshow(modified_left)
             self.image2.imshow(modified_right)
-        
-        
+
     def replace_camera_widget(self):
         if not self.CAMERA_LOADED:
             self.image1 = ImageWidget()
@@ -131,7 +138,7 @@ class ColorPreprocessConfigScreen(QWidget):
             self.image1.ui.lblImage.setAlignment(Qt.AlignCenter)
             self.image2.ui.lblImage.setAlignment(Qt.AlignCenter)
             self.CAMERA_LOADED = True
-        
+
     def showEvent(self, event):
         self.replace_camera_widget()
         self.view_image()
@@ -145,7 +152,7 @@ class ColorPreprocessConfigScreen(QWidget):
         pre_sample_right = detector.preprocess_for_color_diff(
             sample_right, c_cfg['img_size'], c_cfg['blur_val'],
             c_cfg['alpha_r'], c_cfg['beta_r'], c_cfg['sat_adj'])
-        return pre_sample_left, pre_sample_right    
+        return pre_sample_left, pre_sample_right
 
     def load_cfg(self):
         #load from default
@@ -164,17 +171,26 @@ class ColorPreprocessConfigScreen(QWidget):
         self.ui.sldBlur.setValue(round(blur / self.BLUR_STEP, 2))
         self.ui.groupSldBlur.setTitle("Blur: " + str(blur))
 
-        self.ui.sldSaturation.setValue(round(saturation / self.SATURATION_STEP, 1))
+        self.ui.sldSaturation.setValue(
+            round(saturation / self.SATURATION_STEP, 1))
         self.ui.groupSldSaturation.setTitle("Saturation: " + str(saturation))
 
-        self.ui.sldBrightLeft.setValue(round(brightness_left / self.BRIGHTNESS_STEP, 1))
-        self.ui.groupSldBrightLeft.setTitle("Brightness left: " + str(brightness_left))
+        self.ui.sldBrightLeft.setValue(
+            round(brightness_left / self.BRIGHTNESS_STEP, 1))
+        self.ui.groupSldBrightLeft.setTitle("Brightness left: " +
+                                            str(brightness_left))
 
-        self.ui.sldBrightRight.setValue(round(brightness_right / self.BRIGHTNESS_STEP, 1))
-        self.ui.groupSldBrightRight.setTitle("Brightness right: " + str(brightness_right))
+        self.ui.sldBrightRight.setValue(
+            round(brightness_right / self.BRIGHTNESS_STEP, 1))
+        self.ui.groupSldBrightRight.setTitle("Brightness right: " +
+                                             str(brightness_right))
 
-        self.ui.sldConstrastLeft.setValue(round(contrast_left / self.CONTRAST_STEP, 0))
-        self.ui.groupSldConstrastLeft.setTitle("Contrast left: " + str(contrast_left))
+        self.ui.sldConstrastLeft.setValue(
+            round(contrast_left / self.CONTRAST_STEP, 0))
+        self.ui.groupSldConstrastLeft.setTitle("Contrast left: " +
+                                               str(contrast_left))
 
-        self.ui.sldConstrastRight.setValue(round(contrast_right / self.CONTRAST_STEP, 0))
-        self.ui.groupSldConstrastRight.setTitle("Contrast right: " + str(contrast_right))
+        self.ui.sldConstrastRight.setValue(
+            round(contrast_right / self.CONTRAST_STEP, 0))
+        self.ui.groupSldConstrastRight.setTitle("Contrast right: " +
+                                                str(contrast_right))

@@ -1,13 +1,14 @@
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
+from PySide2.QtGui import QColor
+from PySide2.QtWidgets import QWidget
+from PySide2.QtCore import Signal
 import numpy as np
 from views.detection_config_screen import Ui_DetectionConfigScreen
 from widgets.image_widget import ImageWidget
 from FQCS import detector, helper
-from models.detector_config import DetectorConfigSingleton, DetectorConfig
+from app_models.detector_config import DetectorConfig
 from cv2 import cv2
-from app.helpers import *
+from app import helpers
+
 
 class DetectionConfigScreen(QWidget):
     BRIGHTNESS_STEP = 0.1
@@ -15,15 +16,21 @@ class DetectionConfigScreen(QWidget):
     THRESHOLD1_STEP = 5
     THRESHOLD2_STEP = 5
     CAMERA_LOADED = False
+    backscreen: Signal
+    nextscreen: Signal
+    captured: Signal
+    camera_choosen = Signal(object)
 
-    def __init__(self, backscreen: (), nextscreen: (), main_window):
-        QWidget.__init__(self)
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
         self.ui = Ui_DetectionConfigScreen()
-        self.detector_cfg = DetectorConfigSingleton.get_instance().config
+        self.detector_cfg = DetectorConfig.instance().config
         self.ui.setupUi(self)
+        self.backscreen = self.ui.btnBack.clicked
+        self.nextscreen = self.ui.btnNext.clicked
+        self.captured = self.ui.btnCapture.clicked
         self.init_ui_values()
-        self.main_window = main_window
-        self.binding(backscreen=backscreen, nextscreen=nextscreen)
+        self.binding()
         self.load_cfg()
 
     #init ui values
@@ -35,7 +42,7 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbHeight.setCurrentIndex(-1)
         self.ui.cbbCamera.setCurrentIndex(-1)
 
-        cam_array = get_all_camera_index(self)
+        cam_array = helpers.get_all_camera_index()
         self.ui.cbbCamera.clear()
         for camera in cam_array:
             self.ui.cbbCamera.addItem("Camera " + str(camera), userData=camera)
@@ -44,7 +51,7 @@ class DetectionConfigScreen(QWidget):
             "160", "240", "320", "400", "480", "560", "640", "720", "800", "880",
             "960", "1040", "1120", "1200", "1280"
         ]
-        
+
         self.ui.cbbHeight.clear()
         for value in frame_resize_values:
             self.ui.cbbHeight.addItem(value, userData=int(value))
@@ -59,7 +66,7 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbMethod.addItem("Range", userData="range")
 
     #BINDING
-    def binding(self, backscreen: (), nextscreen: ()):
+    def binding(self):
         self.ui.sldBrightness.valueChanged.connect(
             self.brightness_value_change)
         self.ui.sldContrast.valueChanged.connect(self.contrast_value_change)
@@ -80,9 +87,6 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbHeight.currentIndexChanged.connect(self.cbbHeight_changed)
         self.ui.cbbWidth.currentIndexChanged.connect(self.cbbWidth_changed)
         self.ui.cbbMethod.currentIndexChanged.connect(self.cbbMethod_changed)
-        self.ui.btnNext.clicked.connect(nextscreen)
-        self.ui.btnBack.clicked.connect(backscreen)
-        self.ui.btnCapture.clicked.connect(self.button_capture_clicked)
 
     #HANDLERS
     #edge detection method
@@ -139,19 +143,18 @@ class DetectionConfigScreen(QWidget):
         self.detector_cfg["d_cfg"]["light_adj_thresh"] = value
         self.ui.grpboxLightAdjRange.setTitle(f"Light Adjustment: {value}")
 
-
     def button_color_from_clicked(self):
         # get initial color
         hsv = self.detector_cfg["d_cfg"]["cr_from"]
         h = 359 if (int(hsv[0] * 2) > 359) else int(hsv[0] * 2)
         s = int(hsv[1])
         v = int(hsv[2])
-        init_hsv = QColor.fromHsv(h, s, v, a=255)    
-          
+        init_hsv = QColor.fromHsv(h, s, v, a=255)
+
         color = QColorDialog.getColor(parent=self, initial=init_hsv)
         if color.isValid():
             hsv = color.getHsv()
-            hsv = (hsv[0]/2, hsv[1], hsv[2])
+            hsv = (hsv[0] / 2, hsv[1], hsv[2])
             self.detector_cfg["d_cfg"]["cr_from"] = hsv
             color_hex = color.name()
             self.ui.btnColorFrom.setStyleSheet("background-color: " +
@@ -159,16 +162,16 @@ class DetectionConfigScreen(QWidget):
 
     def button_color_to_clicked(self):
         #get initial color
-        hsv = self.detector_cfg["d_cfg"]["cr_to"]      
+        hsv = self.detector_cfg["d_cfg"]["cr_to"]
         h = 359 if (int(hsv[0] * 2) > 359) else int(hsv[0] * 2)
         s = int(hsv[1])
         v = int(hsv[2])
-        init_hsv = QColor.fromHsv(h, s, v, a=255)  
-        
+        init_hsv = QColor.fromHsv(h, s, v, a=255)
+
         color = QColorDialog.getColor(parent=self, initial=init_hsv)
         if color.isValid():
             hsv = color.getHsv()
-            hsv = (hsv[0]/2, hsv[1], hsv[2])
+            hsv = (hsv[0] / 2, hsv[1], hsv[2])
             self.detector_cfg["d_cfg"]["cr_to"] = hsv
             color_hex = color.name()
             self.ui.btnColorTo.setStyleSheet("background-color: " + color_hex)
@@ -177,7 +180,7 @@ class DetectionConfigScreen(QWidget):
     def cbbCamera_chose(self):
         # self.replace_camera_widget()
         index = self.ui.cbbCamera.currentData()
-        self.main_window.video_camera.open(index)
+        self.camera_choosen.emit(index)
 
     def cbbMethod_changed(self, index: int):
         method = self.ui.cbbMethod.currentData()
@@ -191,9 +194,6 @@ class DetectionConfigScreen(QWidget):
     def cbbWidth_changed(self):
         value = self.ui.cbbWidth.currentData()
         self.detector_cfg["frame_width"] = value
-
-    def button_capture_clicked(self):
-        self.main_window.stop()
 
     # view camera
     def view_cam(self, image):
@@ -285,7 +285,8 @@ class DetectionConfigScreen(QWidget):
         thresh2 = self.detector_cfg["d_cfg"]["threshold2"]
         blur = self.detector_cfg["d_cfg"]["kernel"][0]
         dilate = self.detector_cfg["d_cfg"]["d_kernel"].shape[1]
-        erode = self.detector_cfg["d_cfg"]["e_kernel"] and self.detector_cfg["d_cfg"]["e_kernel"].shape[1]
+        erode = self.detector_cfg["d_cfg"]["e_kernel"] and self.detector_cfg[
+            "d_cfg"]["e_kernel"].shape[1]
         #threshold
         bkg = self.detector_cfg["d_cfg"]["bg_thresh"]
         light_thresh = self.detector_cfg["d_cfg"]["light_adj_thresh"]
@@ -294,9 +295,12 @@ class DetectionConfigScreen(QWidget):
         color_to = self.detector_cfg["d_cfg"]["cr_to"]
         color_from = self.detector_cfg["d_cfg"]["cr_from"]
         #main controls
-        method_index = self.ui.cbbMethod.findData(self.detector_cfg["detect_method"])
-        height_index = self.ui.cbbHeight.findData(self.detector_cfg["frame_height"])
-        width_index = self.ui.cbbWidth.findData(self.detector_cfg["frame_width"])
+        method_index = self.ui.cbbMethod.findData(
+            self.detector_cfg["detect_method"])
+        height_index = self.ui.cbbHeight.findData(
+            self.detector_cfg["frame_height"])
+        width_index = self.ui.cbbWidth.findData(
+            self.detector_cfg["frame_width"])
 
         self.ui.sldBrightness.setValue(brightness)
         self.ui.sldContrast.setValue(contrast)
@@ -320,9 +324,7 @@ class DetectionConfigScreen(QWidget):
                                      255)
         self.ui.btnColorFrom.setStyleSheet("background-color: " +
                                            init_hsv_to.name())
-        
+
         self.ui.cbbMethod.setCurrentIndex(method_index)
         self.ui.cbbHeight.setCurrentIndex(height_index)
         self.ui.cbbWidth.setCurrentIndex(width_index)
-
-

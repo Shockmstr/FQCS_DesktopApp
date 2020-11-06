@@ -1,8 +1,7 @@
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
+from PySide2.QtWidgets import QWidget
+from PySide2.QtCore import Signal
 
-from models.detector_config import DetectorConfig, DetectorConfigSingleton
+from app_models.detector_config import DetectorConfig, DetectorConfigSingleton
 from FQCS import helper
 from FQCS.tf2_yolov4 import helper as y_helper
 import os
@@ -17,32 +16,30 @@ import numpy as np
 
 class ProgressScreen(QWidget):
     CAMERA_LOADED = False
-    def __init__(self, homeScreen: (), main_window):
-        QWidget.__init__(self)
+    finished = Signal(bool)
+    stopped = Signal()
+    captured = Signal()
+
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
         self.ui = Ui_ProgressScreen()
         self.detector_cfg = DetectorConfigSingleton.get_instance().config
         self.ui.setupUi(self)
-        self.main_window = main_window
-        self.binding(homeScreen = homeScreen)
-        
-    # data binding
-    def binding(self, homeScreen: ()):
-        self.ui.btnStop.clicked.connect(homeScreen)
-        self.ui.btnCapture.clicked.connect(self.cam_control)
-        self.ui.btnStop.clicked.connect(self.test)
+        self.binding()
 
-    def test(self):
-        if self.sender() == self.ui.btnStop:
-            asyncio.run(self.final_process())
+    # data binding
+    def binding(self):
+        self.ui.btnCapture.clicked.connect(self.cam_control)
+        self.ui.btnStop.clicked.connect(self.btn_finished_clicked)
 
     def cam_control(self):
         if self.CAMERA_LOADED == True:
             self.ui.btnCapture.setText("STOP")
-            self.main_window.stop()
+            self.stopped.emit()
             self.CAMERA_LOADED = False
         elif self.CAMERA_LOADED == False:
             self.ui.btnCapture.setText("CAPTURE")
-            self.main_window.capture()
+            self.captured.emit()
             self.CAMERA_LOADED = True
 
     def view_cam(self, image):
@@ -66,7 +63,7 @@ class ProgressScreen(QWidget):
         sample_left_path = "/Users/bitumhoang/Desktop/capstone/FQCS_DesktopApp/sample_left.jpg"
         sample_right_path = "/Users/bitumhoang/Desktop/capstone/FQCS_DesktopApp/sample_right.jpg"
 
-        err_cfg = self.detector_cfg["err_cfg"] 
+        err_cfg = self.detector_cfg["err_cfg"]
         model = asyncio.create_task(
             detector.get_yolov4_model(
                 inp_shape=err_cfg["inp_shape"],
@@ -79,10 +76,10 @@ class ProgressScreen(QWidget):
 
         uri = "/Users/bitumhoang/Desktop/capstone/FQCS-Research/FQCS.ColorDetection/FQCS_detector/test.mp4"
         cap = cv2.VideoCapture(uri)
-        frame_width, frame_height = self.detector_cfg["frame_width"], self.detector_cfg[
-            "frame_height"]
-        min_width, min_height = self.detector_cfg["min_width_per"], self.detector_cfg[
-            "min_height_per"]
+        frame_width, frame_height = self.detector_cfg[
+            "frame_width"], self.detector_cfg["frame_height"]
+        min_width, min_height = self.detector_cfg[
+            "min_width_per"], self.detector_cfg["min_height_per"]
         min_width, min_height = frame_width * min_width, frame_height * min_height
         # cap.set(cv2.CAP_PROP_POS_FRAMES, 1100)
 
@@ -94,8 +91,9 @@ class ProgressScreen(QWidget):
         model = await model
         try:
             # activate
-            await detector.detect_errors(model, [np.zeros(err_cfg["inp_shape"])],
-                                        err_cfg["img_size"])
+            await detector.detect_errors(model,
+                                         [np.zeros(err_cfg["inp_shape"])],
+                                         err_cfg["img_size"])
         finally:
             print("Activated")
 
@@ -145,7 +143,8 @@ class ProgressScreen(QWidget):
                 lH, lW = helper.calculate_length(
                     dimA, per_10px), helper.calculate_length(dimB, per_10px)
                 sizes.append((lH, lW))
-                cv2.drawContours(image, [box.astype("int")], -1, (0, 255, 0), 2)
+                cv2.drawContours(image, [box.astype("int")], -1, (0, 255, 0),
+                                 2)
                 cv2.putText(image, f"{lW:.1f} {unit}", (tl[0], tl[1]),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
                 cv2.putText(image, f"{lH:.1f} {unit}", (br[0], br[1]),
@@ -160,7 +159,7 @@ class ProgressScreen(QWidget):
                 left, right = pair
                 left, right = left[0], right[0]
                 h_diff, w_diff = detector.compare_size(sizes[0], sizes[1],
-                                                    self.detector_cfg)
+                                                       self.detector_cfg)
 
                 if split_left is not None:
                     # output
@@ -186,7 +185,8 @@ class ProgressScreen(QWidget):
                 else:
                     images = [left, right]
                     err_task = asyncio.create_task(
-                        detector.detect_errors(model, images, err_cfg["img_size"]))
+                        detector.detect_errors(model, images,
+                                               err_cfg["img_size"]))
                     await asyncio.sleep(0)  # hacky way to trigger task
 
                     # start
@@ -264,5 +264,7 @@ class ProgressScreen(QWidget):
                     axs[2].imshow(images[1])
                     plt.show()
 
-
-
+    def btn_finished_clicked(self, event: bool):
+        if self.sender() == self.ui.btnStop:
+            trio.run(self.final_process())
+        self.finished.emit(event)

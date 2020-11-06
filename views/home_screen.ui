@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1266</width>
-    <height>707</height>
+    <width>1319</width>
+    <height>809</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -292,7 +292,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="btnResetDefault">
+             <widget class="QPushButton" name="btnLogout">
               <property name="font">
                <font>
                 <pointsize>14</pointsize>
@@ -304,7 +304,7 @@
                <string notr="true">background-color: grey; height: 45;</string>
               </property>
               <property name="text">
-               <string>RESET DEFAULT</string>
+               <string>LOG OUT</string>
               </property>
              </widget>
             </item>
