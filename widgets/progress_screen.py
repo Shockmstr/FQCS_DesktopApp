@@ -29,7 +29,7 @@ class ProgressScreen(QWidget):
     # data binding
     def binding(self):
         self.ui.btnCapture.clicked.connect(self.cam_control)
-        self.ui.btnStop.clicked.connect(self.btn_finished_clicked)
+        #self.ui.btnStop.clicked.connect(self.btn_finished_clicked)
 
     def cam_control(self):
         if self.CAMERA_LOADED == True:

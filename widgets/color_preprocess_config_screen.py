@@ -141,7 +141,7 @@ class ColorPreprocessConfigScreen(QWidget):
 
     def showEvent(self, event):
         self.replace_camera_widget()
-        self.view_image()
+        
 
     def preprocess_color(self, sample_left, sample_right):
         c_cfg = self.detector_cfg['color_cfg']

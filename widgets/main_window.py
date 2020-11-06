@@ -186,6 +186,8 @@ class MainWindow(QMainWindow):
         elif (currentWidget == self.measurement_screen):
             self.process_cam = self.measurement_screen.view_cam
             self.control_timer(True)
+        elif (currentWidget == self.color_preprocess_config_screen):
+            self.color_preprocess_config_screen.view_image()    
         elif (currentWidget == self.color_param_calib_screen):
             self.process_cam = self.color_param_calib_screen.view_cam
             self.control_timer(True)

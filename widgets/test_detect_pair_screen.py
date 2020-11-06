@@ -136,6 +136,7 @@ class TestDetectPairScreen(QWidget):
             folder_path = DetectorConfig.instance().current_path
             if folder_path is None:
                 folder_path = helpers.file_chooser_open_directory(self)
+                DetectorConfig.instance().current_path = folder_path
             left = cv2.flip(left, 1)
             if not os.path.exists(folder_path + r"/" +
                                   detector.SAMPLE_LEFT_FILE):

@@ -1,4 +1,5 @@
 from PySide2.QtGui import QColor
+from PySide2.QtWidgets import QColorDialog
 from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Signal
 import numpy as np
@@ -302,10 +303,10 @@ class DetectionConfigScreen(QWidget):
         width_index = self.ui.cbbWidth.findData(
             self.detector_cfg["frame_width"])
 
-        self.ui.sldBrightness.setValue(brightness)
-        self.ui.sldContrast.setValue(contrast)
-        self.ui.sldThreshold1.setValue(thresh1)
-        self.ui.sldThreshold2.setValue(thresh2)
+        self.ui.sldBrightness.setValue(round(brightness / self.BRIGHTNESS_STEP, 1))
+        self.ui.sldContrast.setValue(int(contrast / self.CONTRAST_STEP))
+        self.ui.sldThreshold1.setValue(int(thresh1 / self.THRESHOLD1_STEP))
+        self.ui.sldThreshold2.setValue(int(thresh2 / self.THRESHOLD2_STEP))
         self.ui.sldBlur.setValue(blur)
         self.ui.sldDilate.setValue(dilate)
         self.ui.sldErode.setValue(erode or 0)
