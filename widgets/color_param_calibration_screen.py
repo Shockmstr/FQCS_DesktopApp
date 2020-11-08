@@ -84,10 +84,10 @@ class ColorParamCalibrationScreen(QWidget):
         self.ui.ampThreshGreen.setValue(0)  # self-created value
         self.ui.ampThreshRed.setValue(0)  # self-created value
 
-        self.ui.grpSldAllowDiff.setTitle("Amplification Rate: " +
-                                         str(max_diff))
-        self.ui.grpSldAmpRate.setTitle("Allowed Difference (%): " +
-                                       str(amplify_rate))
+        self.ui.grpSldAmpRate.setTitle("Amplification Rate: " +
+                                         str(amplify_rate))
+        self.ui.grpSldAllowDiff.setTitle("Allowed Difference (%): " +
+                                       str(max_diff))
 
     def view_image_sample(self):
         left_path = helpers.get_current_sample_image_path(
@@ -174,8 +174,8 @@ class ColorParamCalibrationScreen(QWidget):
                                 helper.get_hist_bgr(sample_left))))
         self.hist_bgr_list.append(
                 np.abs(
-                    np.subtract(helper.get_hist_bgr(img_left),
-                                helper.get_hist_bgr(sample_left))))
+                    np.subtract(helper.get_hist_bgr(img_right),
+                                helper.get_hist_bgr(sample_right))))
 
         max_blue = 0
         max_green = 0
@@ -200,7 +200,7 @@ class ColorParamCalibrationScreen(QWidget):
     def showEvent(self, event):
         self.replace_image_widget()
         self.view_image_sample()
-        
+
     #image process function
 
     def preprocess_color(self, sample_left, sample_right):
