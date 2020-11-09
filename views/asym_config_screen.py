@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'asym_config_screenLKPVwW.ui'
+## Form generated from reading UI file 'asym_config_screenXArKPD.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -17,7 +17,7 @@ class Ui_AsymConfigScreen(object):
     def setupUi(self, AsymConfigScreen):
         if not AsymConfigScreen.objectName():
             AsymConfigScreen.setObjectName(u"AsymConfigScreen")
-        AsymConfigScreen.resize(1355, 805)
+        AsymConfigScreen.resize(1440, 784)
         AsymConfigScreen.setAutoFillBackground(False)
         AsymConfigScreen.setStyleSheet(u"background:#E5E5E5")
         self.verticalLayout = QVBoxLayout(AsymConfigScreen)
@@ -29,26 +29,12 @@ class Ui_AsymConfigScreen(object):
         self.containerScreen.setAutoFillBackground(False)
         self.gridLayout = QGridLayout(self.containerScreen)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.screen2 = QLabel(self.containerScreen)
-        self.screen2.setObjectName(u"screen2")
-        self.screen2.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
-        self.screen2.setAlignment(Qt.AlignCenter)
-
-        self.gridLayout.addWidget(self.screen2, 0, 1, 1, 1)
-
         self.screen1 = QLabel(self.containerScreen)
         self.screen1.setObjectName(u"screen1")
         self.screen1.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
         self.screen1.setAlignment(Qt.AlignCenter)
 
         self.gridLayout.addWidget(self.screen1, 0, 0, 1, 1)
-
-        self.screen4 = QLabel(self.containerScreen)
-        self.screen4.setObjectName(u"screen4")
-        self.screen4.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
-        self.screen4.setAlignment(Qt.AlignCenter)
-
-        self.gridLayout.addWidget(self.screen4, 1, 1, 1, 1)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
@@ -77,6 +63,40 @@ class Ui_AsymConfigScreen(object):
         self.horizontalLayout_2.setStretch(1, 1)
 
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
+
+        self.screen2 = QWidget(self.containerScreen)
+        self.screen2.setObjectName(u"screen2")
+        self.horizontalLayout_4 = QHBoxLayout(self.screen2)
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.screen2Left = QPushButton(self.screen2)
+        self.screen2Left.setObjectName(u"screen2Left")
+
+        self.horizontalLayout_4.addWidget(self.screen2Left)
+
+        self.screen2Right = QPushButton(self.screen2)
+        self.screen2Right.setObjectName(u"screen2Right")
+
+        self.horizontalLayout_4.addWidget(self.screen2Right)
+
+
+        self.gridLayout.addWidget(self.screen2, 0, 1, 1, 1)
+
+        self.screen3 = QWidget(self.containerScreen)
+        self.screen3.setObjectName(u"screen3")
+        self.horizontalLayout_5 = QHBoxLayout(self.screen3)
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.screen3Left = QPushButton(self.screen3)
+        self.screen3Left.setObjectName(u"screen3Left")
+
+        self.horizontalLayout_5.addWidget(self.screen3Left)
+
+        self.screen3Right = QPushButton(self.screen3)
+        self.screen3Right.setObjectName(u"screen3Right")
+
+        self.horizontalLayout_5.addWidget(self.screen3Right)
+
+
+        self.gridLayout.addWidget(self.screen3, 1, 1, 1, 1)
 
         self.gridLayout.setRowStretch(0, 1)
         self.gridLayout.setRowStretch(1, 1)
@@ -133,7 +153,7 @@ class Ui_AsymConfigScreen(object):
         self.verticalLayout_12 = QVBoxLayout(self.groupSpinTemplate_4)
         self.verticalLayout_12.setObjectName(u"verticalLayout_12")
         self.verticalLayout_12.setContentsMargins(-1, 0, -1, 0)
-        self.inpReCalcFactorLeft = QSpinBox(self.groupSpinTemplate_4)
+        self.inpReCalcFactorLeft = QDoubleSpinBox(self.groupSpinTemplate_4)
         self.inpReCalcFactorLeft.setObjectName(u"inpReCalcFactorLeft")
 
         self.verticalLayout_12.addWidget(self.inpReCalcFactorLeft)
@@ -188,7 +208,7 @@ class Ui_AsymConfigScreen(object):
         self.verticalLayout_7.setContentsMargins(-1, 0, -1, 0)
         self.sldAmpRate = QSlider(self.grpBoxAmpRate)
         self.sldAmpRate.setObjectName(u"sldAmpRate")
-        self.sldAmpRate.setMaximum(100)
+        self.sldAmpRate.setMaximum(20)
         self.sldAmpRate.setPageStep(5)
         self.sldAmpRate.setOrientation(Qt.Horizontal)
 
@@ -202,7 +222,7 @@ class Ui_AsymConfigScreen(object):
         self.verticalLayout_6 = QVBoxLayout(self.groupSpinTemplate_2)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.verticalLayout_6.setContentsMargins(-1, 0, -1, 0)
-        self.inpAmpThresh = QSpinBox(self.groupSpinTemplate_2)
+        self.inpAmpThresh = QDoubleSpinBox(self.groupSpinTemplate_2)
         self.inpAmpThresh.setObjectName(u"inpAmpThresh")
 
         self.verticalLayout_6.addWidget(self.inpAmpThresh)
@@ -244,7 +264,7 @@ class Ui_AsymConfigScreen(object):
         self.verticalLayout_18 = QVBoxLayout(self.groupSpinTemplate_6)
         self.verticalLayout_18.setObjectName(u"verticalLayout_18")
         self.verticalLayout_18.setContentsMargins(-1, 0, -1, 0)
-        self.inpReCalcFactorRight = QSpinBox(self.groupSpinTemplate_6)
+        self.inpReCalcFactorRight = QDoubleSpinBox(self.groupSpinTemplate_6)
         self.inpReCalcFactorRight.setObjectName(u"inpReCalcFactorRight")
 
         self.verticalLayout_18.addWidget(self.inpReCalcFactorRight)
@@ -318,13 +338,15 @@ class Ui_AsymConfigScreen(object):
 
     def retranslateUi(self, AsymConfigScreen):
         AsymConfigScreen.setWindowTitle(QCoreApplication.translate("AsymConfigScreen", u"Form", None))
-        self.screen2.setText(QCoreApplication.translate("AsymConfigScreen", u"SCREEN", None))
         self.screen1.setText(QCoreApplication.translate("AsymConfigScreen", u"SCREEN", None))
-        self.screen4.setText(QCoreApplication.translate("AsymConfigScreen", u"SCREEN", None))
         self.groupCbbTemplate.setTitle(QCoreApplication.translate("AsymConfigScreen", u"Display Type:", None))
         self.cbbDisplayType.setItemText(0, QCoreApplication.translate("AsymConfigScreen", u"Item 1", None))
         self.cbbDisplayType.setItemText(1, QCoreApplication.translate("AsymConfigScreen", u"Item 2", None))
 
+        self.screen2Left.setText(QCoreApplication.translate("AsymConfigScreen", u"PushButton", None))
+        self.screen2Right.setText(QCoreApplication.translate("AsymConfigScreen", u"PushButton", None))
+        self.screen3Left.setText(QCoreApplication.translate("AsymConfigScreen", u"PushButton", None))
+        self.screen3Right.setText(QCoreApplication.translate("AsymConfigScreen", u"PushButton", None))
         self.lblTitle.setText(QCoreApplication.translate("AsymConfigScreen", u"SAMPLE COMPARISON CONFIG", None))
         self.groupSpinTemplate_4.setTitle(QCoreApplication.translate("AsymConfigScreen", u"Re-calc factor (left)", None))
         self.groupSpinTemplate_5.setTitle(QCoreApplication.translate("AsymConfigScreen", u"PSNR Trigger", None))

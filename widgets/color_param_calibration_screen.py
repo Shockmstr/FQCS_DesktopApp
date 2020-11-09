@@ -20,7 +20,7 @@ class ColorParamCalibrationScreen(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.detector_cfg = DetectorConfig.instance().config
+        self.detector_cfg = DetectorConfig.instance()
         self.ui = Ui_ColorParamCalibScreen()
         self.ui.setupUi(self)
         self.backscreen = self.ui.btnBack.clicked
@@ -44,24 +44,24 @@ class ColorParamCalibrationScreen(QWidget):
         amp_thresh_green_value = float(self.ui.ampThreshGreen.text())
         amp_thresh_red_value = float(self.ui.ampThreshRed.text())
         amp_thresh_blue_value = float(self.ui.ampThreshBlue.text())
-        self.detector_cfg["color_cfg"]["amplify_thresh"] = (
+        self.detector_cfg.config["color_cfg"]["amplify_thresh"] = (
             amp_thresh_red_value, amp_thresh_green_value,
             amp_thresh_blue_value)
 
     def amp_rate_change(self):
         value = self.ui.sldAmpRate.value()
         self.ui.grpSldAmpRate.setTitle("Amplification Rate: " + str(value))
-        self.detector_cfg["color_cfg"]["amplify_rate"] = value
+        self.detector_cfg.config["color_cfg"]["amplify_rate"] = value
 
     def sup_thresh_change(self):
         value = self.ui.inpSuppThreshold.value()
-        self.detector_cfg["color_cfg"]["supp_thresh"] = value
+        self.detector_cfg.config["color_cfg"]["supp_thresh"] = value
 
     def allow_diff_change(self):
         value = self.ui.sldAllowDiff.value() / 100
         self.ui.grpSldAllowDiff.setTitle("Allowed Difference (%): " +
                                          str(value))
-        self.detector_cfg["color_cfg"]["max_diff"] = value
+        self.detector_cfg.config["color_cfg"]["max_diff"] = value
 
     def cbbCamera_chose(self):
         self.replace_camera_widget()
@@ -69,13 +69,13 @@ class ColorParamCalibrationScreen(QWidget):
         
 
     def load_default_config(self):
-        #print(self.detector_cfg)
-        # amp_thresh_red_value = self.detector_cfg["color_cfg"]["amplify_thresh"][0]
-        # amp_thresh_green_value = self.detector_cfg["color_cfg"]["amplify_thresh"][1]
-        # amp_thresh_blue_value = self.detector_cfg["color_cfg"]["amplify_thresh"][2]
-        amplify_rate = self.detector_cfg["color_cfg"]["amplify_rate"]
-        supp_thresh = self.detector_cfg["color_cfg"]["supp_thresh"]
-        max_diff = self.detector_cfg["color_cfg"]["max_diff"]
+        #print(self.detector_cfg.config)
+        # amp_thresh_red_value = self.detector_cfg.config["color_cfg"]["amplify_thresh"][0]
+        # amp_thresh_green_value = self.detector_cfg.config["color_cfg"]["amplify_thresh"][1]
+        # amp_thresh_blue_value = self.detector_cfg.config["color_cfg"]["amplify_thresh"][2]
+        amplify_rate = self.detector_cfg.config["color_cfg"]["amplify_rate"]
+        supp_thresh = self.detector_cfg.config["color_cfg"]["supp_thresh"]
+        max_diff = self.detector_cfg.config["color_cfg"]["max_diff"]
 
         self.ui.sldAllowDiff.setValue(max_diff * 100)
         self.ui.sldAmpRate.setValue(amplify_rate)
@@ -90,10 +90,12 @@ class ColorParamCalibrationScreen(QWidget):
                                        str(max_diff))
 
     def view_image_sample(self):
-        left_path = helpers.get_current_sample_image_path(
-            self) + os.sep + detector.SAMPLE_LEFT_FILE
-        right_path = helpers.get_current_sample_image_path(
-            self) + os.sep + detector.SAMPLE_RIGHT_FILE
+        left_path = '/Users/bitumhoang/Desktop/capstone/FQCS_DesktopApp/resources/sample_left.jpg'
+        # helpers.get_current_sample_image_path(
+        #     self) + os.sep + detector.SAMPLE_LEFT_FILE
+        right_path = '/Users/bitumhoang/Desktop/capstone/FQCS_DesktopApp/resources/sample_right.jpg'
+        # helpers.get_current_sample_image_path(
+        #     self) + os.sep + detector.SAMPLE_RIGHT_FILE
         left = cv2.imread(left_path)
         right = cv2.imread(right_path)
         m_left, m_right = self.preprocess_color(left, right)
@@ -192,7 +194,7 @@ class ColorParamCalibrationScreen(QWidget):
         if (blue > self.max_blue): self.max_blue = blue
         if (green > self.max_green): self.max_green = green
         if (red > self.max_red): self.max_red = red
-        amp_thresh = (int(self.max_red), int(self.max_green), int(self.max_blue))
+        amp_thresh = (int(self.max_red), int(self.max_green), int(self.max_blue))       
         self.ui.ampThreshRed.setValue(amp_thresh[0])
         self.ui.ampThreshGreen.setValue(amp_thresh[1])
         self.ui.ampThreshBlue.setValue(amp_thresh[2])
@@ -206,7 +208,7 @@ class ColorParamCalibrationScreen(QWidget):
     #image process function
 
     def preprocess_color(self, sample_left, sample_right):
-        c_cfg = self.detector_cfg['color_cfg']
+        c_cfg = self.detector_cfg.config['color_cfg']
         #print(c_cfg)
         pre_sample_left = detector.preprocess_for_color_diff(
             sample_left, c_cfg['img_size'], c_cfg['blur_val'],
