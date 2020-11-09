@@ -2,6 +2,7 @@ from PySide2.QtWidgets import QFileDialog
 import cv2
 import os
 from app_models.detector_config import DetectorConfig
+from app_constants import ROOT_DIR
 import trio
 import asyncio
 
@@ -46,9 +47,8 @@ def get_all_camera_index(num=10):
         num -= 1
     return arr
 
-
 def get_current_sample_image_path(self):
     currentPath = DetectorConfig.instance().current_path
     if (currentPath == None):
-        currentPath = os.sep.join([os.getcwd(), "resources"])  #default = current working directory/resouces
+        currentPath = os.sep.join([ROOT_DIR, "resources"])  #default = current working directory/resouces
     return currentPath
