@@ -159,7 +159,7 @@ class TestDetectPairScreen(QWidget):
             temp_left = imutils.resize(left, height=max_width)
             temp_right = imutils.resize(right, height=max_width)
             detected = np.concatenate((temp_left, temp_right), axis=1)
-            return image, detected, (left, right)
+            return image, detected, [left, right]
 
         return image, None, None
 

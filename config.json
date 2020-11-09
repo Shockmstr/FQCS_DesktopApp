@@ -1,12 +1,12 @@
 {
-  "min_width_per": 0.1,
-  "min_height_per": 0.7,
-  "stop_condition": -0.98,
+  "min_width_per": 0.08,
+  "min_height_per": 0.15,
+  "stop_condition": 0,
   "detect_range": [
     0.2,
     0.8
   ],
-  "length_per_10px": null,
+  "length_per_10px": 0.4150943396226415,
   "length_unit": "cm",
   "max_size_diff": 0.3,
   "frame_width": 640,
@@ -67,16 +67,17 @@
     ]
   },
   "d_cfg": {
+    "max_boxes": 10,
     "bg_thresh": 110,
-    "adj_bg_thresh": 110,
+    "adj_bg_thresh": 147.64296808226496,
     "light_adj_thresh": 65,
-    "alpha": 0.1,
+    "alpha": 1.0,
     "beta": 0,
-    "threshold1": 200,
-    "threshold2": 255,
+    "threshold1": 40,
+    "threshold2": 100,
     "kernel": [
-      11,
-      11
+      21,
+      21
     ],
     "d_kernel": [
       5,
