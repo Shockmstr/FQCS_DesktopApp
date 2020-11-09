@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'measurement_screenQQvGyJ.ui'
+## Form generated from reading UI file 'measurement_screenwOrkdC.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -138,11 +138,11 @@ class Ui_MeasurementScreen(object):
         self.verticalLayout_13.setContentsMargins(-1, 0, -1, 0)
         self.sldDectectPosition = QSlider(self.groupSliderPosition)
         self.sldDectectPosition.setObjectName(u"sldDectectPosition")
-        self.sldDectectPosition.setMinimum(1)
-        self.sldDectectPosition.setMaximum(100)
+        self.sldDectectPosition.setMinimum(-50)
+        self.sldDectectPosition.setMaximum(50)
         self.sldDectectPosition.setSingleStep(5)
         self.sldDectectPosition.setPageStep(5)
-        self.sldDectectPosition.setValue(50)
+        self.sldDectectPosition.setValue(0)
         self.sldDectectPosition.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_13.addWidget(self.sldDectectPosition)

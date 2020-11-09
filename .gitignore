@@ -123,3 +123,8 @@ venv.bak/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# weights and net configs
+*.h5
+*.cfg
+*.weights
