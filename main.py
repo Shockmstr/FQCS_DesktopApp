@@ -3,6 +3,7 @@ from widgets.main_window import MainWindow
 from widgets.login_screen import LoginScreen
 import asyncio
 import sys
+import os
 from services.login_service import LoginService
 from app_constants import CONFIG_PATH
 from app_models.auth_info import AuthInfo
@@ -27,7 +28,7 @@ class MainApplication():
         self.auth_info.new_token.connect(self.on_logged_in_success)
         self.auth_info.refresh_token.connect(self.on_refresh_token)
         self.auth_info.remove_token.connect(self.on_logged_out)
-        self.auth_info.same_token.connect(lambda val: print("Same token"))
+        self.auth_info.same_token.connect(lambda val: print("Same token"))  
         self.__login_service = LoginService(self.auth_info)
         await self.__login_service.init_auth_info()
         self.choose_screen()
