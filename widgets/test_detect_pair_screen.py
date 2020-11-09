@@ -144,14 +144,7 @@ class TestDetectPairScreen(QWidget):
                             left)
                 cv2.imwrite(folder_path + r"/" + detector.SAMPLE_RIGHT_FILE,
                             right)
-                print(f"save successful at {folder_path}")
-            else:
-                cv2.imwrite(folder_path + r"/" + detector.SAMPLE_LEFT_FILE,
-                            left)
-                cv2.imwrite(folder_path + r"/" + detector.SAMPLE_RIGHT_FILE,
-                            right)
-                print(f"override save successful at {folder_path}")
-
+                print(f"save successful at {folder_path}")         
     def reset_sample(self):
         self.detected_pair = None
         self.image3.imreset()
