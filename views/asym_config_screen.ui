@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1355</width>
-    <height>805</height>
+    <width>1440</width>
+    <height>784</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,34 +41,8 @@
       <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout" rowstretch="1,1" columnstretch="1,1">
-      <item row="0" column="1">
-       <widget class="QLabel" name="screen2">
-        <property name="styleSheet">
-         <string notr="true">background-color: #AFF;font-weight:bold;</string>
-        </property>
-        <property name="text">
-         <string>SCREEN</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="screen1">
-        <property name="styleSheet">
-         <string notr="true">background-color: #AFF;font-weight:bold;</string>
-        </property>
-        <property name="text">
-         <string>SCREEN</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="screen4">
         <property name="styleSheet">
          <string notr="true">background-color: #AFF;font-weight:bold;</string>
         </property>
@@ -131,6 +105,46 @@
          </spacer>
         </item>
        </layout>
+      </item>
+      <item row="0" column="1">
+       <widget class="QWidget" name="screen2" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QPushButton" name="screen2Left">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="screen2Right">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QWidget" name="screen3" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QPushButton" name="screen3Left">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="screen3Right">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -217,7 +231,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSpinBox" name="inpReCalcFactorLeft"/>
+                <widget class="QDoubleSpinBox" name="inpReCalcFactorLeft"/>
                </item>
               </layout>
              </widget>
@@ -331,7 +345,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSpinBox" name="inpAmpThresh"/>
+                <widget class="QDoubleSpinBox" name="inpAmpThresh"/>
                </item>
               </layout>
              </widget>
@@ -396,7 +410,7 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSpinBox" name="inpReCalcFactorRight"/>
+                <widget class="QDoubleSpinBox" name="inpReCalcFactorRight"/>
                </item>
               </layout>
              </widget>
