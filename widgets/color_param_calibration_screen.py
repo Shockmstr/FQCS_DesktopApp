@@ -158,8 +158,10 @@ class ColorParamCalibrationScreen(QWidget):
             self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
             self.CAMERA_LOADED = True
 
-    index = 1
     hist_bgr_list = []
+    max_blue = 0
+    max_green = 0
+    max_red = 0
 
     def find_amp_threshold(self, img_left, img_right):
         sample_left_path = helpers.get_current_sample_image_path(
@@ -168,29 +170,29 @@ class ColorParamCalibrationScreen(QWidget):
             self) + os.sep + detector.SAMPLE_RIGHT_FILE
         sample_left, sample_right = self.preprocess_color(
             cv2.imread(sample_left_path), cv2.imread(sample_right_path))
-        self.hist_bgr_list.append(
-                np.abs(
-                    np.subtract(helper.get_hist_bgr(img_left),
-                                helper.get_hist_bgr(sample_left))))
-        self.hist_bgr_list.append(
-                np.abs(
-                    np.subtract(helper.get_hist_bgr(img_right),
-                                helper.get_hist_bgr(sample_right))))
+        hist_left = np.abs(np.subtract(helper.get_hist_bgr(img_left), helper.get_hist_bgr(sample_left)))
+        hist_right = np.abs(np.subtract(helper.get_hist_bgr(img_right), helper.get_hist_bgr(sample_right)))
+        # self.hist_bgr_list.append(
+        #         np.abs(
+        #             np.subtract(helper.get_hist_bgr(img_left),
+        #                         helper.get_hist_bgr(sample_left))))
+        # self.hist_bgr_list.append(
+        #         np.abs(
+        #             np.subtract(helper.get_hist_bgr(img_right),
+        #                         helper.get_hist_bgr(sample_right))))
 
-        max_blue = 0
-        max_green = 0
-        max_red = 0
-        for hist in self.hist_bgr_list:
-            blue = np.max(hist[0])
-            #print("hist blue:", hist[0].reshape(1,-1))
-            green = np.max(hist[1])
-            #print("hist green:", hist[1].reshape(1,-1))
-            red = np.max(hist[2])
-            #print("hist red:", hist[2].reshape(1,-1))
-            if (blue > max_blue): max_blue = blue
-            if (green > max_green): max_green = green
-            if (red > max_red): max_red = red
-        amp_thresh = (int(max_red), int(max_green), int(max_blue))
+        
+        # for hist in self.hist_bgr_list:
+        blue = np.max(hist_left[0]) if np.max(hist_left[0]) > np.max(hist_right[0]) else blue = np.max(hist_right[0])
+        #print("hist blue:", hist[0].reshape(1,-1))
+        green = np.max(hist_left[1]) if np.max(hist_left[1]) > np.max(hist_right[1]) else green = np.max(hist_right[1])
+        #print("hist green:", hist[1].reshape(1,-1))
+        red = np.max(hist_left[2]) if np.max(hist_left[2]) > np.max(hist_right[2]) else red = np.max(hist_right[2])
+        #print("hist red:", hist[2].reshape(1,-1))
+        if (blue > self.max_blue): self.max_blue = blue
+        if (green > self.max_green): self.max_green = green
+        if (red > self.max_red): self.max_red = red
+        amp_thresh = (int(self.max_red), int(self.max_green), int(self.max_blue))
         self.ui.ampThreshRed.setValue(amp_thresh[0])
         self.ui.ampThreshGreen.setValue(amp_thresh[1])
         self.ui.ampThreshBlue.setValue(amp_thresh[2])
@@ -225,32 +227,58 @@ class ColorParamCalibrationScreen(QWidget):
         find_contours_func = detector.get_find_contours_func_by_method(
             self.detector_cfg["detect_method"])
 
-        # adjust thresh
+        # adjust thresh       
         if (self.detector_cfg["detect_method"] == "thresh"):
-            adj_bg_thresh = helper.adjust_thresh_by_brightness(
-                image, self.detector_cfg["d_cfg"]["light_adj_thresh"],
-                self.detector_cfg["d_cfg"]["bg_thresh"])
+            adj_thresh = self.detector_cfg["d_cfg"]["light_adj_thresh"]
+            if adj_thresh is not None and adj_thresh > 0:
+                adj_bg_thresh = helper.adjust_thresh_by_brightness(
+                    image, self.detector_cfg["d_cfg"]["light_adj_thresh"], self.detector_cfg["d_cfg"]["bg_thresh"])
+            else:
+                adj_bg_thresh = self.detector_cfg["d_cfg"]["bg_thresh"]
             self.detector_cfg["d_cfg"]["adj_bg_thresh"] = adj_bg_thresh
         elif (self.detector_cfg["detect_method"] == "range"):
-            adj_cr_to = helper.adjust_crange_by_brightness(
-                image, self.detector_cfg["d_cfg"]["light_adj_thresh"],
-                self.detector_cfg["d_cfg"]["cr_to"])
-            self.detector_cfg["d_cfg"]["adj_cr_to"] = adj_cr_to
+            adj_thresh = self.detector_cfg["d_cfg"]["light_adj_thresh"]
+            if adj_thresh is not None and adj_thresh > 0:
+                adj_cr_to = helper.adjust_crange_by_brightness(
+                    image, self.detector_cfg["d_cfg"]["light_adj_thresh"], self.detector_cfg["d_cfg"]["cr_to"])
+                self.detector_cfg["d_cfg"]["adj_cr_to"] = adj_cr_to
+            else:
+                self.detector_cfg["d_cfg"]["adj_cr_to"] = self.detector_cfg["d_cfg"]["cr_to"]
 
-        boxes, cnts, proc = detector.find_contours_and_box(
+
+        boxes, proc = detector.find_contours_and_box(
             image,
             find_contours_func,
-            self.detector_cfg["d_cfg"],
+            d_cfg,
             min_width=min_width,
-            min_height=min_height)
-        pair, image, split_left, split_right, boxes = detector.detect_pair_and_size(
-            image,
-            find_contours_func,
-            self.detector_cfg["d_cfg"],
-            boxes,
-            cnts,
-            stop_condition=self.detector_cfg['stop_condition'],
-            detect_range=self.detector_cfg['detect_range'])
+            min_height=min_height,
+            detect_range=self.detector_cfg["d_cfg"]['detect_range'])
+
+        final_grouped, _, _, check_group_idx = manager.group_pairs(
+            boxes, sample_area)
+        group_count = manager.get_last_group_count()
+
+        # pair, image, split_left, split_right, boxes = detector.detect_pair_and_size(
+        #     image,
+        #     find_contours_func,
+        #     self.detector_cfg["d_cfg"],
+        #     boxes,
+        #     cnts,
+        #     stop_condition=self.detector_cfg['stop_condition'],
+        #     detect_range=self.detector_cfg['detect_range'])
+
+        pair, split_left, split_right = None, None, None
+        check_group = None
+        if check_group_idx is not None:
+            check_group = final_grouped[check_group_idx]
+            image_detect = image.copy()
+            pair, image_detect, split_left, split_right, check_group = detector.detect_pair_and_size(
+                image_detect,
+                find_contours_func,
+                self.detector_cfg["d_cfg"],
+                check_group,
+                stop_condition=detector_cfg['stop_condition'])
+            final_grouped[check_group_idx] = check_group
 
         # output
         unit = self.detector_cfg["length_unit"]
@@ -269,6 +297,8 @@ class ColorParamCalibrationScreen(QWidget):
                         cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
         # cv2.imshow("Contours processed", proc)
         if pair is not None:
+            check_group_min_x = manager.get_min_x(check_group)
+            manager.check_group(check_group_min_x)
             left, right = pair
             left, right = left[0], right[0]
             h_diff, w_diff = detector.compare_size(sizes[0], sizes[1],
