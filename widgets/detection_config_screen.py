@@ -223,56 +223,58 @@ class DetectionConfigScreen(QWidget):
             self.CAMERA_LOADED = True
 
     def process_contours(self, image):
-        frame_width, frame_height = self.detector_cfg.config[
-            "frame_width"], self.detector_cfg.config["frame_height"]
-        min_width, min_height = self.detector_cfg.config[
-            "min_width_per"], self.detector_cfg.config["min_height_per"]
+        detector_cfg = self.detector_cfg.config
+        d_cfg = detector_cfg["d_cfg"]
+
+        frame_width, frame_height = detector_cfg[
+            "frame_width"], detector_cfg["frame_height"]
+        min_width, min_height = detector_cfg[
+            "min_width_per"], detector_cfg["min_height_per"]
         min_width, min_height = frame_width * min_width, frame_height * min_height
         find_contours_func = detector.get_find_contours_func_by_method(
-            self.detector_cfg.config["detect_method"])
+            detector_cfg["detect_method"])
+
 
         # adjust thresh
-        if (self.detector_cfg.config["detect_method"] == "thresh"):
-            adj_bg_thresh = helper.adjust_thresh_by_brightness(
-                image, self.detector_cfg.config["d_cfg"]["light_adj_thresh"],
-                self.detector_cfg.config["d_cfg"]["bg_thresh"])
-            self.detector_cfg.config["d_cfg"]["adj_bg_thresh"] = adj_bg_thresh
-        elif (self.detector_cfg.config["detect_method"] == "range"):
-            adj_cr_to = helper.adjust_crange_by_brightness(
-                image, self.detector_cfg.config["d_cfg"]["light_adj_thresh"],
-                self.detector_cfg.config["d_cfg"]["cr_to"])
-            self.detector_cfg.config["d_cfg"]["adj_cr_to"] = adj_cr_to
+        if (detector_cfg["detect_method"] == "thresh"):
+            adj_thresh = d_cfg["light_adj_thresh"]
+            if adj_thresh is not None and adj_thresh > 0:
+                adj_bg_thresh = helper.adjust_thresh_by_brightness(
+                    image, d_cfg["light_adj_thresh"], d_cfg["bg_thresh"])
+            else:
+                adj_bg_thresh = d_cfg["bg_thresh"]
+            d_cfg["adj_bg_thresh"] = adj_bg_thresh
+        elif (detector_cfg["detect_method"] == "range"):
+            adj_thresh = d_cfg["light_adj_thresh"]
+            if adj_thresh is not None and adj_thresh > 0:
+                adj_cr_to = helper.adjust_crange_by_brightness(
+                    image, d_cfg["light_adj_thresh"], d_cfg["cr_to"])
+                d_cfg["adj_cr_to"] = adj_cr_to
+            else:
+                d_cfg["adj_cr_to"] = d_cfg["cr_to"]
 
-        boxes, cnts, proc = detector.find_contours_and_box(
+        boxes, proc = detector.find_contours_and_box(
             image,
             find_contours_func,
-            self.detector_cfg.config["d_cfg"],
+            d_cfg,
             min_width=min_width,
-            min_height=min_height)
+            min_height=min_height,
+            detect_range=detector_cfg['detect_range'])
+        
         pair, image, split_left, split_right, boxes = detector.detect_pair_and_size(
             image,
             find_contours_func,
-            self.detector_cfg.config["d_cfg"],
+            d_cfg,
             boxes,
-            cnts,
-            stop_condition=self.detector_cfg.config['stop_condition'],
-            detect_range=self.detector_cfg.config['detect_range'])
+            stop_condition=detector_cfg['stop_condition'])
 
         # output
-        unit = self.detector_cfg.config["length_unit"]
-        per_10px = self.detector_cfg.config["length_per_10px"]
+        unit = detector_cfg["length_unit"]
+        per_10px = detector_cfg["length_per_10px"]
         sizes = []
         for b in boxes:
-            rect, lH, lW, box, tl, tr, br, bl = b
-            if (per_10px is not None):
-                lH, lW = helper.calculate_length(
-                    lH, per_10px), helper.calculate_length(lW, per_10px)
-            sizes.append((lH, lW))
+            _, _, _, _, box, _, _, _, _, _, _, _ = b
             cv2.drawContours(image, [box.astype("int")], -1, (0, 255, 0), 2)
-            cv2.putText(image, f"{lW:.1f} {unit}", (tl[0], tl[1]),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
-            cv2.putText(image, f"{lH:.1f} {unit}", (br[0], br[1]),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
         # cv2.imshow("Contours processed", proc)
         return image, proc
 
@@ -302,10 +304,10 @@ class DetectionConfigScreen(QWidget):
         width_index = self.ui.cbbWidth.findData(
             self.detector_cfg.config["frame_width"])
 
-        self.ui.sldBrightness.setValue(round(brightness / self.BRIGHTNESS_STEP, 1))
-        self.ui.sldContrast.setValue(int(contrast / self.CONTRAST_STEP))
-        self.ui.sldThreshold1.setValue(int(thresh1 / self.THRESHOLD1_STEP))
-        self.ui.sldThreshold2.setValue(int(thresh2 / self.THRESHOLD2_STEP))
+        self.ui.sldBrightness.setValue(brightness/self.BRIGHTNESS_STEP)
+        self.ui.sldContrast.setValue(contrast/self.CONTRAST_STEP)
+        self.ui.sldThreshold1.setValue(thresh1/self.THRESHOLD1_STEP)
+        self.ui.sldThreshold2.setValue(thresh2/self.THRESHOLD2_STEP)
         self.ui.sldBlur.setValue(blur)
         self.ui.sldDilate.setValue(dilate)
         self.ui.sldErode.setValue(erode or 0)
