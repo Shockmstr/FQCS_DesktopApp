@@ -177,25 +177,21 @@ class ColorParamCalibrationScreen(QWidget):
         hist_right = np.abs(
             np.subtract(helper.get_hist_bgr(img_right),
                         helper.get_hist_bgr(sample_right)))
-        # self.hist_bgr_list.append(
-        #         np.abs(
-        #             np.subtract(helper.get_hist_bgr(img_left),
-        #                         helper.get_hist_bgr(sample_left))))
-        # self.hist_bgr_list.append(
-        #         np.abs(
-        #             np.subtract(helper.get_hist_bgr(img_right),
-        #                         helper.get_hist_bgr(sample_right))))
+        total_hist = np.concatenate((hist_left, hist_right))
 
-        # for hist in self.hist_bgr_list:
-        blue = np.max(hist_left[0]) if np.max(hist_left[0]) > np.max(
-            hist_right[0]) else np.max(hist_right[0])
-        #print("hist blue:", hist[0].reshape(1,-1))
-        green = np.max(hist_left[1]) if np.max(hist_left[1]) > np.max(
-            hist_right[1]) else np.max(hist_right[1])
-        #print("hist green:", hist[1].reshape(1,-1))
-        red = np.max(hist_left[2]) if np.max(hist_left[2]) > np.max(
-            hist_right[2]) else np.max(hist_right[2])
+        
+        # #blue = np.max(hist_left[0]) if np.max(hist_left[0]) > np.max(
+        #     hist_right[0]) else np.max(hist_right[0])
+        # #print("hist blue:", hist[0].reshape(1,-1))
+        # #green = np.max(hist_left[1]) if np.max(hist_left[1]) > np.max(
+        #     hist_right[1]) else np.max(hist_right[1])
+        # #print("hist green:", hist[1].reshape(1,-1))
+        # #red = np.max(hist_left[2]) if np.max(hist_left[2]) > np.max(
+        #     hist_right[2]) else np.max(hist_right[2])
         #print("hist red:", hist[2].reshape(1,-1))
+        blue = np.max(total_hist[0])
+        green = np.max(total_hist[1])
+        red = np.max(total_hist[2])
         if (blue > self.max_blue): self.max_blue = blue
         if (green > self.max_green): self.max_green = green
         if (red > self.max_red): self.max_red = red
@@ -205,7 +201,12 @@ class ColorParamCalibrationScreen(QWidget):
         self.ui.ampThreshGreen.setValue(amp_thresh[1])
         self.ui.ampThreshBlue.setValue(amp_thresh[2])
         self.detector_cfg.config["color_cfg"]["amplify_thresh"] = amp_thresh
-        #self.hist_bgr_list.clear()
+        print(self.detector_cfg.config["color_cfg"]["amplify_thresh"])
+
+    def hideEvent(self, event):
+        self.max_blue = 0
+        self.max_green = 0
+        self.max_red = 0
 
     def showEvent(self, event):
         self.replace_image_widget()

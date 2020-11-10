@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'detection_config_screen_layoutESPyFd.ui'
+## Form generated from reading UI file 'detection_config_screenNcjEFm.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -29,6 +29,13 @@ class Ui_DetectionConfigScreen(object):
         self.containerScreen.setAutoFillBackground(False)
         self.gridLayout = QGridLayout(self.containerScreen)
         self.gridLayout.setObjectName(u"gridLayout")
+        self.screen2 = QLabel(self.containerScreen)
+        self.screen2.setObjectName(u"screen2")
+        self.screen2.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
+        self.screen2.setAlignment(Qt.AlignCenter)
+
+        self.gridLayout.addWidget(self.screen2, 0, 1, 1, 1)
+
         self.screen1 = QLabel(self.containerScreen)
         self.screen1.setObjectName(u"screen1")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -41,19 +48,67 @@ class Ui_DetectionConfigScreen(object):
 
         self.gridLayout.addWidget(self.screen1, 0, 0, 1, 1)
 
-        self.screen2 = QLabel(self.containerScreen)
-        self.screen2.setObjectName(u"screen2")
-        self.screen2.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
-        self.screen2.setAlignment(Qt.AlignCenter)
-
-        self.gridLayout.addWidget(self.screen2, 0, 1, 1, 1)
-
         self.screen3 = QLabel(self.containerScreen)
         self.screen3.setObjectName(u"screen3")
         self.screen3.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
         self.screen3.setAlignment(Qt.AlignCenter)
 
         self.gridLayout.addWidget(self.screen3, 1, 0, 1, 1)
+
+        self.screen4 = QWidget(self.containerScreen)
+        self.screen4.setObjectName(u"screen4")
+        self.gridLayout_7 = QGridLayout(self.screen4)
+        self.gridLayout_7.setObjectName(u"gridLayout_7")
+        self.widget_2 = QWidget(self.screen4)
+        self.widget_2.setObjectName(u"widget_2")
+        self.horizontalLayout_2 = QHBoxLayout(self.widget_2)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.groupCbbTemplate = QGroupBox(self.widget_2)
+        self.groupCbbTemplate.setObjectName(u"groupCbbTemplate")
+        self.verticalLayout_3 = QVBoxLayout(self.groupCbbTemplate)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(-1, 0, -1, 0)
+        self.txtNewCamera = QLineEdit(self.groupCbbTemplate)
+        self.txtNewCamera.setObjectName(u"txtNewCamera")
+        self.txtNewCamera.setClearButtonEnabled(True)
+
+        self.verticalLayout_3.addWidget(self.txtNewCamera)
+
+
+        self.horizontalLayout_2.addWidget(self.groupCbbTemplate)
+
+        self.btnAdd = QToolButton(self.widget_2)
+        self.btnAdd.setObjectName(u"btnAdd")
+
+        self.horizontalLayout_2.addWidget(self.btnAdd)
+
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer_4)
+
+        self.horizontalLayout_2.setStretch(0, 2)
+        self.horizontalLayout_2.setStretch(1, 1)
+        self.horizontalLayout_2.setStretch(2, 2)
+
+        self.gridLayout_7.addWidget(self.widget_2, 0, 1, 1, 1)
+
+        self.tblCameraConfig = QTableWidget(self.screen4)
+        if (self.tblCameraConfig.columnCount() < 2):
+            self.tblCameraConfig.setColumnCount(2)
+        __qtablewidgetitem = QTableWidgetItem()
+        self.tblCameraConfig.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        self.tblCameraConfig.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        self.tblCameraConfig.setObjectName(u"tblCameraConfig")
+        self.tblCameraConfig.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.tblCameraConfig.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.tblCameraConfig.setRowCount(0)
+        self.tblCameraConfig.setColumnCount(2)
+
+        self.gridLayout_7.addWidget(self.tblCameraConfig, 1, 1, 1, 1)
+
+
+        self.gridLayout.addWidget(self.screen4, 1, 1, 1, 1)
 
         self.gridLayout.setRowStretch(0, 1)
         self.gridLayout.setRowStretch(1, 1)
@@ -474,9 +529,16 @@ class Ui_DetectionConfigScreen(object):
 
     def retranslateUi(self, DetectionConfigScreen):
         DetectionConfigScreen.setWindowTitle(QCoreApplication.translate("DetectionConfigScreen", u"Detection Config Screen", None))
-        self.screen1.setText(QCoreApplication.translate("DetectionConfigScreen", u"SCREEN", None))
         self.screen2.setText(QCoreApplication.translate("DetectionConfigScreen", u"SCREEN", None))
+        self.screen1.setText(QCoreApplication.translate("DetectionConfigScreen", u"SCREEN", None))
         self.screen3.setText(QCoreApplication.translate("DetectionConfigScreen", u"SCREEN", None))
+        self.groupCbbTemplate.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Add New", None))
+        self.txtNewCamera.setPlaceholderText(QCoreApplication.translate("DetectionConfigScreen", u"Name", None))
+        self.btnAdd.setText(QCoreApplication.translate("DetectionConfigScreen", u"+", None))
+        ___qtablewidgetitem = self.tblCameraConfig.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("DetectionConfigScreen", u"Camera Name", None));
+        ___qtablewidgetitem1 = self.tblCameraConfig.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("DetectionConfigScreen", u"Role", None));
         self.lblTitle.setText(QCoreApplication.translate("DetectionConfigScreen", u"DEFINE SAMPLE MODEL", None))
         self.groubCbbCamera.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Camera", None))
         self.cbbCamera.setItemText(0, QCoreApplication.translate("DetectionConfigScreen", u"Item 1", None))

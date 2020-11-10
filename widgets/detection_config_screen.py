@@ -1,5 +1,5 @@
 from PySide2.QtGui import QColor
-from PySide2.QtWidgets import QWidget, QColorDialog
+from PySide2.QtWidgets import QWidget, QColorDialog, QHeaderView, QTableWidgetItem, QAbstractItemView, QMessageBox
 from PySide2.QtCore import Signal
 import numpy as np
 from views.detection_config_screen import Ui_DetectionConfigScreen
@@ -65,6 +65,17 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbMethod.addItem("Threshold", userData="thresh")
         self.ui.cbbMethod.addItem("Range", userData="range")
 
+        table = self.ui.tblCameraConfig
+        table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.add_new_row(table, "Camera 1", "Main Camera")
+        self.add_new_row(table, "Camera 2", "Side Camera")
+        self.add_new_row(table, "Camera 3", "Side Camera")
+        table.clearSelection()
+
+    
+
     #BINDING
     def binding(self):
         self.ui.sldBrightness.valueChanged.connect(
@@ -87,6 +98,8 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbHeight.currentIndexChanged.connect(self.cbbHeight_changed)
         self.ui.cbbWidth.currentIndexChanged.connect(self.cbbWidth_changed)
         self.ui.cbbMethod.currentIndexChanged.connect(self.cbbMethod_changed)
+        self.ui.tblCameraConfig.cellClicked.connect(self.table_row_chose)
+        self.ui.btnAdd.clicked.connect(self.add_new_camera)
 
     #HANDLERS
     #edge detection method
@@ -177,6 +190,35 @@ class DetectionConfigScreen(QWidget):
             self.ui.btnColorTo.setStyleSheet("background-color: " + color_hex)
 
     #main controls
+    def add_new_row(self, table, text1, text2):
+        current_row = table.rowCount()
+        table.insertRow(current_row)
+        table.setItem(current_row, 0, QTableWidgetItem(text1))
+        table.setItem(current_row, 1, QTableWidgetItem(text2))
+
+    def add_new_camera(self):
+        table = self.ui.tblCameraConfig
+        camera_name = self.ui.txtNewCamera.text()
+        self.add_new_row(table, camera_name, "")
+
+    def table_row_chose(self):
+        table = self.ui.tblCameraConfig
+        chosen_row = table.currentRow()
+        content = table.item(chosen_row, 0).text()
+        self.showDialog(content)
+
+
+    def showDialog(self, msg):
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setText(msg)
+        msgBox.setWindowTitle("Notice")
+        msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+
+        returnValue = msgBox.exec()
+        if returnValue == QMessageBox.Ok:
+            print('OK clicked')
+
     def cbbCamera_chose(self):
         # self.replace_camera_widget()
         index = self.ui.cbbCamera.currentData()
