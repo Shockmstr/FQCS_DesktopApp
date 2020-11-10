@@ -76,10 +76,10 @@ class TestDetectPairScreen(QWidget):
             sample_right = cv2.imread(sample_right_path)
             sample_area = sample_left.shape[0] * sample_left.shape[1]
 
-        frame_width, frame_height = detector_cfg[
-            "frame_width"], detector_cfg["frame_height"]
-        min_width, min_height = detector_cfg[
-            "min_width_per"], detector_cfg["min_height_per"]
+        frame_width, frame_height = detector_cfg["frame_width"], detector_cfg[
+            "frame_height"]
+        min_width, min_height = detector_cfg["min_width_per"], detector_cfg[
+            "min_height_per"]
         min_width, min_height = frame_width * min_width, frame_height * min_height
         find_contours_func = detector.get_find_contours_func_by_method(
             detector_cfg["detect_method"])
@@ -126,7 +126,7 @@ class TestDetectPairScreen(QWidget):
                 check_group,
                 stop_condition=detector_cfg['stop_condition'])
             final_grouped[check_group_idx] = check_group
-        
+
         # output
         unit = detector_cfg["length_unit"]
         per_10px = detector_cfg["length_per_10px"]
@@ -136,7 +136,8 @@ class TestDetectPairScreen(QWidget):
                 c, rect, dimA, dimB, box, tl, tr, br, bl, minx, maxx, cenx = b
                 if per_10px:
                     lH, lW = helper.calculate_length(
-                        dimA, per_10px), helper.calculate_length(dimB, per_10px)
+                        dimA,
+                        per_10px), helper.calculate_length(dimB, per_10px)
                     sizes.append((lH, lW))
                 else:
                     lH, lW = dimA, dimB
@@ -148,7 +149,7 @@ class TestDetectPairScreen(QWidget):
                             cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
                 cv2.putText(image, f"{lH:.1f} {unit}", (br[0], br[1]),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
-        
+
         if (pair is not None):
             check_group_min_x = manager.get_min_x(check_group)
             manager.check_group(check_group_min_x)

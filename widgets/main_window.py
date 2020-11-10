@@ -2,6 +2,7 @@ from PySide2.QtWidgets import QMainWindow
 from PySide2.QtCore import Signal, QTimer
 from views.main_window import Ui_MainWindow
 from FQCS import detector
+from FQCS.manager import FQCSManager
 from app_models.detector_config import DetectorConfig
 from app import helpers
 import cv2
@@ -126,9 +127,11 @@ class MainWindow(QMainWindow):
 
         self.loaded_config.connect(self.detection_screen.load_cfg)
         self.loaded_config.connect(self.measurement_screen.load_cfg)
-        # TODO: fix detector_cfg bugs in following screens before 
-        self.loaded_config.connect(self.color_preprocess_config_screen.load_cfg)
-        self.loaded_config.connect(self.color_param_calib_screen.load_default_config)
+        # TODO: fix detector_cfg bugs in following screens before
+        self.loaded_config.connect(
+            self.color_preprocess_config_screen.load_cfg)
+        self.loaded_config.connect(
+            self.color_param_calib_screen.load_default_config)
         self.loaded_config.connect(self.error_detect_screen.load_cfg)
 
         return
@@ -196,7 +199,7 @@ class MainWindow(QMainWindow):
             self.process_cam = self.measurement_screen.view_cam
             self.control_timer(True)
         elif (currentWidget == self.color_preprocess_config_screen):
-            self.color_preprocess_config_screen.view_image()    
+            self.color_preprocess_config_screen.view_image()
         elif (currentWidget == self.color_param_calib_screen):
             self.process_cam = self.color_param_calib_screen.view_cam
             self.control_timer(True)
@@ -224,19 +227,18 @@ class MainWindow(QMainWindow):
     def on_load_config(self):
         file_path = helpers.file_chooser_open_directory(self)
         if file_path is not None:
-            temp_cfg = detector.load_json_cfg(file_path)
-            self.detector_cfg.load_config(temp_cfg)
+            self.detector_cfg.manager = FQCSManager(file_path)
             self.detector_cfg.current_path = file_path
             self.loaded_config.emit()
         else:
             print("Error loading config")
 
     def on_save_config(self):
-        configs = self.detector_cfg.config
+        configs = self.detector_cfg.manager.get_configs()
         if configs is not None:
             file_path = helpers.file_chooser_open_directory(self)
             if (file_path):
-                detector.save_json_cfg(configs, file_path)
+                self.detector_cfg.manager.save_config(file_path)
                 self.detector_cfg.current_path = file_path
         else:
             print("No config provided")

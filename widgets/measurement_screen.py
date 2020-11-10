@@ -41,8 +41,7 @@ class MeasurementScreen(QWidget):
     def min_width_change(self):
         value = self.ui.sldMaximumWidth.value()
         self.detector_cfg.config["min_width_per"] = value / 100
-        self.ui.groupSliderWidth.setTitle("Maximum width (%): " +
-                                          str(value))
+        self.ui.groupSliderWidth.setTitle("Maximum width (%): " + str(value))
 
     def min_height_change(self):
         value = self.ui.sldMaximumHeight.value()
@@ -51,7 +50,8 @@ class MeasurementScreen(QWidget):
 
     def position_change(self):
         value = self.ui.sldDectectPosition.value()
-        self.detector_cfg.config["stop_condition"] = value / 100 * self.label_width
+        self.detector_cfg.config[
+            "stop_condition"] = value / 100 * self.label_width
         self.ui.groupSliderPosition.setTitle("Detect position: " + str(value))
 
     def length_unit_change(self):
@@ -62,14 +62,15 @@ class MeasurementScreen(QWidget):
     def detect_range_change(self):
         value = str(self.ui.sldDetectRange.value() / 100)
         self.detector_cfg.config["detect_range"] = (float(value),
-                                             float(1 - float(value)))
+                                                    float(1 - float(value)))
         self.ui.groupSliderDetectRange.setTitle("Detect range: " + value)
 
     def actual_length_change(self, text):
         value = float(self.ui.inpLeftActualLength.text())
         total_px = int(self.ui.inpLeftDetectedLength.text())
-        self.detector_cfg.config["length_per_10px"] = helper.calculate_length_per10px(
-            total_px, value)
+        self.detector_cfg.config[
+            "length_per_10px"] = helper.calculate_length_per10px(
+                total_px, value)
 
     def allow_diff_change(self, text):
         value = float(self.ui.inpAllowDiff.text())
@@ -119,7 +120,7 @@ class MeasurementScreen(QWidget):
         rect_height = int(self.label_height * height_value / 100)
         # draw Green rectangle image into image
         return cv2.rectangle(image, (0, 0), (rect_width, rect_height),
-                            (0, 0, 255), 3)
+                             (0, 0, 255), 3)
         # if img is None:
         #     sys.exit("Could not read the image")
 
@@ -131,7 +132,7 @@ class MeasurementScreen(QWidget):
         position = int(self.label_width * (value + 50) / 100)
 
         return cv2.line(image, (position, 0), (position, self.label_height),
-                       (255, 0, 0), 3)
+                        (255, 0, 0), 3)
         # if img is None:
         #     sys.exit("Could not read the image")
 
@@ -149,12 +150,12 @@ class MeasurementScreen(QWidget):
         left_line_point = int(left_line_ratio * self.label_width)
         right_line_point = int(right_line_ratio * self.label_width)
         self.detector_cfg.config["detect_range"] = (float(value),
-                                             float(1 - float(value)))
+                                                    float(1 - float(value)))
 
         image = cv2.line(image, (left_line_point, 0),
-                        (left_line_point, self.label_height), (0, 255, 0), 3)
+                         (left_line_point, self.label_height), (0, 255, 0), 3)
         image = cv2.line(image, (right_line_point, 0),
-                        (right_line_point, self.label_height), (0, 255, 0), 3)
+                         (right_line_point, self.label_height), (0, 255, 0), 3)
         return image
 
     def process_image(self, image):
@@ -172,10 +173,10 @@ class MeasurementScreen(QWidget):
             sample_right = cv2.imread(sample_right_path)
             sample_area = sample_left.shape[0] * sample_left.shape[1]
 
-        frame_width, frame_height = detector_cfg[
-            "frame_width"], detector_cfg["frame_height"]
-        min_width, min_height = detector_cfg[
-            "min_width_per"], detector_cfg["min_height_per"]
+        frame_width, frame_height = detector_cfg["frame_width"], detector_cfg[
+            "frame_height"]
+        min_width, min_height = detector_cfg["min_width_per"], detector_cfg[
+            "min_height_per"]
         min_width, min_height = frame_width * min_width, frame_height * min_height
         find_contours_func = detector.get_find_contours_func_by_method(
             detector_cfg["detect_method"])
@@ -222,7 +223,7 @@ class MeasurementScreen(QWidget):
                 check_group,
                 stop_condition=detector_cfg['stop_condition'])
             final_grouped[check_group_idx] = check_group
-        
+
         # output
         unit = detector_cfg["length_unit"]
         per_10px = detector_cfg["length_per_10px"]
@@ -232,7 +233,8 @@ class MeasurementScreen(QWidget):
                 c, rect, dimA, dimB, box, tl, tr, br, bl, minx, maxx, cenx = b
                 if per_10px:
                     lH, lW = helper.calculate_length(
-                        dimA, per_10px), helper.calculate_length(dimB, per_10px)
+                        dimA,
+                        per_10px), helper.calculate_length(dimB, per_10px)
                     sizes.append((lH, lW))
                 else:
                     lH, lW = dimA, dimB
@@ -261,7 +263,8 @@ class MeasurementScreen(QWidget):
         self.ui.sldMaximumWidth.setValue(min_width)
         self.ui.sldMaximumHeight.setValue(min_height)
         self.ui.inpLengthUnit.setText(length_unit)
-        self.ui.groupInputAllowDiff.setTitle(f"Allow Difference ({length_unit})")
+        self.ui.groupInputAllowDiff.setTitle(
+            f"Allow Difference ({length_unit})")
         self.ui.sldDectectPosition.setValue(stop_condition)
         self.ui.sldDetectRange.setValue(detect_range)
         self.ui.inpAllowDiff.setValue(max_size_diff)

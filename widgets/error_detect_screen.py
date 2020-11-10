@@ -1,7 +1,7 @@
 from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Signal
-from app_models.detector_config import DetectorConfig 
-from app_models.app_config import AppConfig 
+from app_models.detector_config import DetectorConfig
+from app_models.app_config import AppConfig
 from app import helpers
 from views.error_detect_screen import Ui_ErrorDetectScreen
 from FQCS import detector, helper, manager
@@ -44,7 +44,8 @@ class ErrorDetectScreen(QWidget):
     def load_cfg(self):
         img_size = self.detector_cfg.config["err_cfg"]["img_size"]
         inp_shape = self.detector_cfg.config["err_cfg"]["inp_shape"]
-        yolo_iou_threshold = self.detector_cfg.config["err_cfg"]["yolo_iou_threshold"]
+        yolo_iou_threshold = self.detector_cfg.config["err_cfg"][
+            "yolo_iou_threshold"]
         yolo_max_boxes = self.detector_cfg.config["err_cfg"]["yolo_max_boxes"]
         yolo_score_threshold = self.detector_cfg.config["err_cfg"][
             "yolo_score_threshold"]
@@ -75,10 +76,11 @@ class ErrorDetectScreen(QWidget):
         self.ui.cbbHeight.setCurrentIndex(-1)
 
         frame_resize_values = [
-            "36", "72", "108", "144", "180", "216", "252", "288", "324",
-            "360", "396", "432", "468", "504", "540", "576", "612", "648", "684", "720"
+            "36", "72", "108", "144", "180", "216", "252", "288", "324", "360",
+            "396", "432", "468", "504", "540", "576", "612", "648", "684",
+            "720"
         ]
-        
+
         self.ui.cbbHeight.clear()
         for value in frame_resize_values:
             self.ui.cbbHeight.addItem(value, userData=int(value))
@@ -100,7 +102,8 @@ class ErrorDetectScreen(QWidget):
     # hander
     def min_score_change(self):
         value = self.ui.inpMinimumScore.value()
-        self.detector_cfg.config["err_cfg"]["yolo_score_threshold"] = value / 10
+        self.detector_cfg.config["err_cfg"][
+            "yolo_score_threshold"] = value / 10
 
     def max_instances_change(self):
         value = self.ui.inpMaxInstances.value()
@@ -118,9 +121,10 @@ class ErrorDetectScreen(QWidget):
 
         print(self.height_value, self.width_value)
         self.detector_cfg.config["err_cfg"]["img_size"] = (self.width_value,
-                                                    self.height_value)
+                                                           self.height_value)
         self.detector_cfg.config["err_cfg"]["inp_shape"] = (self.height_value,
-                                                     self.width_value, 3)
+                                                            self.width_value,
+                                                            3)
 
     def choose_model_clicked(self):
         file_name, _ = helpers.file_chooser_open_file(self)
@@ -183,7 +187,8 @@ class ErrorDetectScreen(QWidget):
             inp_shape=self.detector_cfg.config["err_cfg"]["inp_shape"],
             num_classes=self.detector_cfg.config["err_cfg"]["num_classes"],
             training=False,
-            yolo_max_boxes=self.detector_cfg.config["err_cfg"]["yolo_max_boxes"],
+            yolo_max_boxes=self.detector_cfg.config["err_cfg"]
+            ["yolo_max_boxes"],
             yolo_iou_threshold=self.detector_cfg.config["err_cfg"]
             ["yolo_iou_threshold"],
             weights=self.detector_cfg.config["err_cfg"]["weights"],
@@ -197,7 +202,8 @@ class ErrorDetectScreen(QWidget):
 
         CLASSES = self.detector_cfg.config["err_cfg"]["classes"]
         err_task = detector.detect_errors(
-            self.model, images, self.detector_cfg.config["err_cfg"]["img_size"])
+            self.model, images,
+            self.detector_cfg.config["err_cfg"]["img_size"])
 
         boxes, scores, classes, valid_detections = await err_task
 
@@ -208,7 +214,8 @@ class ErrorDetectScreen(QWidget):
             classes,
             CLASSES,
             self.detector_cfg.config["err_cfg"]["img_size"],
-            min_score=self.detector_cfg.config["err_cfg"]["yolo_score_threshold"])
+            min_score=self.detector_cfg.config["err_cfg"]
+            ["yolo_score_threshold"])
 
         images[0] *= 255.
         images[1] *= 255.
@@ -232,10 +239,10 @@ class ErrorDetectScreen(QWidget):
             sample_right = cv2.imread(sample_right_path)
             sample_area = sample_left.shape[0] * sample_left.shape[1]
 
-        frame_width, frame_height = detector_cfg[
-            "frame_width"], detector_cfg["frame_height"]
-        min_width, min_height = detector_cfg[
-            "min_width_per"], detector_cfg["min_height_per"]
+        frame_width, frame_height = detector_cfg["frame_width"], detector_cfg[
+            "frame_height"]
+        min_width, min_height = detector_cfg["min_width_per"], detector_cfg[
+            "min_height_per"]
         min_width, min_height = frame_width * min_width, frame_height * min_height
         find_contours_func = detector.get_find_contours_func_by_method(
             detector_cfg["detect_method"])
@@ -282,7 +289,7 @@ class ErrorDetectScreen(QWidget):
                 check_group,
                 stop_condition=detector_cfg['stop_condition'])
             final_grouped[check_group_idx] = check_group
-        
+
         # output
         unit = detector_cfg["length_unit"]
         per_10px = detector_cfg["length_per_10px"]
@@ -292,7 +299,8 @@ class ErrorDetectScreen(QWidget):
                 c, rect, dimA, dimB, box, tl, tr, br, bl, minx, maxx, cenx = b
                 if per_10px:
                     lH, lW = helper.calculate_length(
-                        dimA, per_10px), helper.calculate_length(dimB, per_10px)
+                        dimA,
+                        per_10px), helper.calculate_length(dimB, per_10px)
                     sizes.append((lH, lW))
                 else:
                     lH, lW = dimA, dimB
@@ -304,7 +312,7 @@ class ErrorDetectScreen(QWidget):
                             cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
                 cv2.putText(image, f"{lH:.1f} {unit}", (br[0], br[1]),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
-        
+
         if (pair is not None):
             check_group_min_x = manager.get_min_x(check_group)
             manager.check_group(check_group_min_x)

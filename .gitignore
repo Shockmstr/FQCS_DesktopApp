@@ -128,3 +128,5 @@ dmypy.json
 *.h5
 *.cfg
 *.weights
+
+FQCS/

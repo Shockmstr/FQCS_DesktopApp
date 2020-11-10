@@ -3,12 +3,9 @@ from app_models.auth_info import AuthInfo
 from app_constants import TOKEN_PATH, ISO_DATE_FORMAT, DEV_TOKEN_PATH
 import requests
 import datetime
-import asyncio
-from app.fukin_thread import FukinThread
-from PySide2.QtCore import QTimer, QThread
-import trio
 import json
 from services.thread_manager import ThreadManager
+from services.refresh_or_logout_thread import RefreshOrLogoutThread
 from app import helpers
 from app_models.app_config import AppConfig
 
@@ -41,70 +38,15 @@ class LoginService:
             min_ref_diff = 0 if min_ref_diff < 0 else min_ref_diff
             print('Refresh token in', min_ref_diff, 'mins')
 
-            if ('refresh_token' in token):
-
-                def start_timer(th: QThread):
-                    def refresh_callback():
-                        try:
-                            print("Refresh callback")
-                            form_data = {}
-                            form_data['grant_type'] = 'refresh_token'
-                            form_data['refresh_token'] = token['refresh_token']
-                            url = "{}/api/users/login".format(
-                                AppConfig.instance().config['api_url'])
-                            resp = requests.post(url, data=form_data)
-                            if (resp.status_code >= 200
-                                    and resp.status_code < 300):
-                                data = resp.json()
-                                self.save_token_json(data)
-                                trio.run(self.check_token)
-                            else:
-                                raise Exception("Resp error")
-                        except:
-                            print("Error refresh callback")
-                            self.log_out()
-                        finally:
-                            th.quit()
-                        return
-
-                    refresh_timer = QTimer()
-                    th.refresh_timer = refresh_timer
-                    th.finished.connect(lambda: refresh_timer.stop())
-                    refresh_timer.timeout.connect(refresh_callback)
-                    refresh_timer.setSingleShot(True)
-                    refresh_timer.start(min_ref_diff * 60 * 1000)
-
-                ThreadManager.instance().cancel_threads(
-                    group=LOGIN_SERVICE_TH_GR_KEY)
-                rf_thread = FukinThread(start_timer)
-                rf_thread.start()
-                ThreadManager.instance().add_thread(rf_thread,
-                                                    LOGIN_SERVICE_TH_GR_KEY)
-            else:
-
-                def start_timer(th: QThread):
-                    def logout_callback():
-                        try:
-                            self.log_out()
-                        except:
-                            print("Log out error")
-                        finally:
-                            th.quit()
-                        return
-
-                    logout_timer = QTimer()
-                    th.logout_timer = logout_timer
-                    th.finished.connect(lambda: logout_timer.stop())
-                    logout_timer.timeout.connect(logout_callback)
-                    logout_timer.setSingleShot(True)
-                    logout_timer.start(min_diff * 60 * 1000)
-
-                ThreadManager.instance().cancel_threads(
-                    group=LOGIN_SERVICE_TH_GR_KEY)
-                lo_thread = FukinThread(start_timer)
-                lo_thread.start()
-                ThreadManager.instance().add_thread(lo_thread,
-                                                    LOGIN_SERVICE_TH_GR_KEY)
+            is_refresh = 'refresh_token' in token
+            timeout_min = min_ref_diff if is_refresh else min_diff
+            ThreadManager.instance().cancel_threads(
+                group=LOGIN_SERVICE_TH_GR_KEY)
+            rol_thread = RefreshOrLogoutThread(self, is_refresh,
+                                               timeout_min * 60 * 1000)
+            rol_thread.start()
+            ThreadManager.instance().add_thread(rol_thread,
+                                                LOGIN_SERVICE_TH_GR_KEY)
         return
 
     async def log_in(self, username, password):

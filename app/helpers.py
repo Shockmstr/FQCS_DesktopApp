@@ -7,7 +7,7 @@ import trio
 import asyncio
 
 
-def sync_func(func, args):
+def sync_func(func, *args):
     if asyncio.iscoroutinefunction(func):
         if (len(args) > 0):
             return trio.run(func, *args)
@@ -47,8 +47,11 @@ def get_all_camera_index(num=10):
         num -= 1
     return arr
 
+
 def get_current_sample_image_path(self):
     currentPath = DetectorConfig.instance().current_path
     if (currentPath == None):
-        currentPath = os.sep.join([ROOT_DIR, "resources"])  #default = current working directory/resouces
+        currentPath = os.sep.join(
+            [ROOT_DIR,
+             "resources"])  #default = current working directory/resouces
     return currentPath

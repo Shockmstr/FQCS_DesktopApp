@@ -48,8 +48,8 @@ class DetectionConfigScreen(QWidget):
             self.ui.cbbCamera.addItem("Camera " + str(camera), userData=camera)
 
         frame_resize_values = [
-            "160", "240", "320", "400", "480", "560", "640", "720", "800", "880",
-            "960", "1040", "1120", "1200", "1280"
+            "160", "240", "320", "400", "480", "560", "640", "720", "800",
+            "880", "960", "1040", "1120", "1200", "1280"
         ]
 
         self.ui.cbbHeight.clear()
@@ -112,7 +112,8 @@ class DetectionConfigScreen(QWidget):
 
     def blur_value_change(self):
         value = self.ui.sldBlur.value()
-        self.detector_cfg.config["d_cfg"]["kernel"] = (2 * value + 1, 2 * value + 1)
+        self.detector_cfg.config["d_cfg"]["kernel"] = (2 * value + 1,
+                                                       2 * value + 1)
         self.ui.grpboxSldBlur.setTitle("Blur: " + str(value))
 
     def dilate_value_change(self):
@@ -226,14 +227,13 @@ class DetectionConfigScreen(QWidget):
         detector_cfg = self.detector_cfg.config
         d_cfg = detector_cfg["d_cfg"]
 
-        frame_width, frame_height = detector_cfg[
-            "frame_width"], detector_cfg["frame_height"]
-        min_width, min_height = detector_cfg[
-            "min_width_per"], detector_cfg["min_height_per"]
+        frame_width, frame_height = detector_cfg["frame_width"], detector_cfg[
+            "frame_height"]
+        min_width, min_height = detector_cfg["min_width_per"], detector_cfg[
+            "min_height_per"]
         min_width, min_height = frame_width * min_width, frame_height * min_height
         find_contours_func = detector.get_find_contours_func_by_method(
             detector_cfg["detect_method"])
-
 
         # adjust thresh
         if (detector_cfg["detect_method"] == "thresh"):
@@ -260,7 +260,7 @@ class DetectionConfigScreen(QWidget):
             min_width=min_width,
             min_height=min_height,
             detect_range=detector_cfg['detect_range'])
-        
+
         pair, image, split_left, split_right, boxes = detector.detect_pair_and_size(
             image,
             find_contours_func,
@@ -287,8 +287,9 @@ class DetectionConfigScreen(QWidget):
         thresh2 = self.detector_cfg.config["d_cfg"]["threshold2"]
         blur = self.detector_cfg.config["d_cfg"]["kernel"][0]
         dilate = self.detector_cfg.config["d_cfg"]["d_kernel"].shape[1]
-        erode = self.detector_cfg.config["d_cfg"]["e_kernel"] and self.detector_cfg.config[
-            "d_cfg"]["e_kernel"].shape[1]
+        erode = self.detector_cfg.config["d_cfg"][
+            "e_kernel"] and self.detector_cfg.config["d_cfg"][
+                "e_kernel"].shape[1]
         #threshold
         bkg = self.detector_cfg.config["d_cfg"]["bg_thresh"]
         light_thresh = self.detector_cfg.config["d_cfg"]["light_adj_thresh"]
@@ -304,10 +305,10 @@ class DetectionConfigScreen(QWidget):
         width_index = self.ui.cbbWidth.findData(
             self.detector_cfg.config["frame_width"])
 
-        self.ui.sldBrightness.setValue(brightness/self.BRIGHTNESS_STEP)
-        self.ui.sldContrast.setValue(contrast/self.CONTRAST_STEP)
-        self.ui.sldThreshold1.setValue(thresh1/self.THRESHOLD1_STEP)
-        self.ui.sldThreshold2.setValue(thresh2/self.THRESHOLD2_STEP)
+        self.ui.sldBrightness.setValue(brightness / self.BRIGHTNESS_STEP)
+        self.ui.sldContrast.setValue(contrast / self.CONTRAST_STEP)
+        self.ui.sldThreshold1.setValue(thresh1 / self.THRESHOLD1_STEP)
+        self.ui.sldThreshold2.setValue(thresh2 / self.THRESHOLD2_STEP)
         self.ui.sldBlur.setValue(blur)
         self.ui.sldDilate.setValue(dilate)
         self.ui.sldErode.setValue(erode or 0)

@@ -11,6 +11,7 @@ import os
 import numpy as np
 import trio
 
+
 class AsymConfigScreen(QWidget):
     MIN_SIMILARITY_STEP = 0.01
     CAMERA_LOADED = False
@@ -31,8 +32,10 @@ class AsymConfigScreen(QWidget):
 
     # binding
     def binding(self):
-        self.ui.sldAmpRate.valueChanged.connect(self.amplification_rate_changed)
-        self.ui.sldMinSimilarity.valueChanged.connect(self.min_similarity_changed)
+        self.ui.sldAmpRate.valueChanged.connect(
+            self.amplification_rate_changed)
+        self.ui.sldMinSimilarity.valueChanged.connect(
+            self.min_similarity_changed)
 
     # handlers
     def amplification_rate_changed(self):
@@ -41,9 +44,11 @@ class AsymConfigScreen(QWidget):
         self.ui.grpBoxAmpRate.setTitle("Amplification rate: " + str(value))
 
     def min_similarity_changed(self):
-        value = round(self.ui.sldMinSimilarity.value() * self.MIN_SIMILARITY_STEP, 2)
+        value = round(
+            self.ui.sldMinSimilarity.value() * self.MIN_SIMILARITY_STEP, 2)
         self.detector_cfg["sim_cfg"]["min_similarity"] = value
-        self.ui.grpBoxMinSimilarity.setTitle("Minimum similarity (%): " + str(value))
+        self.ui.grpBoxMinSimilarity.setTitle("Minimum similarity (%): " +
+                                             str(value))
 
     def load_cfg(self):
         cfg = self.detector_cfg["sim_cfg"]
@@ -57,7 +62,8 @@ class AsymConfigScreen(QWidget):
         re_calc_factor_right = cfg["re_calc_factor_right"]
         segments_list = cfg["segments_list"]
         #---------------------------------------#
-        min_similarity_slider_val = round(min_similarity / self.MIN_SIMILARITY_STEP, 0)
+        min_similarity_slider_val = round(
+            min_similarity / self.MIN_SIMILARITY_STEP, 0)
         if (amp_thresh is None): amp_thresh = 0
         #---------------------------------------#
         self.ui.inpC1.setValue(c1)
@@ -68,7 +74,8 @@ class AsymConfigScreen(QWidget):
         self.ui.inpReCalcFactorRight.setValue(int(re_calc_factor_right))
         self.ui.inpSegments.setText(segments_list.__str__())
         self.ui.sldMinSimilarity.setValue(int(min_similarity_slider_val))
-        self.ui.grpBoxMinSimilarity.setTitle("Minimum similarity (%): " + str(min_similarity))
+        self.ui.grpBoxMinSimilarity.setTitle("Minimum similarity (%): " +
+                                             str(min_similarity))
         self.ui.sldAmpRate.setValue(int(amp_rate))
         self.ui.grpBoxAmpRate.setTitle("Amplification rate: " + str(amp_rate))
 
@@ -88,7 +95,6 @@ class AsymConfigScreen(QWidget):
         self.image_sample_left.imshow(m_left)
         self.image_sample_right.imshow(m_right)
 
-
     def view_cam(self, image):
         # read image in BGR format
         self.replace_camera_widget()
@@ -99,7 +105,8 @@ class AsymConfigScreen(QWidget):
         contour_resized = cv2.resize(contour, self.dim)
         self.image1.imshow(contour_resized)
         if detected_pair is not None:
-            left, right = self.preprocess_color(detected_pair[0], detected_pair[1])
+            left, right = self.preprocess_color(detected_pair[0],
+                                                detected_pair[1])
             left = cv2.flip(left, 1)
             trio.run(self.detect_asym_diff, left, right)
             left = cv2.resize(left, img_size)
@@ -108,31 +115,29 @@ class AsymConfigScreen(QWidget):
             self.image_detect_right.imshow(right)
             self.detected_pair = detected_pair
 
-
     def replace_image_widget(self):
         if not self.CAMERA_LOADED:
             self.image_detect_left = ImageWidget()
             self.image_detect_right = ImageWidget()
             self.image_sample_left = ImageWidget()
             self.image_sample_right = ImageWidget()
-            #       
+            #
             self.label_w = self.ui.screen1.width()
             self.label_h = self.ui.screen1.height()
 
             self.screen2_layout = self.ui.screen2.layout()
 
             self.screen2_layout.replaceWidget(self.ui.screen2Left,
-                                            self.image_detect_left)
+                                              self.image_detect_left)
             self.screen2_layout.replaceWidget(self.ui.screen2Right,
-                                            self.image_detect_right)
+                                              self.image_detect_right)
 
             self.screen3_layout = self.ui.screen3.layout()
 
             self.screen3_layout.replaceWidget(self.ui.screen3Left,
-                                            self.image_sample_left)
-            self.screen3_layout.replaceWidget(self.ui.screen3Right, 
-                                            self.image_sample_right)
-
+                                              self.image_sample_left)
+            self.screen3_layout.replaceWidget(self.ui.screen3Right,
+                                              self.image_sample_right)
 
             self.image_detect_left.ui.lblImage.setAlignment(Qt.AlignCenter)
             self.image_detect_right.ui.lblImage.setAlignment(Qt.AlignCenter)
@@ -149,10 +154,10 @@ class AsymConfigScreen(QWidget):
             self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
             self.CAMERA_LOADED = True
 
-
     avg_min = 1
     re_calc_factor_left = 0
     re_calc_factor_right = 0
+
     async def detect_asym_diff(self, left, right):
         sample_left_path = '/Users/bitumhoang/Desktop/capstone/FQCS_DesktopApp/resources/sample_left.jpg'
         # helpers.get_current_sample_image_path(
@@ -165,34 +170,31 @@ class AsymConfigScreen(QWidget):
         cfg = self.detector_cfg["sim_cfg"]
         min_sim = self.detector_cfg["sim_cfg"]['min_similarity']
 
-        
         is_asym_diff_left, self.avg_asym_left, self.avg_amp_left, recalc_left, res_list_l, amp_res_list_l = (
             await detector.detect_asym_diff(
-                left, sample_left, cfg['segments_list'],
-                cfg['C1'], cfg['C2'], cfg['psnr_trigger'],
-                cfg['asym_amp_thresh'], cfg['asym_amp_rate'],
-                cfg['re_calc_factor_left'],
-                min_sim))
+                left, sample_left, cfg['segments_list'], cfg['C1'], cfg['C2'],
+                cfg['psnr_trigger'], cfg['asym_amp_thresh'],
+                cfg['asym_amp_rate'], cfg['re_calc_factor_left'], min_sim))
         is_asym_diff_right, self.avg_asym_right, self.avg_amp_right, recalc_right, res_list_r, amp_res_list_r = (
             await detector.detect_asym_diff(
-                right, sample_right, cfg['segments_list'],
-                cfg['C1'], cfg['C2'], cfg['psnr_trigger'],
-                cfg['asym_amp_thresh'], cfg['asym_amp_rate'],
-                cfg['re_calc_factor_right'],
-                min_sim))
-        # find smaller value between the value of asym left and right 
+                right, sample_right, cfg['segments_list'], cfg['C1'],
+                cfg['C2'], cfg['psnr_trigger'], cfg['asym_amp_thresh'],
+                cfg['asym_amp_rate'], cfg['re_calc_factor_right'], min_sim))
+        # find smaller value between the value of asym left and right
         self.tmp_min = min(self.avg_asym_left, self.avg_asym_right)
         print("tmpmin - ", self.tmp_min)
-        
+
         # find the smallest ASYM value among all detected shoes
         if (self.tmp_min < self.avg_min): self.avg_min = self.tmp_min
         print("avg_min - ", self.avg_min)
-        
+
         # calculate calc_factor both side and then keep the highest only
         self.tmp_re_calc_factor_left = self.avg_asym_left / self.avg_amp_left
         self.tmp_re_calc_factor_right = self.avg_asym_right / self.avg_amp_right
-        if(self.tmp_re_calc_factor_left > self.re_calc_factor_left): self.re_calc_factor_left = self.tmp_re_calc_factor_left
-        if(self.tmp_re_calc_factor_right > self.re_calc_factor_right): self.re_calc_factor_right = self.tmp_re_calc_factor_right
+        if (self.tmp_re_calc_factor_left > self.re_calc_factor_left):
+            self.re_calc_factor_left = self.tmp_re_calc_factor_left
+        if (self.tmp_re_calc_factor_right > self.re_calc_factor_right):
+            self.re_calc_factor_right = self.tmp_re_calc_factor_right
 
         # update configure value
         self.detector_cfg['asym_amp_thresh'] = self.avg_min
@@ -204,12 +206,9 @@ class AsymConfigScreen(QWidget):
         self.ui.inpReCalcFactorLeft.setValue(self.re_calc_factor_left)
         self.ui.inpReCalcFactorRight.setValue(self.re_calc_factor_right)
 
-
-
     def showEvent(self, event):
         self.replace_image_widget()
         self.view_image_sample()
-
 
     def preprocess_color(self, sample_left, sample_right):
         c_cfg = self.detector_cfg['color_cfg']
@@ -221,8 +220,6 @@ class AsymConfigScreen(QWidget):
             sample_right, c_cfg['img_size'], c_cfg['blur_val'],
             c_cfg['alpha_r'], c_cfg['beta_r'], c_cfg['sat_adj'])
         return pre_sample_left, pre_sample_right
-
-
 
     def process_image(self, image):
         detected = None
@@ -293,4 +290,3 @@ class AsymConfigScreen(QWidget):
             return image, detected, (left, right)
 
         return image, None, None
-
