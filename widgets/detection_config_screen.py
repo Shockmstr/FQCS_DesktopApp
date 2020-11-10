@@ -234,6 +234,7 @@ class DetectionConfigScreen(QWidget):
 
     #load init configs
     def load_cfg(self):
+        if self.detector_cfg is None: return
         #edge
         brightness = self.detector_cfg["d_cfg"]["alpha"]
         contrast = self.detector_cfg["d_cfg"]["beta"]

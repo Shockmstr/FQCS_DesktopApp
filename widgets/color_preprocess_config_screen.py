@@ -151,6 +151,7 @@ class ColorPreprocessConfigScreen(QWidget):
         return pre_sample_left, pre_sample_right
 
     def load_cfg(self):
+        if self.detector_cfg is None: return
         #load from default
         color_cfg = self.detector_cfg["color_cfg"]
         img_size = color_cfg["img_size"]

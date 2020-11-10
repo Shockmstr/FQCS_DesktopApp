@@ -22,7 +22,6 @@ class ErrorDetectScreen(QWidget):
     SAVED = False
     backscreen: Signal
     nextscreen: Signal
-    initing = Signal()
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -38,6 +37,7 @@ class ErrorDetectScreen(QWidget):
         self.load_cfg()
 
     def load_cfg(self):
+        if self.detector_cfg is None: return
         img_size = self.detector_cfg["err_cfg"]["img_size"]
         inp_shape = self.detector_cfg["err_cfg"]["inp_shape"]
         yolo_iou_threshold = self.detector_cfg["err_cfg"]["yolo_iou_threshold"]

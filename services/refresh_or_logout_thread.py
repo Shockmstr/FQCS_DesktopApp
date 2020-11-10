@@ -12,11 +12,15 @@ class RefreshOrLogoutThread(QThread):
         self.__login_service = login_service
 
     def run(self):
+        print("Start thread")
         self.__refresh_timer = QTimer()
         callback = self.__refresh_callback if self.__is_refresh else self.__logout_callback
         self.__refresh_timer.timeout.connect(callback)
         self.__refresh_timer.setSingleShot(True)
         self.__refresh_timer.start(self.__timeout)
+        self.exec_()
+        self.__stop_timer()
+        print("End thread")
 
     def __refresh_callback(self):
         try:
@@ -33,7 +37,7 @@ class RefreshOrLogoutThread(QThread):
             print("Error refresh callback")
             self.__login_service.log_out()
         finally:
-            self.__refresh_timer.stop()
+            self.__stop_timer()
             self.quit()
         return
 
@@ -43,6 +47,9 @@ class RefreshOrLogoutThread(QThread):
         except:
             print("Log out error")
         finally:
-            self.__refresh_timer.stop()
+            self.__stop_timer()
             self.quit()
         return
+
+    def __stop_timer(self):
+        self.__refresh_timer.stop()

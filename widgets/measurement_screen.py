@@ -165,6 +165,7 @@ class MeasurementScreen(QWidget):
         return image
 
     def load_cfg(self):
+        if self.detector_cfg is None: return
         min_width = self.detector_cfg["min_width_per"] * 100
         min_height = self.detector_cfg["min_height_per"] * 100
         # length_per_10px = self.detector_cfg["lenght_per_10px"] #

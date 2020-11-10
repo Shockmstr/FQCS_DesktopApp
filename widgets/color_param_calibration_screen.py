@@ -26,8 +26,8 @@ class ColorParamCalibrationScreen(QWidget):
         self.ui.setupUi(self)
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnNext.clicked
-        self.load_default_config()
         self.binding()
+        self.load_cfg()
 
     # binding
     def binding(self):
@@ -68,7 +68,8 @@ class ColorParamCalibrationScreen(QWidget):
         self.replace_camera_widget()
         index = self.ui.cbbCamera.currentData()
 
-    def load_default_config(self):
+    def load_cfg(self):
+        if self.detector_cfg is None: return
         #print(self.detector_cfg)
         # amp_thresh_red_value = self.detector_cfg["color_cfg"]["amplify_thresh"][0]
         # amp_thresh_green_value = self.detector_cfg["color_cfg"]["amplify_thresh"][1]

@@ -27,8 +27,8 @@ class AsymConfigScreen(QWidget):
         self.ui.setupUi(self)
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnNext.clicked
-        self.load_cfg()
         self.binding()
+        self.load_cfg()
 
     # binding
     def binding(self):
@@ -51,6 +51,7 @@ class AsymConfigScreen(QWidget):
                                              str(value))
 
     def load_cfg(self):
+        if self.detector_cfg is None: return
         cfg = self.detector_cfg["sim_cfg"]
         c1 = cfg["C1"]
         c2 = cfg["C2"]
