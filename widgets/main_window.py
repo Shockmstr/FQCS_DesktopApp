@@ -17,6 +17,7 @@ from widgets.progress_screen import ProgressScreen
 from widgets.asym_config_screen import AsymConfigScreen
 from services.login_service import LoginService
 from qasync import QEventLoop, asyncSlot
+import asyncio
 
 
 class MainWindow(QMainWindow):
@@ -121,6 +122,7 @@ class MainWindow(QMainWindow):
         self.progress_screen.captured.connect(self.capture)
         self.progress_screen.stopped.connect(self.stop)
 
+        self.loaded_config.connect(self.test_detect_pair_screen.load_cfg)
         self.loaded_config.connect(self.detection_screen.load_cfg)
         self.loaded_config.connect(self.measurement_screen.load_cfg)
         # TODO: fix detector_cfg bugs in following screens before
@@ -128,6 +130,7 @@ class MainWindow(QMainWindow):
             self.color_preprocess_config_screen.load_cfg)
         self.loaded_config.connect(self.color_param_calib_screen.load_cfg)
         self.loaded_config.connect(self.error_detect_screen.load_cfg)
+        self.loaded_config.connect(self.asym_config_screen.load_cfg)
 
         return
 
@@ -135,10 +138,14 @@ class MainWindow(QMainWindow):
         # logic
         self.logged_out.emit(event)
 
-    def show_cam(self):
+    @asyncSlot()
+    async def show_cam(self):
         if (self.video_camera.isOpened() and self.process_cam is not None):
             _, image = self.video_camera.read()
-            self.process_cam(image)
+            if asyncio.iscoroutinefunction(self.process_cam):
+                await self.process_cam(image)
+            else:
+                self.process_cam(image)
 
     # start/stop timer
     def control_timer(self, active):
@@ -146,7 +153,7 @@ class MainWindow(QMainWindow):
         if active:
             if (not self.timer.isActive()):
                 # start timer
-                self.timer.start(20)
+                self.timer.start(50)
         # if timer is started
         else:
             self.timer.stop()

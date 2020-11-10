@@ -15,6 +15,7 @@ from widgets.image_widget import ImageWidget
 import imutils
 import matplotlib.pyplot as plt
 import numpy as np
+from qasync import asyncSlot
 
 
 class ErrorDetectScreen(QWidget):
@@ -120,10 +121,12 @@ class ErrorDetectScreen(QWidget):
         self.detector_cfg["err_cfg"]["inp_shape"] = (self.height_value,
                                                      self.width_value, 3)
 
-    def choose_model_clicked(self):
+    @asyncSlot()
+    async def choose_model_clicked(self):
         file_name, _ = helpers.file_chooser_open_file(self)
         self.ui.inpModelChoice.setText(file_name.split(r"/")[-1])
         self.detector_cfg["err_cfg"]["weights"] = file_name
+        await DetectorConfig.instance().manager.load_model(self.detector_cfg)
 
     def choose_classes_clicked(self):
         class_list = []
@@ -144,14 +147,14 @@ class ErrorDetectScreen(QWidget):
 
         self.ui.inpClasses.setText(str(tail))
 
-    def view_cam(self, image):
+    async def view_cam(self, image):
         # read image in BGR format
         self.replace_camera_widget()
         self.img = image
         self.dim = (self.label_w, self.label_h)
         orig = cv2.resize(self.img, self.dim)
         self.image1.imshow(orig)
-        trio.run(self.process_image, self.img)
+        await self.process_image(self.img)
 
     def replace_camera_widget(self):
         if not self.CAMERA_LOADED:
@@ -186,8 +189,8 @@ class ErrorDetectScreen(QWidget):
 
     async def process_pair(self, image):
         manager = DetectorConfig.instance().manager
-        frame_width, frame_height = self.detector_cfg["frame_width"], self.detector_cfg[
-            "frame_height"]
+        frame_width, frame_height = self.detector_cfg[
+            "frame_width"], self.detector_cfg["frame_height"]
         boxes, proc = manager.extract_boxes(self.detector_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
             self.detector_cfg, boxes, image)
@@ -215,5 +218,6 @@ class ErrorDetectScreen(QWidget):
         contour, _, detected_pair = await self.process_pair(image)
         contour = cv2.resize(contour, self.dim)
         self.image2.imshow(contour)
-        if detected_pair is not None:
+        manager = DetectorConfig.instance().manager
+        if detected_pair is not None and manager.get_model() is not None:
             await self.show_error(detected_pair)

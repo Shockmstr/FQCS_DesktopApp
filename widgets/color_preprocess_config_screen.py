@@ -108,13 +108,10 @@ class ColorPreprocessConfigScreen(QWidget):
             self.view_image()
 
     def view_image(self):
+        manager = DetectorConfig.instance().manager
         if (self.image1 is not None and self.image2 is not None):
-            left_path = helpers.get_current_sample_image_path(
-                self) + os.sep + detector.SAMPLE_LEFT_FILE
-            right_path = helpers.get_current_sample_image_path(
-                self) + os.sep + detector.SAMPLE_RIGHT_FILE
-            left = cv2.imread(left_path)
-            right = cv2.imread(right_path)
+            left = manager.get_sample_left()
+            right = manager.get_sample_right()
             modified_left, modified_right = self.preprocess_color(left, right)
             img_size = (256, self.label_h - 50)
             modified_left = cv2.resize(modified_left,

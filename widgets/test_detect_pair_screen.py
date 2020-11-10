@@ -47,6 +47,10 @@ class TestDetectPairScreen(QWidget):
             self.image3.imshow(detected_resized)
             self.detected_pair = detected_pair
 
+    def load_cfg(self):
+        self.detector_cfg = DetectorConfig.instance().get_current_cfg()
+        if self.detector_cfg is None: return
+
     def replace_camera_widget(self):
         if not self.CAMERA_LOADED:
             self.image1 = ImageWidget()
@@ -63,8 +67,6 @@ class TestDetectPairScreen(QWidget):
 
     def process_image(self, image):
         manager = DetectorConfig.instance().manager
-        frame_width, frame_height = self.detector_cfg["frame_width"], self.detector_cfg[
-            "frame_height"]
         boxes, proc = manager.extract_boxes(self.detector_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
             self.detector_cfg, boxes, image)

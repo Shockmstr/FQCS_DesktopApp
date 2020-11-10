@@ -5,16 +5,16 @@
     "is_main": true,
     "is_color_enable": true,
     "is_defect_enable": true,
-    "min_width_per": 0.1,
-    "min_height_per": 0.7,
+    "min_width_per": 0.08,
+    "min_height_per": 0.13,
     "stop_condition": 0,
     "detect_range": [
-      0.1,
-      0.9
+      0.09,
+      0.91
     ],
-    "length_per_10px": 0.65,
+    "length_per_10px": 0.23809523809523808,
     "length_unit": "cm",
-    "max_size_diff": 0.3,
+    "max_size_diff": 0.7,
     "frame_width": 640,
     "frame_height": 480,
     "color_cfg": {
@@ -52,21 +52,21 @@
         1
       ]
     },
-    "detect_method": "edge",
+    "detect_method": "thresh",
     "err_cfg": {
       "inp_shape": [
-        320,
-        160,
+        108,
+        108,
         3
       ],
       "img_size": [
-        160,
-        320
+        108,
+        108
       ],
       "num_classes": 1,
       "yolo_max_boxes": 10,
       "yolo_iou_threshold": 0.5,
-      "weights": "yolov4.h5",
+      "weights": "N:/Workspace/Capstone/FQCS-Research/FQCS.ColorDetection/yolov4.h5",
       "yolo_score_threshold": 0.3,
       "classes": [
         "dirt"
@@ -74,8 +74,8 @@
     },
     "d_cfg": {
       "max_boxes": 10,
-      "bg_thresh": 86,
-      "adj_bg_thresh": 86,
+      "bg_thresh": 151,
+      "adj_bg_thresh": 304.2478491586538,
       "thresh_inv": false,
       "light_adj_thresh": 65,
       "alpha": 1.0,

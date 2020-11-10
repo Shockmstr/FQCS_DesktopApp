@@ -82,22 +82,22 @@ class AsymConfigScreen(QWidget):
         self.ui.grpBoxAmpRate.setTitle("Amplification rate: " + str(amp_rate))
 
     def view_image_sample(self):
-        left_path = '/Users/bitumhoang/Desktop/capstone/FQCS_DesktopApp/resources/sample_left.jpg'
-        # helpers.get_current_sample_image_path(
-        #     self) + os.sep + detector.SAMPLE_LEFT_FILE
-        right_path = '/Users/bitumhoang/Desktop/capstone/FQCS_DesktopApp/resources/sample_right.jpg'
-        # helpers.get_current_sample_image_path(
-        #     self) + os.sep + detector.SAMPLE_RIGHT_FILE
-        left = cv2.imread(left_path)
-        right = cv2.imread(right_path)
-        m_left, m_right = self.preprocess_color(left, right)
+        manager = DetectorConfig.instance().manager
+        left = manager.get_sample_left()
+        right = manager.get_sample_right()
+        self.sample_left, self.sample_right = self.preprocess_color(
+            left, right)
         img_size = (156, self.label_h - 30)
-        m_left = cv2.resize(m_left, img_size, interpolation=cv2.INTER_AREA)
-        m_right = cv2.resize(m_right, img_size, interpolation=cv2.INTER_AREA)
+        m_left = cv2.resize(self.sample_left,
+                            img_size,
+                            interpolation=cv2.INTER_AREA)
+        m_right = cv2.resize(self.sample_right,
+                             img_size,
+                             interpolation=cv2.INTER_AREA)
         self.image_sample_left.imshow(m_left)
         self.image_sample_right.imshow(m_right)
 
-    def view_cam(self, image):
+    async def view_cam(self, image):
         # read image in BGR format
         self.replace_camera_widget()
         self.img = image
@@ -110,7 +110,7 @@ class AsymConfigScreen(QWidget):
             left, right = self.preprocess_color(detected_pair[0],
                                                 detected_pair[1])
             left = cv2.flip(left, 1)
-            trio.run(self.detect_asym_diff, left, right)
+            await self.detect_asym_diff(left, right)
             left = cv2.resize(left, img_size)
             right = cv2.resize(right, img_size)
             self.image_detect_left.imshow(left)
@@ -161,19 +161,12 @@ class AsymConfigScreen(QWidget):
     re_calc_factor_right = 0
 
     async def detect_asym_diff(self, left, right):
-        sample_left_path = '/Users/bitumhoang/Desktop/capstone/FQCS_DesktopApp/resources/sample_left.jpg'
-        # helpers.get_current_sample_image_path(
-        #     self) + os.sep + detector.SAMPLE_LEFT_FILE
-        sample_right_path = '/Users/bitumhoang/Desktop/capstone/FQCS_DesktopApp/resources/sample_left.jpg'
-        # helpers.get_current_sample_image_path(
-        #     self) + os.sep + detector.SAMPLE_RIGHT_FILE
-        sample_left, sample_right = self.preprocess_color(
-            cv2.imread(sample_left_path), cv2.imread(sample_right_path))
         cfg = self.detector_cfg["sim_cfg"]
         min_sim = self.detector_cfg["sim_cfg"]['min_similarity']
 
         left_task, right_task = DetectorConfig.instance().manager.detect_asym(
-            self.detector_cfg, left, right, sample_left, sample_right)
+            self.detector_cfg, left, right, self.sample_left,
+            self.sample_right)
 
         is_asym_diff_left, self.avg_asym_left, self.avg_amp_left, recalc_left, res_list_l, amp_res_list_l = await left_task
         is_asym_diff_right, self.avg_asym_right, self.avg_amp_right, recalc_right, res_list_r, amp_res_list_r = await right_task
@@ -217,8 +210,6 @@ class AsymConfigScreen(QWidget):
 
     def process_image(self, image):
         manager = DetectorConfig.instance().manager
-        frame_width, frame_height = self.detector_cfg["frame_width"], self.detector_cfg[
-            "frame_height"]
         boxes, proc = manager.extract_boxes(self.detector_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
             self.detector_cfg, boxes, image)
