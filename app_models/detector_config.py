@@ -1,15 +1,17 @@
 from FQCS import detector
+from FQCS.manager import FQCSManager
 import cv2
 import abc
 
 
 class DetectorConfigAbs(metaclass=abc.ABCMeta):
     camera: cv2.VideoCapture
-    config: dict
     current_path: str
+    manager: FQCSManager
+    current_cfg_name: str
 
     @abc.abstractmethod
-    def load_config(self, detector_config=None):
+    def get_current_cfg(self):
         pass
 
 
@@ -19,18 +21,15 @@ class DetectorConfig(DetectorConfigAbs):
     def __init__(self):
         return
 
-    def load_config(self, detector_config=None):
-        if detector_config is None:
-            self.config = detector.default_detector_config()
-            self.current_path = None
-        else:
-            self.config = detector_config
+    def get_current_cfg(self):
+        return self.manager.get_config_by_name(self.current_cfg_name)
 
     @staticmethod
     def instance() -> DetectorConfigAbs:
         if DetectorConfig.__instance == None:
             instance = DetectorConfig()
-            instance.load_config()
+            instance.manager = FQCSManager()
+            instance.current_cfg_name = None
             DetectorConfig.__instance = instance
 
         return DetectorConfig.__instance

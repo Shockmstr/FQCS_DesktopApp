@@ -2,6 +2,7 @@ from PySide2.QtWidgets import QMainWindow
 from PySide2.QtCore import Signal, QTimer
 from views.main_window import Ui_MainWindow
 from FQCS import detector
+from FQCS.manager import FQCSManager
 from app_models.detector_config import DetectorConfig
 from app import helpers
 import cv2
@@ -15,6 +16,8 @@ from widgets.error_detect_screen import ErrorDetectScreen
 from widgets.progress_screen import ProgressScreen
 from widgets.asym_config_screen import AsymConfigScreen
 from services.login_service import LoginService
+from qasync import QEventLoop, asyncSlot
+import asyncio
 
 
 class MainWindow(QMainWindow):
@@ -52,9 +55,6 @@ class MainWindow(QMainWindow):
         self.asym_config_screen = AsymConfigScreen(self)
 
         self.binding()
-
-        # hack
-        self.error_detect_screen.initing.emit()
 
         # add to Stacked Widget
         self.ui.centralStackWidget.addWidget(self.home_screen)
@@ -117,19 +117,20 @@ class MainWindow(QMainWindow):
             self.change_color_param_calib_screen)
         self.error_detect_screen.nextscreen.connect(
             self.change_progress_screen)
-        self.error_detect_screen.initing.connect(
-            self.error_detect_screen.load_yolov4_model)
 
         self.progress_screen.finished.connect(self.change_home_screen)
         self.progress_screen.captured.connect(self.capture)
         self.progress_screen.stopped.connect(self.stop)
 
+        self.loaded_config.connect(self.test_detect_pair_screen.load_cfg)
         self.loaded_config.connect(self.detection_screen.load_cfg)
         self.loaded_config.connect(self.measurement_screen.load_cfg)
-        # TODO: fix detector_cfg bugs in following screens before 
-        self.loaded_config.connect(self.color_preprocess_config_screen.load_cfg)
-        self.loaded_config.connect(self.color_param_calib_screen.load_default_config)
+        # TODO: fix detector_cfg bugs in following screens before
+        self.loaded_config.connect(
+            self.color_preprocess_config_screen.load_cfg)
+        self.loaded_config.connect(self.color_param_calib_screen.load_cfg)
         self.loaded_config.connect(self.error_detect_screen.load_cfg)
+        self.loaded_config.connect(self.asym_config_screen.load_cfg)
 
         return
 
@@ -137,10 +138,14 @@ class MainWindow(QMainWindow):
         # logic
         self.logged_out.emit(event)
 
-    def show_cam(self):
+    @asyncSlot()
+    async def show_cam(self):
         if (self.video_camera.isOpened() and self.process_cam is not None):
             _, image = self.video_camera.read()
-            self.process_cam(image)
+            if asyncio.iscoroutinefunction(self.process_cam):
+                await self.process_cam(image)
+            else:
+                self.process_cam(image)
 
     # start/stop timer
     def control_timer(self, active):
@@ -148,7 +153,7 @@ class MainWindow(QMainWindow):
         if active:
             if (not self.timer.isActive()):
                 # start timer
-                self.timer.start(20)
+                self.timer.start(50)
         # if timer is started
         else:
             self.timer.stop()
@@ -196,7 +201,7 @@ class MainWindow(QMainWindow):
             self.process_cam = self.measurement_screen.view_cam
             self.control_timer(True)
         elif (currentWidget == self.color_preprocess_config_screen):
-            self.color_preprocess_config_screen.view_image()    
+            self.color_preprocess_config_screen.view_image()
         elif (currentWidget == self.color_param_calib_screen):
             self.process_cam = self.color_param_calib_screen.view_cam
             self.control_timer(True)
@@ -221,22 +226,30 @@ class MainWindow(QMainWindow):
     def capture(self):
         self.control_timer(True)
 
-    def on_load_config(self):
+    @asyncSlot()
+    async def on_load_config(self):
         file_path = helpers.file_chooser_open_directory(self)
         if file_path is not None:
-            temp_cfg = detector.load_json_cfg(file_path)
-            self.detector_cfg.load_config(temp_cfg)
+            manager = FQCSManager(config_folder=file_path)
+            manager.load_sample_images()
+            configs = manager.get_configs()
+            for cfg in configs:
+                if cfg["is_main"] == True:
+                    self.detector_cfg.current_cfg_name = cfg["name"]
+                    await manager.load_model(cfg)
+                    break
+            self.detector_cfg.manager = manager
             self.detector_cfg.current_path = file_path
             self.loaded_config.emit()
         else:
             print("Error loading config")
 
     def on_save_config(self):
-        configs = self.detector_cfg.config
+        configs = self.detector_cfg.manager.get_configs()
         if configs is not None:
             file_path = helpers.file_chooser_open_directory(self)
             if (file_path):
-                detector.save_json_cfg(configs, file_path)
+                self.detector_cfg.manager.save_config(file_path)
                 self.detector_cfg.current_path = file_path
         else:
             print("No config provided")

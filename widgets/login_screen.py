@@ -2,7 +2,6 @@ from PySide2.QtWidgets import QWidget, QMessageBox
 from PySide2.QtCore import Signal
 from services.login_service import LoginService
 from views.login_screen import Ui_LoginScreen
-import trio
 
 
 class LoginScreen(QWidget):
@@ -25,11 +24,10 @@ class LoginScreen(QWidget):
     def log_in(self):
         username = self.ui.inpAcc.text()
         password = self.ui.inpPass.text()
-        is_success, resp = trio.run(self.__login_service.log_in, username,
-                                    password)
+        is_success, resp = self.__login_service.log_in(username, password)
         if is_success:
             self.__login_service.save_token_json(resp)
-            trio.run(self.__login_service.check_token)
+            self.__login_service.check_token()
             self.success.emit(resp)
         else:
             choice = self.on_logged_in_error(resp)

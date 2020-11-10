@@ -1,5 +1,4 @@
 {
   "api_url": "http://localhost:60873",
-  "dev": true,
-  "model_path": "resources/models"
+  "dev": true
 }

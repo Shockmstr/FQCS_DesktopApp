@@ -11,6 +11,8 @@ import json
 from app_constants import KEY_AUTH_INFO
 from services.thread_manager import ThreadManager
 from app_models.app_config import AppConfig
+from qasync import QEventLoop
+
 
 class MainApplication():
     def __init__(self):
@@ -21,18 +23,16 @@ class MainApplication():
         self.login_screen = None
         return
 
-    async def run(self):
+    def run(self):
         AppConfig.instance().load_config()
-        self.app = QApplication([])
         self.auth_info = AuthInfo()
         self.auth_info.new_token.connect(self.on_logged_in_success)
         self.auth_info.refresh_token.connect(self.on_refresh_token)
         self.auth_info.remove_token.connect(self.on_logged_out)
-        self.auth_info.same_token.connect(lambda val: print("Same token"))  
+        self.auth_info.same_token.connect(lambda val: print("Same token"))
         self.__login_service = LoginService(self.auth_info)
-        await self.__login_service.init_auth_info()
+        self.__login_service.init_auth_info()
         self.choose_screen()
-        return self.app.exec_()
 
     def on_logged_in_success(self, token):
         print("Logged in")
@@ -63,12 +63,13 @@ class MainApplication():
                 self.login_screen.close()
 
 
-async def main():
+if __name__ == "__main__":
     with ThreadManager.instance() as tm:
-        status = await MainApplication().run()
+        app = QApplication([])
+        loop = QEventLoop(app)
+        asyncio.set_event_loop(loop)
+        MainApplication().run()
+        with loop:
+            status = loop.run_forever()
     ThreadManager.instance().wait()
     sys.exit(status)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
