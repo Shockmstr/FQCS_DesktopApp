@@ -31,6 +31,8 @@ class ColorPreprocessConfigScreen(QWidget):
         self.image2 = None
         self.binding()
         self.load_cfg()
+        if not self.CAMERA_LOADED:
+            self.ui.containerConfig.setEnabled(False)
 
     # binding
     def binding(self):
@@ -135,6 +137,7 @@ class ColorPreprocessConfigScreen(QWidget):
             self.image1.ui.lblImage.setAlignment(Qt.AlignCenter)
             self.image2.ui.lblImage.setAlignment(Qt.AlignCenter)
             self.CAMERA_LOADED = True
+            self.ui.containerConfig.setEnabled(True)
 
     def showEvent(self, event):
         self.replace_camera_widget()

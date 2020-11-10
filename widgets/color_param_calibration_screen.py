@@ -28,6 +28,8 @@ class ColorParamCalibrationScreen(QWidget):
         self.nextscreen = self.ui.btnNext.clicked
         self.binding()
         self.load_cfg()
+        if not self.CAMERA_LOADED:
+            self.ui.containerConfig.setEnabled(False)
 
     # binding
     def binding(self):
@@ -160,6 +162,7 @@ class ColorParamCalibrationScreen(QWidget):
             self.imageLayout = self.ui.screen1.parentWidget().layout()
             self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
             self.CAMERA_LOADED = True
+            self.ui.containerConfig.setEnabled(True)
 
     hist_bgr_list = []
     max_blue = 0

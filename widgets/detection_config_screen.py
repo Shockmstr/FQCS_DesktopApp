@@ -32,6 +32,8 @@ class DetectionConfigScreen(QWidget):
         self.init_ui_values()
         self.binding()
         self.load_cfg()
+        if not self.CAMERA_LOADED:
+            self.ui.containerConfig.setEnabled(False)
 
     #init ui values
     def init_ui_values(self):
@@ -222,6 +224,8 @@ class DetectionConfigScreen(QWidget):
             self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
             self.imageLayout.replaceWidget(self.ui.screen3, self.image3)
             self.CAMERA_LOADED = True
+            self.ui.containerConfig.setEnabled(True)
+
 
     def process_contours(self, image):
         manager = DetectorConfig.instance().manager

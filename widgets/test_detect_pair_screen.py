@@ -27,6 +27,8 @@ class TestDetectPairScreen(QWidget):
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnNext.clicked
         self.binding()
+        if not self.CAMERA_LOADED:
+            self.ui.containerConfig.setEnabled(False)
 
     # binding
     def binding(self):
@@ -64,6 +66,7 @@ class TestDetectPairScreen(QWidget):
             self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
             self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
             self.CAMERA_LOADED = True
+            self.ui.containerConfig.setEnabled(True)
 
     def process_image(self, image):
         manager = DetectorConfig.instance().manager

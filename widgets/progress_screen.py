@@ -24,6 +24,9 @@ class ProgressScreen(QWidget):
         self.detector_cfg = DetectorConfig.instance().get_current_cfg()
         self.ui.setupUi(self)
         self.binding()
+        if not self.CAMERA_LOADED:
+            self.ui.containerConfig.setEnabled(False)
+
 
     # data binding
     def binding(self):

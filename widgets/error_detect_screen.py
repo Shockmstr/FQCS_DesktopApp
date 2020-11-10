@@ -36,13 +36,15 @@ class ErrorDetectScreen(QWidget):
         self.init_ui_values()
         self.binding()
         self.load_cfg()
+        if not self.CAMERA_LOADED:
+            self.ui.containerConfig.setVisible(False)
 
     def load_cfg(self):
         self.detector_cfg = DetectorConfig.instance().get_current_cfg()
         if self.detector_cfg is None: return
         img_size = self.detector_cfg["err_cfg"]["img_size"]
         inp_shape = self.detector_cfg["err_cfg"]["inp_shape"]
-        yolo_iou_threshold = self.detector_cfg["err_cfg"]["yolo_iou_threshold"]
+        yolo_iou_threshold = self.detector_cfg["err_cfg"]["yolo_iou_threshold"] / 10
         yolo_max_boxes = self.detector_cfg["err_cfg"]["yolo_max_boxes"]
         yolo_score_threshold = self.detector_cfg["err_cfg"][
             "yolo_score_threshold"]
@@ -164,6 +166,7 @@ class ErrorDetectScreen(QWidget):
             self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
             self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
             self.CAMERA_LOADED = True
+            self.ui.containerConfig.setVisible(True)
 
     async def show_error(self, images):
         manager = DetectorConfig.instance().manager
