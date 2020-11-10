@@ -22,7 +22,7 @@ class AsymConfigScreen(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.detector_cfg = DetectorConfig.instance().config
+        self.detector_cfg = DetectorConfig.instance().get_current_cfg()
         self.ui = Ui_AsymConfigScreen()
         self.ui.setupUi(self)
         self.backscreen = self.ui.btnBack.clicked
@@ -170,16 +170,11 @@ class AsymConfigScreen(QWidget):
         cfg = self.detector_cfg["sim_cfg"]
         min_sim = self.detector_cfg["sim_cfg"]['min_similarity']
 
-        is_asym_diff_left, self.avg_asym_left, self.avg_amp_left, recalc_left, res_list_l, amp_res_list_l = (
-            await detector.detect_asym_diff(
-                left, sample_left, cfg['segments_list'], cfg['C1'], cfg['C2'],
-                cfg['psnr_trigger'], cfg['asym_amp_thresh'],
-                cfg['asym_amp_rate'], cfg['re_calc_factor_left'], min_sim))
-        is_asym_diff_right, self.avg_asym_right, self.avg_amp_right, recalc_right, res_list_r, amp_res_list_r = (
-            await detector.detect_asym_diff(
-                right, sample_right, cfg['segments_list'], cfg['C1'],
-                cfg['C2'], cfg['psnr_trigger'], cfg['asym_amp_thresh'],
-                cfg['asym_amp_rate'], cfg['re_calc_factor_right'], min_sim))
+        left_task, right_task = DetectorConfig.instance().manager.detect_asym(
+            self.detector_cfg, left, right, sample_left, sample_right)
+
+        is_asym_diff_left, self.avg_asym_left, self.avg_amp_left, recalc_left, res_list_l, amp_res_list_l = await left_task
+        is_asym_diff_right, self.avg_asym_right, self.avg_amp_right, recalc_right, res_list_r, amp_res_list_r = await right_task
         # find smaller value between the value of asym left and right
         self.tmp_min = min(self.avg_asym_left, self.avg_asym_right)
         print("tmpmin - ", self.tmp_min)
@@ -211,82 +206,36 @@ class AsymConfigScreen(QWidget):
         self.view_image_sample()
 
     def preprocess_color(self, sample_left, sample_right):
-        c_cfg = self.detector_cfg['color_cfg']
-        #print(c_cfg)
-        pre_sample_left = detector.preprocess_for_color_diff(
-            sample_left, c_cfg['img_size'], c_cfg['blur_val'],
-            c_cfg['alpha_l'], c_cfg['beta_l'], c_cfg['sat_adj'])
-        pre_sample_right = detector.preprocess_for_color_diff(
-            sample_right, c_cfg['img_size'], c_cfg['blur_val'],
-            c_cfg['alpha_r'], c_cfg['beta_r'], c_cfg['sat_adj'])
+        manager = DetectorConfig.instance().manager
+        pre_sample_left = manager.preprocess(self.detector_cfg, sample_left,
+                                             True)
+        pre_sample_right = manager.preprocess(self.detector_cfg, sample_right,
+                                              False)
         return pre_sample_left, pre_sample_right
 
     def process_image(self, image):
-        detected = None
-
-        frame_width, frame_height = self.detector_cfg[
-            "frame_width"], self.detector_cfg["frame_height"]
-        min_width, min_height = self.detector_cfg[
-            "min_width_per"], self.detector_cfg["min_height_per"]
-        min_width, min_height = frame_width * min_width, frame_height * min_height
-        find_contours_func = detector.get_find_contours_func_by_method(
-            self.detector_cfg["detect_method"])
-
-        # adjust thresh
-        if (self.detector_cfg["detect_method"] == "thresh"):
-            adj_bg_thresh = helper.adjust_thresh_by_brightness(
-                image, self.detector_cfg["d_cfg"]["light_adj_thresh"],
-                self.detector_cfg["d_cfg"]["bg_thresh"])
-            self.detector_cfg["d_cfg"]["adj_bg_thresh"] = adj_bg_thresh
-        elif (self.detector_cfg["detect_method"] == "range"):
-            adj_cr_to = helper.adjust_crange_by_brightness(
-                image, self.detector_cfg["d_cfg"]["light_adj_thresh"],
-                self.detector_cfg["d_cfg"]["cr_to"])
-            self.detector_cfg["d_cfg"]["adj_cr_to"] = adj_cr_to
-
-        boxes, cnts, proc = detector.find_contours_and_box(
-            image,
-            find_contours_func,
-            self.detector_cfg["d_cfg"],
-            min_width=min_width,
-            min_height=min_height)
-        pair, image, split_left, split_right, boxes = detector.detect_pair_and_size(
-            image,
-            find_contours_func,
-            self.detector_cfg["d_cfg"],
-            boxes,
-            cnts,
-            stop_condition=self.detector_cfg['stop_condition'],
-            detect_range=self.detector_cfg['detect_range'])
-
-        # output
-        unit = self.detector_cfg["length_unit"]
-        per_10px = self.detector_cfg["length_per_10px"]
-        sizes = []
-        for b in boxes:
-            rect, lH, lW, box, tl, tr, br, bl = b
-            if (per_10px is not None):
-                lH, lW = helper.calculate_length(
-                    lH, per_10px), helper.calculate_length(lW, per_10px)
-            sizes.append((lH, lW))
-            cv2.drawContours(image, [box.astype("int")], -1, (0, 255, 0), 2)
-            cv2.putText(image, f"{lW:.1f} {unit}", (tl[0], tl[1]),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
-            cv2.putText(image, f"{lH:.1f} {unit}", (br[0], br[1]),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
-        # cv2.imshow("Contours processed", proc)
-        if pair is not None:
+        manager = DetectorConfig.instance().manager
+        frame_width, frame_height = main_cfg["frame_width"], main_cfg[
+            "frame_height"]
+        boxes, proc = manager.extract_boxes(main_cfg, image)
+        final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
+            main_cfg, boxes, image)
+        unit = main_cfg["length_unit"]
+        for idx, group in enumerate(final_grouped):
+            for b_idx, b in enumerate(group):
+                c, rect, dimA, dimB, box, tl, tr, br, bl, minx, maxx, cenx = b
+                cur_size = sizes[idx][b_idx]
+                lH, lW = cur_size
+                helper.draw_boxes_and_sizes(image, idx, box, lH, lW, unit, tl,
+                                            br)
+        if (pair is not None):
+            manager.check_group(check_group_idx, final_grouped)
             left, right = pair
             left, right = left[0], right[0]
-            h_diff, w_diff = detector.compare_size(sizes[0], sizes[1],
-                                                   self.detector_cfg)
-
-            # if split_left is not None:
-            #     detected = np.concatenate((split_left, split_right), axis=1)
+            left = cv2.flip(left, 1)
             max_width = max((left.shape[0], right.shape[0]))
             temp_left = imutils.resize(left, height=max_width)
             temp_right = imutils.resize(right, height=max_width)
             detected = np.concatenate((temp_left, temp_right), axis=1)
-            return image, detected, (left, right)
-
+            return image, detected, [left, right]
         return image, None, None

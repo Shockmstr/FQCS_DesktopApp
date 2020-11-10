@@ -20,7 +20,7 @@ class ColorParamCalibrationScreen(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.detector_cfg = DetectorConfig.instance()
+        self.detector_cfg = DetectorConfig.instance().get_current_cfg()
         self.ui = Ui_ColorParamCalibScreen()
         self.manager = manager.FQCSManager()
         self.ui.setupUi(self)
@@ -45,37 +45,37 @@ class ColorParamCalibrationScreen(QWidget):
         amp_thresh_green_value = float(self.ui.ampThreshGreen.text())
         amp_thresh_red_value = float(self.ui.ampThreshRed.text())
         amp_thresh_blue_value = float(self.ui.ampThreshBlue.text())
-        self.detector_cfg.config["color_cfg"]["amplify_thresh"] = (
+        self.detector_cfg["color_cfg"]["amplify_thresh"] = (
             amp_thresh_red_value, amp_thresh_green_value,
             amp_thresh_blue_value)
 
     def amp_rate_change(self):
         value = self.ui.sldAmpRate.value()
         self.ui.grpSldAmpRate.setTitle("Amplification Rate: " + str(value))
-        self.detector_cfg.config["color_cfg"]["amplify_rate"] = value
+        self.detector_cfg["color_cfg"]["amplify_rate"] = value
 
     def sup_thresh_change(self):
         value = self.ui.inpSuppThreshold.value()
-        self.detector_cfg.config["color_cfg"]["supp_thresh"] = value
+        self.detector_cfg["color_cfg"]["supp_thresh"] = value
 
     def allow_diff_change(self):
         value = self.ui.sldAllowDiff.value() / 100
         self.ui.grpSldAllowDiff.setTitle("Allowed Difference (%): " +
                                          str(value))
-        self.detector_cfg.config["color_cfg"]["max_diff"] = value
+        self.detector_cfg["color_cfg"]["max_diff"] = value
 
     def cbbCamera_chose(self):
         self.replace_camera_widget()
         index = self.ui.cbbCamera.currentData()
 
     def load_default_config(self):
-        #print(self.detector_cfg.config)
-        # amp_thresh_red_value = self.detector_cfg.config["color_cfg"]["amplify_thresh"][0]
-        # amp_thresh_green_value = self.detector_cfg.config["color_cfg"]["amplify_thresh"][1]
-        # amp_thresh_blue_value = self.detector_cfg.config["color_cfg"]["amplify_thresh"][2]
-        amplify_rate = self.detector_cfg.config["color_cfg"]["amplify_rate"]
-        supp_thresh = self.detector_cfg.config["color_cfg"]["supp_thresh"]
-        max_diff = self.detector_cfg.config["color_cfg"]["max_diff"]
+        #print(self.detector_cfg)
+        # amp_thresh_red_value = self.detector_cfg["color_cfg"]["amplify_thresh"][0]
+        # amp_thresh_green_value = self.detector_cfg["color_cfg"]["amplify_thresh"][1]
+        # amp_thresh_blue_value = self.detector_cfg["color_cfg"]["amplify_thresh"][2]
+        amplify_rate = self.detector_cfg["color_cfg"]["amplify_rate"]
+        supp_thresh = self.detector_cfg["color_cfg"]["supp_thresh"]
+        max_diff = self.detector_cfg["color_cfg"]["max_diff"]
 
         self.ui.sldAllowDiff.setValue(max_diff * 100)
         self.ui.sldAmpRate.setValue(amplify_rate)
@@ -204,7 +204,7 @@ class ColorParamCalibrationScreen(QWidget):
         self.ui.ampThreshRed.setValue(amp_thresh[0])
         self.ui.ampThreshGreen.setValue(amp_thresh[1])
         self.ui.ampThreshBlue.setValue(amp_thresh[2])
-        self.detector_cfg.config["color_cfg"]["amplify_thresh"] = amp_thresh
+        self.detector_cfg["color_cfg"]["amplify_thresh"] = amp_thresh
         #self.hist_bgr_list.clear()
 
     def showEvent(self, event):
@@ -214,115 +214,36 @@ class ColorParamCalibrationScreen(QWidget):
     #image process function
 
     def preprocess_color(self, sample_left, sample_right):
-        c_cfg = self.detector_cfg.config['color_cfg']
-        #print(c_cfg)
-        pre_sample_left = detector.preprocess_for_color_diff(
-            sample_left, c_cfg['img_size'], c_cfg['blur_val'],
-            c_cfg['alpha_l'], c_cfg['beta_l'], c_cfg['sat_adj'])
-        pre_sample_right = detector.preprocess_for_color_diff(
-            sample_right, c_cfg['img_size'], c_cfg['blur_val'],
-            c_cfg['alpha_r'], c_cfg['beta_r'], c_cfg['sat_adj'])
+        manager = DetectorConfig.instance().manager
+        pre_sample_left = manager.preprocess(self.detector_cfg, sample_left,
+                                             True)
+        pre_sample_right = manager.preprocess(self.detector_cfg, sample_right,
+                                              False)
         return pre_sample_left, pre_sample_right
 
     def process_image(self, image):
-        detected = None
-        detector_cfg = self.detector_cfg.config
-        d_cfg = detector_cfg["d_cfg"]
-        manager = self.manager
-
-        # define sample_area for grouping
-        sample_area = None
-        sample_left, sample_right = None, None
-        sample_left_path = None
-        if os.path.exists(sample_left_path or "/a/b"):
-            sample_left = cv2.imread(sample_left_path)
-            sample_right = cv2.imread(sample_right_path)
-            sample_area = sample_left.shape[0] * sample_left.shape[1]
-
-        frame_width, frame_height = detector_cfg["frame_width"], detector_cfg[
+        manager = DetectorConfig.instance().manager
+        frame_width, frame_height = main_cfg["frame_width"], main_cfg[
             "frame_height"]
-        min_width, min_height = detector_cfg["min_width_per"], detector_cfg[
-            "min_height_per"]
-        min_width, min_height = frame_width * min_width, frame_height * min_height
-        find_contours_func = detector.get_find_contours_func_by_method(
-            detector_cfg["detect_method"])
-
-        # adjust thresh
-        if (detector_cfg["detect_method"] == "thresh"):
-            adj_thresh = d_cfg["light_adj_thresh"]
-            if adj_thresh is not None and adj_thresh > 0:
-                adj_bg_thresh = helper.adjust_thresh_by_brightness(
-                    image, d_cfg["light_adj_thresh"], d_cfg["bg_thresh"])
-            else:
-                adj_bg_thresh = d_cfg["bg_thresh"]
-            d_cfg["adj_bg_thresh"] = adj_bg_thresh
-        elif (detector_cfg["detect_method"] == "range"):
-            adj_thresh = d_cfg["light_adj_thresh"]
-            if adj_thresh is not None and adj_thresh > 0:
-                adj_cr_to = helper.adjust_crange_by_brightness(
-                    image, d_cfg["light_adj_thresh"], d_cfg["cr_to"])
-                d_cfg["adj_cr_to"] = adj_cr_to
-            else:
-                d_cfg["adj_cr_to"] = d_cfg["cr_to"]
-
-        boxes, proc = detector.find_contours_and_box(
-            image,
-            find_contours_func,
-            d_cfg,
-            min_width=min_width,
-            min_height=min_height,
-            detect_range=detector_cfg['detect_range'])
-
-        final_grouped, _, _, check_group_idx = manager.group_pairs(
-            boxes, sample_area)
-        group_count = manager.get_last_group_count()
-
-        pair, split_left, split_right = None, None, None
-        check_group = None
-        if check_group_idx is not None:
-            check_group = final_grouped[check_group_idx]
-            image_detect = image.copy()
-            pair, image_detect, split_left, split_right, check_group = detector.detect_pair_and_size(
-                image_detect,
-                find_contours_func,
-                d_cfg,
-                check_group,
-                stop_condition=detector_cfg['stop_condition'])
-            final_grouped[check_group_idx] = check_group
-
-        # output
-        unit = detector_cfg["length_unit"]
-        per_10px = detector_cfg["length_per_10px"]
-        sizes = []
+        boxes, proc = manager.extract_boxes(main_cfg, image)
+        final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
+            main_cfg, boxes, image)
+        unit = main_cfg["length_unit"]
         for idx, group in enumerate(final_grouped):
-            for b in group:
+            for b_idx, b in enumerate(group):
                 c, rect, dimA, dimB, box, tl, tr, br, bl, minx, maxx, cenx = b
-                if per_10px:
-                    lH, lW = helper.calculate_length(
-                        dimA,
-                        per_10px), helper.calculate_length(dimB, per_10px)
-                    sizes.append((lH, lW))
-                else:
-                    lH, lW = dimA, dimB
-                    sizes.append((lH, lW))
-                    unit = "px"
-                cv2.drawContours(image, [box.astype("int")], -1, (0, 255, 0),
-                                 2)
-                cv2.putText(image, f"{idx}/ {lW:.1f} {unit}", (tl[0], tl[1]),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
-                cv2.putText(image, f"{lH:.1f} {unit}", (br[0], br[1]),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
-
+                cur_size = sizes[idx][b_idx]
+                lH, lW = cur_size
+                helper.draw_boxes_and_sizes(image, idx, box, lH, lW, unit, tl,
+                                            br)
         if (pair is not None):
-            check_group_min_x = manager.get_min_x(check_group)
-            manager.check_group(check_group_min_x)
+            manager.check_group(check_group_idx, final_grouped)
             left, right = pair
             left, right = left[0], right[0]
-
+            left = cv2.flip(left, 1)
             max_width = max((left.shape[0], right.shape[0]))
             temp_left = imutils.resize(left, height=max_width)
             temp_right = imutils.resize(right, height=max_width)
             detected = np.concatenate((temp_left, temp_right), axis=1)
             return image, detected, [left, right]
-
         return image, None, None

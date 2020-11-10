@@ -1,14 +1,13 @@
 import os
 from app_models.auth_info import AuthInfo
 from app_constants import TOKEN_PATH, ISO_DATE_FORMAT, DEV_TOKEN_PATH
-import requests
 import datetime
 import json
 from services.thread_manager import ThreadManager
 from services.refresh_or_logout_thread import RefreshOrLogoutThread
 from app import helpers
 from app_models.app_config import AppConfig
-
+from FQCS import fqcs_api
 LOGIN_SERVICE_TH_GR_KEY = "LoginService"
 
 
@@ -42,7 +41,7 @@ class LoginService:
             timeout_min = min_ref_diff if is_refresh else min_diff
             ThreadManager.instance().cancel_threads(
                 group=LOGIN_SERVICE_TH_GR_KEY)
-            rol_thread = RefreshOrLogoutThread(self, is_refresh,
+            rol_thread = RefreshOrLogoutThread(self, token, is_refresh,
                                                timeout_min * 60 * 1000)
             rol_thread.start()
             ThreadManager.instance().add_thread(rol_thread,
@@ -54,22 +53,9 @@ class LoginService:
             with open(DEV_TOKEN_PATH) as fi:
                 dev_token = json.load(fi)
                 return (True, dev_token)
-
-        try:
-            form_data = {}
-            form_data['username'] = username
-            form_data['password'] = password
-            url = "{}/api/users/login".format(
-                AppConfig.instance().config['api_url'])
-            resp = requests.post(url, data=form_data)
-            if (resp.status_code >= 200 and resp.status_code < 300):
-                data = resp.json()
-                return (True, data)
-            else:
-                return (False, resp)
-        except Exception as ex:
-            print(ex)
-            return (False, None)
+        api_url = AppConfig.instance().config['api_url']
+        result = fqcs_api.login(api_url, username, password)
+        return result
 
     def save_token_json(self, token):
         self.__auth_info.set_token_info(token)

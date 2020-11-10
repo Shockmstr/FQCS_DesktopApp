@@ -16,6 +16,7 @@ from widgets.error_detect_screen import ErrorDetectScreen
 from widgets.progress_screen import ProgressScreen
 from widgets.asym_config_screen import AsymConfigScreen
 from services.login_service import LoginService
+from qasync import asyncSlot
 
 
 class MainWindow(QMainWindow):
@@ -224,10 +225,18 @@ class MainWindow(QMainWindow):
     def capture(self):
         self.control_timer(True)
 
-    def on_load_config(self):
+    @asyncSlot
+    async def on_load_config(self):
         file_path = helpers.file_chooser_open_directory(self)
         if file_path is not None:
-            self.detector_cfg.manager = FQCSManager(file_path)
+            manager = FQCSManager(config_folder=file_path)
+            manager.load_sample_images()
+            configs = manager.get_configs()
+            for cfg in configs:
+                if cfg["is_main"] == True:
+                    await manager.load_model(cfg)
+                    break
+            self.detector_cfg.manager = manager
             self.detector_cfg.current_path = file_path
             self.loaded_config.emit()
         else:

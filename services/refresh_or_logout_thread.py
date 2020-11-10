@@ -1,15 +1,18 @@
 from PySide2.QtCore import QTimer, QThread
 from services.login_service import LoginService
 from app_models.app_config import AppConfig
+from FQCS import fqcs_api
 
 
 class RefreshOrLogoutThread(QThread):
     def __init__(self,
                  login_service: LoginService,
+                 token,
                  is_refresh,
                  timeout,
                  parent=None):
         QThread.__init__(self, parent)
+        self.__token = token
         self.__is_refresh = is_refresh
         self.__timeout = timeout
         self.__login_service = login_service
@@ -24,15 +27,11 @@ class RefreshOrLogoutThread(QThread):
     def __refresh_callback(self):
         try:
             print("Refresh callback")
-            form_data = {}
-            form_data['grant_type'] = 'refresh_token'
-            form_data['refresh_token'] = token['refresh_token']
-            url = "{}/api/users/login".format(
-                AppConfig.instance().config['api_url'])
-            resp = requests.post(url, data=form_data)
-            if (resp.status_code >= 200 and resp.status_code < 300):
-                data = resp.json()
-                self.__login_service.save_token_json(data)
+            api_url = AppConfig.instance().config['api_url']
+            rf_token = self.__token['refresh_token']
+            (status, resp) = fqcs_api.refresh_token(api_url, rf_token)
+            if (status == True):
+                self.__login_service.save_token_json(resp)
                 trio.run(self.__login_service.check_token)
             else:
                 raise Exception("Resp error")

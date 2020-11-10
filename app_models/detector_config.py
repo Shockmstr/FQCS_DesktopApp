@@ -8,6 +8,11 @@ class DetectorConfigAbs(metaclass=abc.ABCMeta):
     camera: cv2.VideoCapture
     current_path: str
     manager: FQCSManager
+    current_cfg_name: str
+
+    @abc.abstractmethod
+    def get_current_cfg(self):
+        pass
 
 
 class DetectorConfig(DetectorConfigAbs):
@@ -15,6 +20,9 @@ class DetectorConfig(DetectorConfigAbs):
 
     def __init__(self):
         return
+
+    def get_current_cfg(self):
+        return self.manager.get_config_by_name(self.current_cfg_name)
 
     @staticmethod
     def instance() -> DetectorConfigAbs:
