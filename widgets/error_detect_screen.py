@@ -72,11 +72,7 @@ class ErrorDetectScreen(QWidget):
         self.ui.cbbWidth.setCurrentIndex(-1)
         self.ui.cbbHeight.setCurrentIndex(-1)
 
-        frame_resize_values = [
-            "36", "72", "108", "144", "180", "216", "252", "288", "324", "360",
-            "396", "432", "468", "504", "540", "576", "612", "648", "684",
-            "720"
-        ]
+        frame_resize_values = [str(32 * i) for i in range(1, 20, 2)]
 
         self.ui.cbbHeight.clear()
         for value in frame_resize_values:

@@ -30,9 +30,9 @@
       "sat_adj": 2,
       "supp_thresh": 10,
       "amplify_thresh": [
-        1000,
-        1000,
-        1000
+        952,
+        543,
+        510
       ],
       "amplify_rate": 20,
       "max_diff": 0.2
@@ -55,13 +55,13 @@
     "detect_method": "thresh",
     "err_cfg": {
       "inp_shape": [
-        108,
-        108,
+        288,
+        288,
         3
       ],
       "img_size": [
-        108,
-        108
+        288,
+        288
       ],
       "num_classes": 1,
       "yolo_max_boxes": 10,
@@ -75,7 +75,7 @@
     "d_cfg": {
       "max_boxes": 10,
       "bg_thresh": 151,
-      "adj_bg_thresh": 304.2478491586538,
+      "adj_bg_thresh": 230.29032081330126,
       "thresh_inv": false,
       "light_adj_thresh": 65,
       "alpha": 1.0,
@@ -107,7 +107,10 @@
         127.5,
         127.5
       ]
-    }
+    },
+    "asym_amp_thresh": 0.9202876396431949,
+    "re_calc_factor_left": 1.3431616049753226,
+    "re_calc_factor_right": 1.5362763634229861
   },
   {
     "name": "Camera-2020-11-09 14:59:05.046790",

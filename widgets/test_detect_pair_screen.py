@@ -104,6 +104,7 @@ class TestDetectPairScreen(QWidget):
                         left)
             cv2.imwrite(os.path.join(folder_path, detector.SAMPLE_RIGHT_FILE),
                         right)
+            DetectorConfig.instance().manager.load_sample_images()
             print(f"save successful at {folder_path}")
 
     def reset_sample(self):
