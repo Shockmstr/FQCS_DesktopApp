@@ -15,15 +15,15 @@ class LoginService:
     def __init__(self, auth_info: AuthInfo):
         self.__auth_info = auth_info
 
-    async def init_auth_info(self):
+    def init_auth_info(self):
         if os.path.exists(TOKEN_PATH):
             with open(TOKEN_PATH) as fi:
                 token = json.load(fi)
                 self.__auth_info.set_token_info(token)
-        await self.check_token()
+        self.check_token()
         return
 
-    async def check_token(self):
+    def check_token(self):
         if AppConfig.instance().config["dev"]: return
         token = self.__auth_info.get_token_info()
         if (token is not None and 'expires_utc' in token):
@@ -48,7 +48,7 @@ class LoginService:
                                                 LOGIN_SERVICE_TH_GR_KEY)
         return
 
-    async def log_in(self, username, password):
+    def log_in(self, username, password):
         if AppConfig.instance().config["dev"]:
             with open(DEV_TOKEN_PATH) as fi:
                 dev_token = json.load(fi)

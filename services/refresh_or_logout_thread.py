@@ -1,16 +1,10 @@
 from PySide2.QtCore import QTimer, QThread
-from services.login_service import LoginService
 from app_models.app_config import AppConfig
 from FQCS import fqcs_api
 
 
 class RefreshOrLogoutThread(QThread):
-    def __init__(self,
-                 login_service: LoginService,
-                 token,
-                 is_refresh,
-                 timeout,
-                 parent=None):
+    def __init__(self, login_service, token, is_refresh, timeout, parent=None):
         QThread.__init__(self, parent)
         self.__token = token
         self.__is_refresh = is_refresh

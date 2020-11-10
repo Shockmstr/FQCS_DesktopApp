@@ -29,6 +29,7 @@ class DetectorConfig(DetectorConfigAbs):
         if DetectorConfig.__instance == None:
             instance = DetectorConfig()
             instance.manager = FQCSManager()
+            instance.current_cfg_name = None
             DetectorConfig.__instance = instance
 
         return DetectorConfig.__instance

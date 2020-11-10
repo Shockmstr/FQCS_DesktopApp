@@ -12,6 +12,7 @@ from app_constants import KEY_AUTH_INFO
 from services.thread_manager import ThreadManager
 from app_models.app_config import AppConfig
 
+
 class MainApplication():
     def __init__(self):
         self.__login_service = None
@@ -21,16 +22,16 @@ class MainApplication():
         self.login_screen = None
         return
 
-    async def run(self):
+    def run(self):
         AppConfig.instance().load_config()
         self.app = QApplication([])
         self.auth_info = AuthInfo()
         self.auth_info.new_token.connect(self.on_logged_in_success)
         self.auth_info.refresh_token.connect(self.on_refresh_token)
         self.auth_info.remove_token.connect(self.on_logged_out)
-        self.auth_info.same_token.connect(lambda val: print("Same token"))  
+        self.auth_info.same_token.connect(lambda val: print("Same token"))
         self.__login_service = LoginService(self.auth_info)
-        await self.__login_service.init_auth_info()
+        self.__login_service.init_auth_info()
         self.choose_screen()
         return self.app.exec_()
 
@@ -65,7 +66,7 @@ class MainApplication():
 
 async def main():
     with ThreadManager.instance() as tm:
-        status = await MainApplication().run()
+        status = MainApplication().run()
     ThreadManager.instance().wait()
     sys.exit(status)
 

@@ -3,7 +3,6 @@ from PySide2.QtCore import Signal
 import trio
 from app_models.detector_config import DetectorConfig
 from FQCS import helper
-from FQCS.tf2_yolov4 import helper as y_helper
 import os
 from FQCS import detector
 
