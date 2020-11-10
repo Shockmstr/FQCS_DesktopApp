@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QWidget
-from PySide2.QtCore import Signal
+from PySide2.QtCore import Signal, QThreadPool
 from app_models.detector_config import DetectorConfig
 from app_models.app_config import AppConfig
 from app import helpers
@@ -16,6 +16,7 @@ import imutils
 import matplotlib.pyplot as plt
 import numpy as np
 from qasync import asyncSlot
+from services.worker_runnable import WorkerRunnable
 
 
 class ErrorDetectScreen(QWidget):
@@ -143,14 +144,14 @@ class ErrorDetectScreen(QWidget):
 
         self.ui.inpClasses.setText(str(tail))
 
-    async def view_cam(self, image):
+    def view_cam(self, image):
         # read image in BGR format
         self.replace_camera_widget()
         self.img = image
         self.dim = (self.label_w, self.label_h)
         orig = cv2.resize(self.img, self.dim)
         self.image1.imshow(orig)
-        await self.process_image(self.img)
+        self.process_image(self.img)
 
     def replace_camera_widget(self):
         if not self.CAMERA_LOADED:
@@ -167,7 +168,7 @@ class ErrorDetectScreen(QWidget):
 
     async def show_error(self, images):
         manager = DetectorConfig.instance().manager
-        err_task = manager.detect_errors(self.detector_cfg, images)
+        err_task = manager.detect_errors(self.detector_cfg, images, None)
         boxes, scores, classes, valid_detections = await err_task
         err_cfg = self.detector_cfg["err_cfg"]
         helper.draw_yolo_results(images,
@@ -183,7 +184,7 @@ class ErrorDetectScreen(QWidget):
         images[0] = np.asarray(images[0], np.uint8)
         self.image3.imshow(images[0])
 
-    async def process_pair(self, image):
+    def process_pair(self, image):
         manager = DetectorConfig.instance().manager
         frame_width, frame_height = self.detector_cfg[
             "frame_width"], self.detector_cfg["frame_height"]
@@ -210,10 +211,14 @@ class ErrorDetectScreen(QWidget):
             return image, detected, [left, right]
         return image, None, None
 
-    async def process_image(self, image):
-        contour, _, detected_pair = await self.process_pair(image)
+    def process_image(self, image):
+        contour, _, detected_pair = self.process_pair(image)
         contour = cv2.resize(contour, self.dim)
         self.image2.imshow(contour)
         manager = DetectorConfig.instance().manager
         if detected_pair is not None and manager.get_model() is not None:
-            await self.show_error(detected_pair)
+            runnable = WorkerRunnable(self.show_error,
+                                      detected_pair,
+                                      parent=self)
+            runnable.work_error.connect(lambda ex: print(ex))
+            QThreadPool.globalInstance().start(runnable)

@@ -138,14 +138,10 @@ class MainWindow(QMainWindow):
         # logic
         self.logged_out.emit(event)
 
-    @asyncSlot()
-    async def show_cam(self):
+    def show_cam(self):
         if (self.video_camera.isOpened() and self.process_cam is not None):
             _, image = self.video_camera.read()
-            if asyncio.iscoroutinefunction(self.process_cam):
-                await self.process_cam(image)
-            else:
-                self.process_cam(image)
+            self.process_cam(image)
 
     # start/stop timer
     def control_timer(self, active):
