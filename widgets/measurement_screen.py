@@ -158,13 +158,14 @@ class MeasurementScreen(QWidget):
 
     def process_image(self, image):
         manager = DetectorConfig.instance().manager
-        boxes, proc = manager.extract_boxes(main_cfg, image)
+        boxes, proc = manager.extract_boxes(self.detector_cfg, image)
         for idx, b in enumerate(boxes):
             c, rect, dimA, dimB, box, tl, tr, br, bl, minx, maxx, cenx = b
             helper.draw_boxes(image, box)
         return image
 
     def load_cfg(self):
+        self.detector_cfg = DetectorConfig.instance().get_current_cfg()
         if self.detector_cfg is None: return
         min_width = self.detector_cfg["min_width_per"] * 100
         min_height = self.detector_cfg["min_height_per"] * 100

@@ -180,6 +180,7 @@ class DetectionConfigScreen(QWidget):
     def cbbCamera_chose(self):
         # self.replace_camera_widget()
         index = self.ui.cbbCamera.currentData()
+        self.detector_cfg["camera_uri"] = index
         self.camera_choosen.emit(index)
 
     def cbbMethod_changed(self, index: int):
@@ -224,9 +225,9 @@ class DetectionConfigScreen(QWidget):
 
     def process_contours(self, image):
         manager = DetectorConfig.instance().manager
-        frame_width, frame_height = main_cfg["frame_width"], main_cfg[
-            "frame_height"]
-        boxes, proc = manager.extract_boxes(main_cfg, image)
+        frame_width, frame_height = self.detector_cfg[
+            "frame_width"], self.detector_cfg["frame_height"]
+        boxes, proc = manager.extract_boxes(self.detector_cfg, image)
         for b in boxes:
             c, rect, dimA, dimB, box, tl, tr, br, bl, minx, maxx, cenx = b
             helper.draw_boxes(image, box)
@@ -234,6 +235,7 @@ class DetectionConfigScreen(QWidget):
 
     #load init configs
     def load_cfg(self):
+        self.detector_cfg = DetectorConfig.instance().get_current_cfg()
         if self.detector_cfg is None: return
         #edge
         brightness = self.detector_cfg["d_cfg"]["alpha"]
@@ -285,3 +287,8 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbMethod.setCurrentIndex(method_index)
         self.ui.cbbHeight.setCurrentIndex(height_index)
         self.ui.cbbWidth.setCurrentIndex(width_index)
+
+        camera_uri = self.detector_cfg["camera_uri"]
+        if camera_uri < self.ui.cbbCamera.count():
+            self.ui.cbbCamera.setCurrentIndex(camera_uri)
+            self.camera_choosen.emit(camera_uri)

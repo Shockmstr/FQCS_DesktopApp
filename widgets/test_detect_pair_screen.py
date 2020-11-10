@@ -63,12 +63,12 @@ class TestDetectPairScreen(QWidget):
 
     def process_image(self, image):
         manager = DetectorConfig.instance().manager
-        frame_width, frame_height = main_cfg["frame_width"], main_cfg[
+        frame_width, frame_height = self.detector_cfg["frame_width"], self.detector_cfg[
             "frame_height"]
-        boxes, proc = manager.extract_boxes(main_cfg, image)
+        boxes, proc = manager.extract_boxes(self.detector_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
-            main_cfg, boxes, image)
-        unit = main_cfg["length_unit"]
+            self.detector_cfg, boxes, image)
+        unit = self.detector_cfg["length_unit"]
         for idx, group in enumerate(final_grouped):
             for b_idx, b in enumerate(group):
                 c, rect, dimA, dimB, box, tl, tr, br, bl, minx, maxx, cenx = b

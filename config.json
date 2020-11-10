@@ -1,7 +1,7 @@
 [
   {
     "name": "Camera-2020-11-09 14:59:05.046790",
-    "camera_uri": "test.mp4",
+    "camera_uri": 0,
     "is_main": true,
     "is_color_enable": true,
     "is_defect_enable": true,
@@ -23,8 +23,8 @@
         64
       ],
       "blur_val": 0.05,
-      "alpha_r": 1,
-      "alpha_l": 1,
+      "alpha_r": 1.0,
+      "alpha_l": 1.0,
       "beta_r": -150,
       "beta_l": -150,
       "sat_adj": 2,
@@ -52,7 +52,7 @@
         1
       ]
     },
-    "detect_method": "thresh",
+    "detect_method": "edge",
     "err_cfg": {
       "inp_shape": [
         320,
@@ -74,21 +74,21 @@
     },
     "d_cfg": {
       "max_boxes": 10,
-      "bg_thresh": 110,
-      "adj_bg_thresh": 110,
+      "bg_thresh": 86,
+      "adj_bg_thresh": 86,
       "thresh_inv": false,
       "light_adj_thresh": 65,
       "alpha": 1.0,
-      "beta": 0,
-      "threshold1": 40,
+      "beta": -40,
+      "threshold1": 45,
       "threshold2": 100,
       "kernel": [
-        5,
-        5
+        21,
+        21
       ],
       "d_kernel": [
-        5,
-        5
+        6,
+        6
       ],
       "e_kernel": null,
       "color_inv": false,
@@ -111,7 +111,7 @@
   },
   {
     "name": "Camera-2020-11-09 14:59:05.046790",
-    "camera_uri": 0,
+    "camera_uri": 1,
     "is_main": false,
     "is_color_enable": true,
     "is_defect_enable": true,
@@ -185,7 +185,7 @@
     "d_cfg": {
       "max_boxes": 10,
       "bg_thresh": 110,
-      "adj_bg_thresh": 0,
+      "adj_bg_thresh": 110,
       "thresh_inv": false,
       "light_adj_thresh": 65,
       "alpha": 1.0,

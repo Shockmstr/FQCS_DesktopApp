@@ -16,7 +16,7 @@ from widgets.error_detect_screen import ErrorDetectScreen
 from widgets.progress_screen import ProgressScreen
 from widgets.asym_config_screen import AsymConfigScreen
 from services.login_service import LoginService
-from qasync import asyncSlot
+from qasync import QEventLoop, asyncSlot
 
 
 class MainWindow(QMainWindow):
@@ -126,8 +126,7 @@ class MainWindow(QMainWindow):
         # TODO: fix detector_cfg bugs in following screens before
         self.loaded_config.connect(
             self.color_preprocess_config_screen.load_cfg)
-        self.loaded_config.connect(
-            self.color_param_calib_screen.load_cfg)
+        self.loaded_config.connect(self.color_param_calib_screen.load_cfg)
         self.loaded_config.connect(self.error_detect_screen.load_cfg)
 
         return
@@ -220,7 +219,7 @@ class MainWindow(QMainWindow):
     def capture(self):
         self.control_timer(True)
 
-    @asyncSlot
+    @asyncSlot()
     async def on_load_config(self):
         file_path = helpers.file_chooser_open_directory(self)
         if file_path is not None:
@@ -229,6 +228,7 @@ class MainWindow(QMainWindow):
             configs = manager.get_configs()
             for cfg in configs:
                 if cfg["is_main"] == True:
+                    self.detector_cfg.current_cfg_name = cfg["name"]
                     await manager.load_model(cfg)
                     break
             self.detector_cfg.manager = manager
