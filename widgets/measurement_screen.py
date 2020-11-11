@@ -37,6 +37,14 @@ class MeasurementScreen(QWidget):
             self.actual_length_change)
         self.ui.inpAllowDiff.textChanged.connect(self.allow_diff_change)
         self.ui.inpLengthUnit.textChanged.connect(self.length_unit_change)
+        self.ui.chkMainCamera.stateChanged.connect(self.get_checked_is_main_camera)
+
+    def get_checked_is_main_camera(self):
+        is_checked = self.ui.chkMainCamera.isChecked()
+        if (is_checked):
+            self.detector_cfg["is_main"] = True
+        else:
+            self.detector_cfg["is_main"] = False
 
     def min_width_change(self):
         value = self.ui.sldMaximumWidth.value()

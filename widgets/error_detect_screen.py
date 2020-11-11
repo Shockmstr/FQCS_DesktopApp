@@ -92,6 +92,13 @@ class ErrorDetectScreen(QWidget):
         self.ui.cbbWidth.currentIndexChanged.connect(self.image_resize)
         self.ui.btnChooseModel.clicked.connect(self.choose_model_clicked)
         self.ui.btnChooseClasses.clicked.connect(self.choose_classes_clicked)
+        self.ui.chkDefectDetection.stateChanged.connect(self.defect_detection_state_change)
+
+    def defect_detection_state_change(self):
+        if self.ui.chkDefectDetection.isChecked():
+            self.detector_cfg["is_defect_enable"] = True
+        else:
+            self.detector_cfg["is_defect_enable"] = False
 
     # hander
     def min_score_change(self):

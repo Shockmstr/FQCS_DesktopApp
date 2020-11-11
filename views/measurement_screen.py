@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'measurement_screenwOrkdC.ui'
+## Form generated from reading UI file 'measurement_screenMvcGON.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -88,6 +88,16 @@ class Ui_MeasurementScreen(object):
 "}")
         self.verticalLayout_10 = QVBoxLayout(self.containerLeft)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.chkMainCamera = QCheckBox(self.containerLeft)
+        self.chkMainCamera.setObjectName(u"chkMainCamera")
+        self.chkMainCamera.setChecked(True)
+
+        self.verticalLayout_10.addWidget(self.chkMainCamera)
+
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_10.addItem(self.verticalSpacer)
+
 
         self.horizontalLayout.addWidget(self.containerLeft)
 
@@ -301,6 +311,7 @@ class Ui_MeasurementScreen(object):
         self.screen3.setText(QCoreApplication.translate("MeasurementScreen", u"SCREEN", None))
         self.screen4.setText(QCoreApplication.translate("MeasurementScreen", u"SCREEN", None))
         self.lblTitle.setText(QCoreApplication.translate("MeasurementScreen", u"DEFINE MEASUREMENT AND MIN AREA", None))
+        self.chkMainCamera.setText(QCoreApplication.translate("MeasurementScreen", u"Is main camera", None))
         self.groupSliderWidth.setTitle(QCoreApplication.translate("MeasurementScreen", u"Maximum width(%):", None))
         self.groupLeftActualLength.setTitle(QCoreApplication.translate("MeasurementScreen", u"Left side actual length", None))
         self.groupSliderPosition.setTitle(QCoreApplication.translate("MeasurementScreen", u"Detect position:", None))

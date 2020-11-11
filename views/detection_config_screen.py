@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'detection_config_screenNcjEFm.ui'
+## Form generated from reading UI file 'detection_config_screenDfhtdZ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -17,7 +17,7 @@ class Ui_DetectionConfigScreen(object):
     def setupUi(self, DetectionConfigScreen):
         if not DetectionConfigScreen.objectName():
             DetectionConfigScreen.setObjectName(u"DetectionConfigScreen")
-        DetectionConfigScreen.resize(1355, 817)
+        DetectionConfigScreen.resize(1355, 792)
         DetectionConfigScreen.setAutoFillBackground(False)
         DetectionConfigScreen.setStyleSheet(u"background:#E5E5E5")
         self.verticalLayout = QVBoxLayout(DetectionConfigScreen)
@@ -387,6 +387,18 @@ class Ui_DetectionConfigScreen(object):
 
         self.gridLayout_4.addItem(self.horizontalSpacer_2, 0, 1, 2, 1)
 
+        self.grpCkbInvertThresh = QWidget(self.subContainer)
+        self.grpCkbInvertThresh.setObjectName(u"grpCkbInvertThresh")
+        self.verticalLayout_3 = QVBoxLayout(self.grpCkbInvertThresh)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.ckbInvertThresh = QCheckBox(self.grpCkbInvertThresh)
+        self.ckbInvertThresh.setObjectName(u"ckbInvertThresh")
+
+        self.verticalLayout_3.addWidget(self.ckbInvertThresh)
+
+
+        self.gridLayout_4.addWidget(self.grpCkbInvertThresh, 2, 0, 1, 1)
+
         self.gridLayout_4.setColumnStretch(0, 1)
         self.gridLayout_4.setColumnStretch(1, 2)
 
@@ -450,6 +462,18 @@ class Ui_DetectionConfigScreen(object):
 
 
         self.gridLayout_5.addWidget(self.grpboxLightAdjRange, 1, 0, 1, 1)
+
+        self.grpCkbInvertRange = QWidget(self.subContainerRange)
+        self.grpCkbInvertRange.setObjectName(u"grpCkbInvertRange")
+        self.verticalLayout_4 = QVBoxLayout(self.grpCkbInvertRange)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.ckbInvertRange = QCheckBox(self.grpCkbInvertRange)
+        self.ckbInvertRange.setObjectName(u"ckbInvertRange")
+
+        self.verticalLayout_4.addWidget(self.ckbInvertRange)
+
+
+        self.gridLayout_5.addWidget(self.grpCkbInvertRange, 2, 0, 1, 1)
 
         self.gridLayout_5.setColumnStretch(0, 3)
 
@@ -521,7 +545,7 @@ class Ui_DetectionConfigScreen(object):
         self.retranslateUi(DetectionConfigScreen)
 
         self.cbbHeight.setCurrentIndex(-1)
-        self.stackContainerMid.setCurrentIndex(0)
+        self.stackContainerMid.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(DetectionConfigScreen)
@@ -566,11 +590,13 @@ class Ui_DetectionConfigScreen(object):
         self.grbboxSldThreshold2.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Threshold 2: 0", None))
         self.grpboxLightAdj.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Light Adjustment: 0", None))
         self.grpboxBkgThreshold.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Background Threshold: 0", None))
+        self.ckbInvertThresh.setText(QCoreApplication.translate("DetectionConfigScreen", u"Invert", None))
         self.groupColorPickerTemplate.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Color Range", None))
         self.btnColorFrom.setText("")
         self.lblConnectTemplate_2.setText(QCoreApplication.translate("DetectionConfigScreen", u"---", None))
         self.btnColorTo.setText("")
         self.grpboxLightAdjRange.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Light Adjustment: 0", None))
+        self.ckbInvertRange.setText(QCoreApplication.translate("DetectionConfigScreen", u"Invert", None))
         self.btnCapture.setText(QCoreApplication.translate("DetectionConfigScreen", u"CAPTURE", None))
         self.btnBack.setText(QCoreApplication.translate("DetectionConfigScreen", u"BACK", None))
         self.btnNext.setText(QCoreApplication.translate("DetectionConfigScreen", u"NEXT", None))
