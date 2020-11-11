@@ -99,7 +99,7 @@ class AsymConfigScreen(QWidget):
         self.image_sample_left.imshow(m_left)
         self.image_sample_right.imshow(m_right)
 
-    async def view_cam(self, image):
+    def view_cam(self, image):
         # read image in BGR format
         self.replace_camera_widget()
         self.img = image
@@ -112,7 +112,7 @@ class AsymConfigScreen(QWidget):
             left, right = self.preprocess_color(detected_pair[0],
                                                 detected_pair[1])
             left = cv2.flip(left, 1)
-            await self.detect_asym_diff(left, right)
+            trio.run(self.detect_asym_diff, left, right)
             left = cv2.resize(left, img_size)
             right = cv2.resize(right, img_size)
             self.image_detect_left.imshow(left)
@@ -166,13 +166,12 @@ class AsymConfigScreen(QWidget):
     async def detect_asym_diff(self, left, right):
         cfg = self.detector_cfg["sim_cfg"]
         min_sim = self.detector_cfg["sim_cfg"]['min_similarity']
-
-        left_task, right_task = DetectorConfig.instance().manager.detect_asym(
+        manager = DetectorConfig.instance().manager
+        left_result, right_result = await manager.detect_asym(
             self.detector_cfg, left, right, self.sample_left,
-            self.sample_right)
-
-        is_asym_diff_left, self.avg_asym_left, self.avg_amp_left, recalc_left, res_list_l, amp_res_list_l = await left_task
-        is_asym_diff_right, self.avg_asym_right, self.avg_amp_right, recalc_right, res_list_r, amp_res_list_r = await right_task
+            self.sample_right, None)
+        is_asym_diff_left, self.avg_asym_left, self.avg_amp_left, recalc_left, res_list_l, amp_res_list_l = left_result
+        is_asym_diff_right, self.avg_asym_right, self.avg_amp_right, recalc_right, res_list_r, amp_res_list_r = right_result
         # find smaller value between the value of asym left and right
         self.tmp_min = min(self.avg_asym_left, self.avg_asym_right)
         print("tmpmin - ", self.tmp_min)
