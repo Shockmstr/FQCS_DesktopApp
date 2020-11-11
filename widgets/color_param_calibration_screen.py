@@ -8,6 +8,7 @@ from app import helpers
 import numpy as np
 import os
 import imutils
+import trio
 from views.color_param_calibration_screen import Ui_ColorParamCalibScreen
 
 
@@ -102,7 +103,7 @@ class ColorParamCalibrationScreen(QWidget):
         self.image_sample_left.imshow(m_left)
         self.image_sample_right.imshow(m_right)
 
-    async def view_cam(self, image):
+    def view_cam(self, image):
         # read image in BGR format
         self.replace_camera_widget()
         self.img = image
@@ -115,7 +116,7 @@ class ColorParamCalibrationScreen(QWidget):
             left, right = self.preprocess_color(detected_pair[0],
                                                 detected_pair[1])
             left = cv2.flip(left, 1)
-            await self.find_amp_threshold(left, right)
+            trio.run(self.find_amp_threshold, left, right)
             left = cv2.resize(left, img_size)
             right = cv2.resize(right, img_size)
             self.image_detect_left.imshow(left)
@@ -170,36 +171,22 @@ class ColorParamCalibrationScreen(QWidget):
         sample_left, sample_right = self.preprocess_color(
             sample_left_path, sample_right_path)
         
-        left_task, right_task = DetectorConfig.instance().manager.compare_colors(self.detector_cfg, img_left, img_right, sample_left, sample_right)
-        a, b, c, d = await left_task
-        e, f, g, h = await right_task
-        print(a, b, c, d)
-        print(e, f ,g, h)
-        # hist_left = np.abs(
-        #     np.subtract(helper.get_hist_bgr(img_left),
-        #                 helper.get_hist_bgr(sample_left)))
-        # hist_right = np.abs(
-        #     np.subtract(helper.get_hist_bgr(img_right),
-        #                 helper.get_hist_bgr(sample_right)))
-        
-        # blue = np.max(hist_left[0]) if np.max(hist_left[0]) > np.max(
-        #     hist_right[0]) else np.max(hist_right[0])
-        # #print("hist blue:", hist[0].reshape(1,-1))
-        # green = np.max(hist_left[1]) if np.max(hist_left[1]) > np.max(
-        #     hist_right[1]) else np.max(hist_right[1])
-        # #print("hist green:", hist[1].reshape(1,-1))
-        # red = np.max(hist_left[2]) if np.max(hist_left[2]) > np.max(
-        #     hist_right[2]) else np.max(hist_right[2])
-        # #print("hist red:", hist[2].reshape(1,-1))
-        # if (blue > self.max_blue): self.max_blue = blue
-        # if (green > self.max_green): self.max_green = green
-        # if (red > self.max_red): self.max_red = red
-        # amp_thresh = (int(self.max_red), int(self.max_green),
-        #               int(self.max_blue))
-        # self.ui.ampThreshRed.setValue(amp_thresh[0])
-        # self.ui.ampThreshGreen.setValue(amp_thresh[1])
-        # self.ui.ampThreshBlue.setValue(amp_thresh[2])
-        # self.detector_cfg["color_cfg"]["amplify_thresh"] = amp_thresh
+        left_task, right_task = await manager.compare_colors(self.detector_cfg, img_left, img_right, sample_left, sample_right, None)
+        _,_,left_hist,_ = left_task
+        _,_,right_hist,_ = right_task
+        blue = max(left_hist[0], right_hist[0])
+        green = max(left_hist[1], right_hist[1])
+        red = max(left_hist[2], right_hist[2])
+        #if (blue > self.max_blue): self.max_blue = blue
+        #if (green > self.max_green): self.max_green = green
+        #if (red > self.max_red): self.max_red = red
+        #amp_thresh = (int(self.max_red), int(self.max_green),
+        #              int(self.max_blue))
+        amp_thresh = (int(red), int(green),int(blue))
+        self.ui.ampThreshRed.setValue(amp_thresh[0])
+        self.ui.ampThreshGreen.setValue(amp_thresh[1])
+        self.ui.ampThreshBlue.setValue(amp_thresh[2])
+        self.detector_cfg["color_cfg"]["amplify_thresh"] = amp_thresh
 
     def showEvent(self, event):
         self.replace_image_widget()

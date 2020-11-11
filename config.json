@@ -113,8 +113,8 @@
     "re_calc_factor_right": 1.5362763634229861
   },
   {
-    "name": "Camera-2020-11-09 14:59:05.046790",
-    "camera_uri": 1,
+    "name": "Camera-2020-11-09 14:59:05.046890",
+    "camera_uri": 0,
     "is_main": false,
     "is_color_enable": true,
     "is_defect_enable": true,
@@ -138,8 +138,8 @@
       "blur_val": 0.05,
       "alpha_r": 1,
       "alpha_l": 1,
-      "beta_r": -150,
-      "beta_l": -150,
+      "beta_r": -100,
+      "beta_l": -100,
       "sat_adj": 2,
       "supp_thresh": 10,
       "amplify_thresh": [
@@ -147,7 +147,7 @@
         null,
         null
       ],
-      "amplify_rate": 20,
+      "amplify_rate": 10,
       "max_diff": 0.2
     },
     "sim_cfg": {
