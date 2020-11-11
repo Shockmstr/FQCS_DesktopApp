@@ -87,9 +87,23 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbHeight.currentIndexChanged.connect(self.cbbHeight_changed)
         self.ui.cbbWidth.currentIndexChanged.connect(self.cbbWidth_changed)
         self.ui.cbbMethod.currentIndexChanged.connect(self.cbbMethod_changed)
+        self.ui.ckbInvertThresh.stateChanged.connect(self.thresh_invert_state_change)
+        self.ui.ckbInvertRange.stateChanged.connect(self.range_invert_state_change)
 
     #HANDLERS
     #edge detection method
+    def thresh_invert_state_change(self):
+        if self.ui.ckbInvertThresh.isChecked():
+            self.detector_cfg["d_cfg"]["thresh_inv"] = True
+        else:
+            self.detector_cfg["d_cfg"]["thresh_inv"] = False
+
+    def range_invert_state_change(self):
+        if self.ui.ckbInvertRange.isChecked():
+            self.detector_cfg["d_cfg"]["color_inv"] = True
+        else:
+            self.detector_cfg["d_cfg"]["color_inv"] = False
+
     def brightness_value_change(self):
         value = round(self.ui.sldBrightness.value() * self.BRIGHTNESS_STEP, 1)
         self.detector_cfg["d_cfg"]["alpha"] = value
