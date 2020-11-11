@@ -8,10 +8,11 @@ from services.refresh_or_logout_thread import RefreshOrLogoutThread
 from app import helpers
 from app_models.app_config import AppConfig
 from FQCS import fqcs_api
-LOGIN_SERVICE_TH_GR_KEY = "LoginService"
+import app_constants
+LOGIN_SERVICE_TH_GR_KEY = "IdentityService"
 
 
-class LoginService:
+class IdentityService:
     def __init__(self, auth_info: AuthInfo):
         self.__auth_info = auth_info
 
@@ -20,7 +21,6 @@ class LoginService:
             with open(TOKEN_PATH) as fi:
                 token = json.load(fi)
                 self.__auth_info.set_token_info(token)
-        self.check_token()
         return
 
     def check_token(self):
@@ -61,6 +61,9 @@ class LoginService:
         self.__auth_info.set_token_info(token)
         with open(TOKEN_PATH, 'w') as fo:
             json.dump(token, fo, indent=2)
+
+    def is_device_account(self, token):
+        return app_constants.ROLE_DEVICE in token['roles']
 
     def log_out(self):
         ThreadManager.instance().cancel_threads(group=LOGIN_SERVICE_TH_GR_KEY)

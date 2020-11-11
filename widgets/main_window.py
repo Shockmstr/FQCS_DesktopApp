@@ -15,7 +15,7 @@ from widgets.color_param_calibration_screen import ColorParamCalibrationScreen
 from widgets.error_detect_screen import ErrorDetectScreen
 from widgets.progress_screen import ProgressScreen
 from widgets.asym_config_screen import AsymConfigScreen
-from services.login_service import LoginService
+from services.identity_service import IdentityService
 from qasync import QEventLoop, asyncSlot
 import asyncio
 
@@ -24,19 +24,18 @@ class MainWindow(QMainWindow):
     logged_out = Signal(bool)
     loaded_config = Signal()
 
-    def __init__(self, login_service: LoginService):
+    def __init__(self, identity_service: IdentityService):
         QMainWindow.__init__(self)
-        self.__login_service = login_service
+        self.__identity_service = identity_service
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.showFullScreen()
         self.detector_cfg = DetectorConfig.instance()
         self.video_camera = cv2.VideoCapture()
         self.timer = QTimer()
         self.process_cam = None
 
         # screen 0
-        self.home_screen = HomeScreen(login_service, self)
+        self.home_screen = HomeScreen(identity_service, self)
         # screen 1
         self.detection_screen = DetectionConfigScreen(self)
         # screen 2
@@ -87,7 +86,8 @@ class MainWindow(QMainWindow):
         self.detection_screen.captured.connect(self.capture)
         self.detection_screen.camera_choosen.connect(
             lambda index: self.video_camera.open(index))
-        self.detection_screen.change_config.connect(lambda cfg: self.call_loaded_config(cfg))
+        self.detection_screen.change_config.connect(
+            lambda cfg: self.call_loaded_config(cfg))
 
         self.measurement_screen.backscreen.connect(
             self.change_detection_screen)
@@ -135,6 +135,10 @@ class MainWindow(QMainWindow):
         self.loaded_config.connect(self.progress_screen.load_cfg)
 
         return
+
+    def closeEvent(self, event):
+        if self.video_camera is not None and self.video_camera.isOpened():
+            self.video_camera.release()
 
     def on_logged_out(self, event: bool):
         # logic

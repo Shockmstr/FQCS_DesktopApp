@@ -2,7 +2,7 @@ from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Signal
 
 from views.home_screen import Ui_HomeScreen
-from services.login_service import LoginService
+from services.identity_service import IdentityService
 
 
 class HomeScreen(QWidget):
@@ -11,9 +11,9 @@ class HomeScreen(QWidget):
     action_exit: Signal
     action_logout = Signal(bool)
 
-    def __init__(self, login_service: LoginService, parent=None):
+    def __init__(self, identity_service: IdentityService, parent=None):
         QWidget.__init__(self, parent)
-        self.__login_service = login_service
+        self.__identity_service = identity_service
         self.ui = Ui_HomeScreen()
         self.ui.setupUi(self)
         self.action_edit = self.ui.btnEditConfig.clicked
@@ -28,4 +28,4 @@ class HomeScreen(QWidget):
 
     def log_out(self, event: bool):
         self.action_logout.emit(event)
-        self.__login_service.log_out()
+        self.__identity_service.log_out()
