@@ -118,7 +118,7 @@ class MainWindow(QMainWindow):
         self.error_detect_screen.nextscreen.connect(
             self.change_progress_screen)
 
-        self.progress_screen.finished.connect(self.change_home_screen)
+        self.progress_screen.returned_home.connect(self.change_home_screen)
         self.progress_screen.captured.connect(self.capture)
         self.progress_screen.stopped.connect(self.stop)
 

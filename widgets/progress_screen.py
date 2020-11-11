@@ -1,22 +1,23 @@
 from PySide2.QtWidgets import QWidget
-from PySide2.QtCore import Signal
+from PySide2.QtCore import Signal, QThreadPool
 import trio
 from app_models.detector_config import DetectorConfig
 from FQCS import helper
 import os
 from FQCS import detector
-
 from views.progress_screen import Ui_ProgressScreen
 from widgets.image_widget import ImageWidget
 from cv2 import cv2
 import numpy as np
+from services.worker_runnable import WorkerRunnable
+
 
 
 class ProgressScreen(QWidget):
     CAMERA_LOADED = False
-    finished = Signal(bool)
     stopped = Signal()
     captured = Signal()
+    returned_home = Signal()
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -24,6 +25,7 @@ class ProgressScreen(QWidget):
         self.detector_cfg = DetectorConfig.instance().get_current_cfg()
         self.ui.setupUi(self)
         self.binding()
+        self.returned_home = self.ui.btnReturnHome.clicked
         self.load_cfg()
         if not self.CAMERA_LOADED:
             self.ui.containerConfig.setEnabled(False)
@@ -35,12 +37,12 @@ class ProgressScreen(QWidget):
 
     def cam_control(self):
         if self.CAMERA_LOADED == True:
-            self.ui.btnCapture.setText("STOP")
-            self.captured.emit()
-            self.CAMERA_LOADED = False
-        elif self.CAMERA_LOADED == False:
             self.ui.btnCapture.setText("CAPTURE")
             self.stopped.emit()
+            self.CAMERA_LOADED = False
+        elif self.CAMERA_LOADED == False:
+            self.ui.btnCapture.setText("STOP")
+            self.captured.emit()
             self.CAMERA_LOADED = True
 
     def view_cam(self, image):
@@ -64,8 +66,7 @@ class ProgressScreen(QWidget):
             self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
             self.ui.btnCapture.setText("STOP")
             self.CAMERA_LOADED = True
-            if not self.CAMERA_LOADED:
-                self.ui.containerConfig.setEnabled(True)
+            self.ui.containerConfig.setEnabled(True)
 
     def __process_pair(self, image):
         manager = DetectorConfig.instance().manager
