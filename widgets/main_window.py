@@ -131,6 +131,7 @@ class MainWindow(QMainWindow):
         self.loaded_config.connect(self.color_param_calib_screen.load_cfg)
         self.loaded_config.connect(self.error_detect_screen.load_cfg)
         self.loaded_config.connect(self.asym_config_screen.load_cfg)
+        self.loaded_config.connect(self.progress_screen.load_cfg)
 
         return
 

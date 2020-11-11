@@ -38,7 +38,7 @@ class ErrorDetectScreen(QWidget):
         self.binding()
         self.load_cfg()
         if not self.CAMERA_LOADED:
-            self.ui.containerConfig.setVisible(False)
+            self.ui.containerConfig.setEnabled(False)
 
     def load_cfg(self):
         self.detector_cfg = DetectorConfig.instance().get_current_cfg()
@@ -49,7 +49,7 @@ class ErrorDetectScreen(QWidget):
         yolo_max_boxes = self.detector_cfg["err_cfg"]["yolo_max_boxes"]
         yolo_score_threshold = self.detector_cfg["err_cfg"][
             "yolo_score_threshold"]
-        weights = self.detector_cfg["err_cfg"]["weights"]
+        weights = self.detector_cfg["err_cfg"]["weights"].split("/")[-1].split("\\")[-1]
         classes = self.detector_cfg["err_cfg"]["classes"]
         num_classes = self.detector_cfg["err_cfg"]["num_classes"]
 
@@ -65,7 +65,7 @@ class ErrorDetectScreen(QWidget):
         self.ui.inpIouThreshold.setValue(yolo_iou_threshold * 10)
         self.ui.inpMaxInstances.setValue(yolo_max_boxes)
         self.ui.inpMinimumScore.setValue(yolo_score_threshold * 10)
-        self.ui.inpClasses.setText(str(classes))
+        self.ui.inpClasses.setText(", ".join(classes))
 
     def init_ui_values(self):
         self.height_value = 0
@@ -123,28 +123,22 @@ class ErrorDetectScreen(QWidget):
     @asyncSlot()
     async def choose_model_clicked(self):
         file_name, _ = helpers.file_chooser_open_file(self)
-        self.ui.inpModelChoice.setText(file_name.split(r"/")[-1])
-        self.detector_cfg["err_cfg"]["weights"] = file_name
-        await DetectorConfig.instance().manager.load_model(self.detector_cfg)
+        if file_name is not None:
+            self.ui.inpModelChoice.setText(file_name.split("/")[-1].split("\\")[-1])
+            self.detector_cfg["err_cfg"]["weights"] = file_name
+            await DetectorConfig.instance().manager.load_model(self.detector_cfg)
 
     def choose_classes_clicked(self):
-        class_list = []
-        file_name = QFileDialog.getOpenFileName(self, 'open file')
-        with open(str(file_name[0]), newline='') as csvfile:
-            spamreader = csv.reader(csvfile, delimiter=',')
-            for row in spamreader:
-                class_list.extend(row)
-
-            print(class_list)
-        self.detector_cfg["err_cfg"]["classes"] = class_list
-        self.detector_cfg["err_cffg"]["num_classes"] = len(class_list)
-        print(self.detector_cfg["err_cfg"]["classes"])
-        print(self.detector_cfg["err_cfg"]["num_classes"])
-
-        # get file name
-        _, tail = os.path.split(file_name[0])
-
-        self.ui.inpClasses.setText(str(tail))
+        file_name, _= helpers.file_chooser_open_file(self)
+        if file_name is not None:
+            class_list = []
+            with open(file_name, newline='') as csvfile:
+                spamreader = csv.reader(csvfile, delimiter='\n')
+                for row in spamreader:
+                    class_list.extend(row)
+            self.detector_cfg["err_cfg"]["classes"] = class_list
+            self.detector_cfg["err_cfg"]["num_classes"] = len(class_list)
+            self.ui.inpClasses.setText(", ".join(class_list))
 
     def view_cam(self, image):
         # read image in BGR format
@@ -167,7 +161,7 @@ class ErrorDetectScreen(QWidget):
             self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
             self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
             self.CAMERA_LOADED = True
-            self.ui.containerConfig.setVisible(True)
+            self.ui.containerConfig.setEnabled(True)
 
     async def show_error(self, images):
         manager = DetectorConfig.instance().manager
@@ -183,14 +177,18 @@ class ErrorDetectScreen(QWidget):
                                  min_score=err_cfg["yolo_score_threshold"])
         images[0] *= 255.
         images[1] *= 255.
-        images[0] = np.asarray(images[0], np.uint8)
-        images[0] = np.asarray(images[0], np.uint8)
-        self.image3.imshow(images[0])
 
-    def process_pair(self, image):
+        left = np.asarray(images[0], np.uint8)
+        right = np.asarray(images[1], np.uint8)
+        max_width = max((left.shape[0], right.shape[0]))
+        temp_left = imutils.resize(left, height=max_width)
+        temp_right = imutils.resize(right, height=max_width)
+        detected = np.concatenate((temp_left, temp_right), axis=1)
+        detected = cv2.resize(detected, self.dim)
+        self.image3.imshow(detected)
+
+    def __process_pair(self, image):
         manager = DetectorConfig.instance().manager
-        frame_width, frame_height = self.detector_cfg[
-            "frame_width"], self.detector_cfg["frame_height"]
         boxes, proc = manager.extract_boxes(self.detector_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
             self.detector_cfg, boxes, image)
@@ -207,18 +205,14 @@ class ErrorDetectScreen(QWidget):
             left, right = pair
             left, right = left[0], right[0]
             left = cv2.flip(left, 1)
-            max_width = max((left.shape[0], right.shape[0]))
-            temp_left = imutils.resize(left, height=max_width)
-            temp_right = imutils.resize(right, height=max_width)
-            detected = np.concatenate((temp_left, temp_right), axis=1)
-            return image, detected, [left, right]
-        return image, None, None
+            return image, [left, right]
+        return image, None
 
     def process_image(self, image):
-        contour, _, detected_pair = self.process_pair(image)
+        manager = DetectorConfig.instance().manager
+        contour, detected_pair = self.__process_pair(image)
         contour = cv2.resize(contour, self.dim)
         self.image2.imshow(contour)
-        manager = DetectorConfig.instance().manager
         if detected_pair is not None and manager.get_model() is not None:
             runnable = WorkerRunnable(self.show_error,
                                       detected_pair,

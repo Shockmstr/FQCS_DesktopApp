@@ -229,8 +229,6 @@ class DetectionConfigScreen(QWidget):
 
     def process_contours(self, image):
         manager = DetectorConfig.instance().manager
-        frame_width, frame_height = self.detector_cfg[
-            "frame_width"], self.detector_cfg["frame_height"]
         boxes, proc = manager.extract_boxes(self.detector_cfg, image)
         for b in boxes:
             c, rect, dimA, dimB, box, tl, tr, br, bl, minx, maxx, cenx = b

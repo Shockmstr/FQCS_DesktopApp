@@ -92,7 +92,7 @@ class MeasurementScreen(QWidget):
         orig = self.draw_position_line_on_image(orig)
         orig = self.draw_detect_range(orig)
         self.dim = (self.label_w, self.label_h)
-        contour = self.process_image(image.copy())
+        contour = self.__process_image(image.copy())
         img_resized = cv2.resize(orig, self.dim)
         contour_resized = cv2.resize(contour, self.dim)
         self.image1.imshow(img_resized)
@@ -160,7 +160,7 @@ class MeasurementScreen(QWidget):
                          (right_line_point, self.label_height), (0, 255, 0), 3)
         return image
 
-    def process_image(self, image):
+    def __process_image(self, image):
         manager = DetectorConfig.instance().manager
         boxes, proc = manager.extract_boxes(self.detector_cfg, image)
         for idx, b in enumerate(boxes):

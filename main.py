@@ -54,14 +54,13 @@ class MainApplication():
             self.login_screen = LoginScreen(self.__login_service)
             self.login_screen.show()
             if self.main_window is not None:
-                self.main_window.close()
+                self.main_window.close()    
         elif (self.main_window is None
               or not self.main_window.isActiveWindow()):
             self.main_window = MainWindow(self.__login_service)
             self.main_window.show()
             if self.login_screen is not None:
                 self.login_screen.close()
-
 
 if __name__ == "__main__":
     with ThreadManager.instance() as tm:

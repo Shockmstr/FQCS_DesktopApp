@@ -39,7 +39,7 @@ class TestDetectPairScreen(QWidget):
         # read image in BGR format
         self.replace_camera_widget()
         self.img = image
-        contour, detected, detected_pair = self.process_image(self.img.copy())
+        contour, detected, detected_pair = self.__process_pair(self.img.copy())
         img_resized = cv2.resize(self.img, self.dim)
         contour_resized = cv2.resize(contour, self.dim)
         self.image1.imshow(img_resized)
@@ -68,7 +68,7 @@ class TestDetectPairScreen(QWidget):
             self.CAMERA_LOADED = True
             self.ui.containerConfig.setEnabled(True)
 
-    def process_image(self, image):
+    def __process_pair(self, image):
         manager = DetectorConfig.instance().manager
         boxes, proc = manager.extract_boxes(self.detector_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(

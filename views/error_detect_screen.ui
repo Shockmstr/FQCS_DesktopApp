@@ -259,11 +259,14 @@ font-weight:bold;</string>
                </property>
                <item>
                 <widget class="QSpinBox" name="inpIouThreshold">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="minimum">
                   <number>0</number>
                  </property>
                  <property name="maximum">
-                  <number>100</number>
+                  <number>1</number>
                  </property>
                 </widget>
                </item>
@@ -382,6 +385,9 @@ font-weight:bold;</string>
                </property>
                <item>
                 <widget class="QLineEdit" name="inpModelChoice">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="inputMask">
                   <string/>
                  </property>
@@ -417,6 +423,9 @@ font-weight:bold;</string>
                </property>
                <item>
                 <widget class="QLineEdit" name="inpClasses">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="inputMask">
                   <string/>
                  </property>
