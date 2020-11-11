@@ -47,6 +47,8 @@ class ColorPreprocessConfigScreen(QWidget):
             self.contrast_right_value_change)
         self.ui.sldSaturation.valueChanged.connect(
             self.saturation_value_change)
+        self.ui.chkColorCompare.stateChanged.connect(
+            self.color_compare_state_change)
 
         resize_number = ["32", "64", "128", "256", "512", "1024"]
         self.ui.cbbResizeWidth.clear()
@@ -61,6 +63,12 @@ class ColorPreprocessConfigScreen(QWidget):
 
         self.ui.cbbResizeWidth.activated.connect(self.cbbResize_chosen)
         self.ui.cbbResizeHeight.activated.connect(self.cbbResize_chosen)
+
+    def color_compare_state_change(self):
+        if self.ui.chkColorCompare.isChecked():
+            self.detector_cfg["is_color_enable"] = True
+        else:
+            self.detector_cfg["is_color_enable"] = False
 
     # handler
     def blur_value_change(self):
