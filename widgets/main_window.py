@@ -87,6 +87,7 @@ class MainWindow(QMainWindow):
         self.detection_screen.captured.connect(self.capture)
         self.detection_screen.camera_choosen.connect(
             lambda index: self.video_camera.open(index))
+        self.detection_screen.change_config.connect(lambda cfg: self.call_loaded_config(cfg))
 
         self.measurement_screen.backscreen.connect(
             self.change_detection_screen)
@@ -188,6 +189,11 @@ class MainWindow(QMainWindow):
 
     def change_asym_config_screen(self):
         self.ui.centralStackWidget.setCurrentWidget(self.asym_config_screen)
+
+    @asyncSlot()
+    async def call_loaded_config(self, cfg):
+        self.detector_cfg.current_cfg_name = cfg["name"]
+        self.loaded_config.emit()
 
     def widget_change(self):
         currentWidget = self.ui.centralStackWidget.currentWidget()

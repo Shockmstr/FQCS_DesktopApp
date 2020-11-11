@@ -16,10 +16,12 @@ class DetectionConfigScreen(QWidget):
     THRESHOLD1_STEP = 5
     THRESHOLD2_STEP = 5
     CAMERA_LOADED = False
+    chosen_table_index = -1
     backscreen: Signal
     nextscreen: Signal
     captured: Signal
     camera_choosen = Signal(object)
+    change_config = Signal(object)
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -66,16 +68,30 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbMethod.addItem("Edge", userData="edge")
         self.ui.cbbMethod.addItem("Threshold", userData="thresh")
         self.ui.cbbMethod.addItem("Range", userData="range")
-
+      
         table = self.ui.tblCameraConfig
         table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
         table.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.add_new_row(table, "Camera 1", "Main Camera")
-        self.add_new_row(table, "Camera 2", "Side Camera")
-        self.add_new_row(table, "Camera 3", "Side Camera")
         table.clearSelection()
+        
 
+    def load_camera_cfg_to_table(self):
+        table = self.ui.tblCameraConfig
+        table.clearContents()
+        table.setRowCount(0)
+        manager = DetectorConfig.instance().manager
+
+        cfgs = manager.get_configs()
+        for cfg in cfgs:
+            camera_name = cfg["name"]
+            is_main = cfg["is_main"]
+            if (is_main):
+                self.add_new_row(table, camera_name, "Main Camera")
+            else:
+                self.add_new_row(table, camera_name, "")
+        table.clearSelection()
+    
     #BINDING
     def binding(self):
         self.ui.sldBrightness.valueChanged.connect(
@@ -204,22 +220,31 @@ class DetectionConfigScreen(QWidget):
             self.ui.btnColorTo.setStyleSheet("background-color: " + color_hex)
 
     #main controls
-    def add_new_row(self, table, text1, text2):
+    def add_new_row(self, table, camera_name, is_main):
         current_row = table.rowCount()
         table.insertRow(current_row)
-        table.setItem(current_row, 0, QTableWidgetItem(text1))
-        table.setItem(current_row, 1, QTableWidgetItem(text2))
+        table.setItem(current_row, 0, QTableWidgetItem(camera_name))
+        table.setItem(current_row, 1, QTableWidgetItem(is_main))
 
     def add_new_camera(self):
         table = self.ui.tblCameraConfig
         camera_name = self.ui.txtNewCamera.text()
         self.add_new_row(table, camera_name, "")
 
+    def set_row_choose(self):
+        table = self.ui.tblCameraConfig
+        if (self.chosen_table_index != -1):
+            table.selectRow(self.chosen_table_index)
+
     def table_row_chose(self):
         table = self.ui.tblCameraConfig
         chosen_row = table.currentRow()
-        content = table.item(chosen_row, 0).text()
-        self.showDialog(content)
+        self.chosen_table_index = chosen_row
+        camera_name = table.item(chosen_row, 0).text()
+        manager = DetectorConfig.instance().manager
+        config = manager.get_config_by_name(camera_name)
+        self.detector_cfg = config
+        self.change_config.emit(self.detector_cfg)
     
     def showDialog(self, msg):
         msgBox = QMessageBox()
@@ -347,3 +372,6 @@ class DetectionConfigScreen(QWidget):
         if camera_uri < self.ui.cbbCamera.count():
             self.ui.cbbCamera.setCurrentIndex(camera_uri)
             self.camera_choosen.emit(camera_uri)
+
+        self.load_camera_cfg_to_table()
+        self.set_row_choose()
