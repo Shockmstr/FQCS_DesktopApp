@@ -5,7 +5,6 @@ import abc
 
 
 class DetectorConfigAbs(metaclass=abc.ABCMeta):
-    camera: cv2.VideoCapture
     current_path: str
     manager: FQCSManager
     current_cfg_name: str

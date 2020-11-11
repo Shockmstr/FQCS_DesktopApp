@@ -5,5 +5,5 @@
   "expires_utc": "2020-11-06T04:18:43Z",
   "issued_utc": "2020-11-06T04:12:43Z",
   "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjczMWFiNjVhLWVmNzUtNGJkZS1iOTg1LTdiYjE3YmNkNWUzOSIsIm5iZiI6MTYwNDYzNTk2MywiZXhwIjoxNjA0NjM5NTYzLCJpYXQiOjE2MDQ2MzU5NjMsImlzcyI6InJlZnJlc2hfZnFjc2RldmljZTFzdCIsImF1ZCI6InJlZnJlc2hfZnFjc2RldmljZTFzdCJ9.-0rUMQJAYP9YVQcFIEt60zHxEX19-DFiWEXVWQPJr3U",
-  "roles": null
+  "roles": ["Device"]
 }

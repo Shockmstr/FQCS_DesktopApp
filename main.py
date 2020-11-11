@@ -4,7 +4,7 @@ from widgets.login_screen import LoginScreen
 import asyncio
 import sys
 import os
-from services.login_service import LoginService
+from services.identity_service import IdentityService
 from app_constants import CONFIG_PATH
 from app_models.auth_info import AuthInfo
 import json
@@ -16,23 +16,25 @@ from qasync import QEventLoop
 
 class MainApplication():
     def __init__(self):
-        self.__login_service = None
+        self.__identity_service = None
         self.auth_info = None
         self.app = None
         self.main_window = None
         self.login_screen = None
         return
 
-    def run(self):
+    def run(self, loop):
         AppConfig.instance().load_config()
         self.auth_info = AuthInfo()
+        self.__identity_service = IdentityService(self.auth_info)
+        self.__identity_service.init_auth_info()
         self.auth_info.new_token.connect(self.on_logged_in_success)
         self.auth_info.refresh_token.connect(self.on_refresh_token)
         self.auth_info.remove_token.connect(self.on_logged_out)
         self.auth_info.same_token.connect(lambda val: print("Same token"))
-        self.__login_service = LoginService(self.auth_info)
-        self.__login_service.init_auth_info()
         self.choose_screen()
+        self.__identity_service.check_token()
+        return loop.run_forever()
 
     def on_logged_in_success(self, token):
         print("Logged in")
@@ -43,7 +45,8 @@ class MainApplication():
         print("Refresh token")
         return
 
-    def on_logged_out(self):
+    def on_logged_out(self, old_token):
+        print("Logged out")
         self.choose_screen()
         return
 
@@ -51,25 +54,24 @@ class MainApplication():
         if not self.auth_info.is_logged_in() and (
                 self.login_screen is None
                 or not self.login_screen.isActiveWindow()):
-            self.login_screen = LoginScreen(self.__login_service)
-            self.login_screen.show()
+            self.login_screen = LoginScreen(self.__identity_service)
+            self.login_screen.showFullScreen()
             if self.main_window is not None:
-                self.main_window.close()    
+                self.main_window.close()
         elif (self.main_window is None
               or not self.main_window.isActiveWindow()):
-            self.main_window = MainWindow(self.__login_service)
-            self.main_window.show()
+            self.main_window = MainWindow(self.__identity_service)
+            self.main_window.showFullScreen()
             if self.login_screen is not None:
                 self.login_screen.close()
+
 
 if __name__ == "__main__":
     with ThreadManager.instance() as tm:
         app = QApplication([])
         loop = QEventLoop(app)
         asyncio.set_event_loop(loop)
-        MainApplication().run()
         with loop:
-            status = loop.run_forever()
+            status = MainApplication().run(loop)
     ThreadManager.instance().wait()
     sys.exit(status)
-    
