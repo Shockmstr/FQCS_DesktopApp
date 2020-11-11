@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'error_detect_screenuZDNwI.ui'
+## Form generated from reading UI file 'error_detect_screenHKZMBj.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -166,8 +166,9 @@ class Ui_ErrorDetectScreen(object):
         self.verticalLayout_14.setContentsMargins(-1, 0, -1, 0)
         self.inpIouThreshold = QSpinBox(self.groupIouThreshold)
         self.inpIouThreshold.setObjectName(u"inpIouThreshold")
+        self.inpIouThreshold.setEnabled(True)
         self.inpIouThreshold.setMinimum(0)
-        self.inpIouThreshold.setMaximum(100)
+        self.inpIouThreshold.setMaximum(1)
 
         self.verticalLayout_14.addWidget(self.inpIouThreshold)
 
@@ -224,6 +225,7 @@ class Ui_ErrorDetectScreen(object):
         self.horizontalLayout_6.setContentsMargins(-1, 0, -1, 0)
         self.inpModelChoice = QLineEdit(self.groupModel)
         self.inpModelChoice.setObjectName(u"inpModelChoice")
+        self.inpModelChoice.setEnabled(False)
 
         self.horizontalLayout_6.addWidget(self.inpModelChoice)
 
@@ -242,6 +244,7 @@ class Ui_ErrorDetectScreen(object):
         self.horizontalLayout_5.setContentsMargins(-1, 0, -1, 0)
         self.inpClasses = QLineEdit(self.groupClasses)
         self.inpClasses.setObjectName(u"inpClasses")
+        self.inpClasses.setEnabled(False)
 
         self.horizontalLayout_5.addWidget(self.inpClasses)
 

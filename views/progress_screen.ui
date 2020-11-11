@@ -271,9 +271,9 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QPushButton" name="btnStop">
+                <widget class="QPushButton" name="btnReturnHome">
                  <property name="text">
-                  <string>STOP</string>
+                  <string>RETURN HOME</string>
                  </property>
                 </widget>
                </item>

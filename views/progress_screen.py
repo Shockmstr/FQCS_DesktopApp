@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'progress_screenjjkuVV.ui'
+## Form generated from reading UI file 'progress_screenZXkoVF.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -162,10 +162,10 @@ class Ui_ProgressScreen(object):
         self.horizontalLayout_3 = QHBoxLayout(self.containerNavBtn)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.btnStop = QPushButton(self.containerNavBtn)
-        self.btnStop.setObjectName(u"btnStop")
+        self.btnReturnHome = QPushButton(self.containerNavBtn)
+        self.btnReturnHome.setObjectName(u"btnReturnHome")
 
-        self.horizontalLayout_3.addWidget(self.btnStop)
+        self.horizontalLayout_3.addWidget(self.btnReturnHome)
 
 
         self.verticalLayout_16.addWidget(self.containerNavBtn, 0, Qt.AlignBottom)
@@ -204,6 +204,6 @@ class Ui_ProgressScreen(object):
         self.screen1.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
         self.lblTitle.setText(QCoreApplication.translate("ProgressScreen", u"PROGRESS", None))
         self.btnCapture.setText(QCoreApplication.translate("ProgressScreen", u"CAPTURE", None))
-        self.btnStop.setText(QCoreApplication.translate("ProgressScreen", u"STOP", None))
+        self.btnReturnHome.setText(QCoreApplication.translate("ProgressScreen", u"RETURN HOME", None))
     # retranslateUi
 

@@ -28,6 +28,8 @@ class ColorParamCalibrationScreen(QWidget):
         self.nextscreen = self.ui.btnNext.clicked
         self.binding()
         self.load_cfg()
+        if not self.CAMERA_LOADED:
+            self.ui.containerConfig.setEnabled(False)
 
     # binding
     def binding(self):
@@ -108,7 +110,7 @@ class ColorParamCalibrationScreen(QWidget):
         self.img = image
         self.dim = (self.label_w, self.label_h)
         img_size = (156, self.label_h - 30)
-        contour, detected, detected_pair = self.process_image(self.img.copy())
+        contour, detected, detected_pair = self.__process_pair(self.img.copy())
         contour_resized = cv2.resize(contour, self.dim)
         self.image1.imshow(contour_resized)
         if detected_pair is not None:
@@ -157,6 +159,7 @@ class ColorParamCalibrationScreen(QWidget):
             self.imageLayout = self.ui.screen1.parentWidget().layout()
             self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
             self.CAMERA_LOADED = True
+            self.ui.containerConfig.setEnabled(True)
 
     hist_bgr_list = []
     max_blue = 0
@@ -215,10 +218,8 @@ class ColorParamCalibrationScreen(QWidget):
                                               False)
         return pre_sample_left, pre_sample_right
 
-    def process_image(self, image):
+    def __process_pair(self, image):
         manager = DetectorConfig.instance().manager
-        frame_width, frame_height = self.detector_cfg["frame_width"], self.detector_cfg[
-            "frame_height"]
         boxes, proc = manager.extract_boxes(self.detector_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
             self.detector_cfg, boxes, image)

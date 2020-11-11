@@ -29,6 +29,8 @@ class AsymConfigScreen(QWidget):
         self.nextscreen = self.ui.btnNext.clicked
         self.binding()
         self.load_cfg()
+        if not self.CAMERA_LOADED:
+            self.ui.containerConfig.setEnabled(False)
 
     # binding
     def binding(self):
@@ -103,7 +105,7 @@ class AsymConfigScreen(QWidget):
         self.img = image
         self.dim = (self.label_w, self.label_h)
         img_size = (156, self.label_h - 30)
-        contour, detected, detected_pair = self.process_image(self.img.copy())
+        contour, detected, detected_pair = self.__process_pair(self.img.copy())
         contour_resized = cv2.resize(contour, self.dim)
         self.image1.imshow(contour_resized)
         if detected_pair is not None:
@@ -155,6 +157,7 @@ class AsymConfigScreen(QWidget):
             self.imageLayout = self.ui.screen1.parentWidget().layout()
             self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
             self.CAMERA_LOADED = True
+            self.ui.containerConfig.setEnabled(True)
 
     avg_min = 1
     re_calc_factor_left = 0
@@ -207,7 +210,7 @@ class AsymConfigScreen(QWidget):
                                               False)
         return pre_sample_left, pre_sample_right
 
-    def process_image(self, image):
+    def __process_pair(self, image):
         manager = DetectorConfig.instance().manager
         boxes, proc = manager.extract_boxes(self.detector_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
@@ -220,7 +223,7 @@ class AsymConfigScreen(QWidget):
                 lH, lW = cur_size
                 helper.draw_boxes_and_sizes(image, idx, box, lH, lW, unit, tl,
                                             br)
-        if (pair is not None):
+        if pair is not None:
             manager.check_group(check_group_idx, final_grouped)
             left, right = pair
             left, right = left[0], right[0]
