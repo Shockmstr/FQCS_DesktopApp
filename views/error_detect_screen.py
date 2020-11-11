@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'error_detect_screennnVMNl.ui'
+## Form generated from reading UI file 'error_detect_screenuZDNwI.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -124,6 +124,16 @@ class Ui_ErrorDetectScreen(object):
 "}")
         self.verticalLayout_10 = QVBoxLayout(self.containerLeft)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.verticalLayout_10.setContentsMargins(-1, -1, -1, 12)
+        self.chkDefectDetection = QCheckBox(self.containerLeft)
+        self.chkDefectDetection.setObjectName(u"chkDefectDetection")
+
+        self.verticalLayout_10.addWidget(self.chkDefectDetection)
+
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_10.addItem(self.verticalSpacer)
+
 
         self.horizontalLayout.addWidget(self.containerLeft)
 
@@ -325,6 +335,7 @@ class Ui_ErrorDetectScreen(object):
         self.screen2.setText(QCoreApplication.translate("ErrorDetectScreen", u"SCREEN", None))
         self.screen1.setText(QCoreApplication.translate("ErrorDetectScreen", u"SCREEN", None))
         self.lblTitle.setText(QCoreApplication.translate("ErrorDetectScreen", u"DEFECTS DETECTION - PARAMETERS CONFIGURATION", None))
+        self.chkDefectDetection.setText(QCoreApplication.translate("ErrorDetectScreen", u"Enable defects detection", None))
         self.groupMinimumScore.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Minimum score", None))
         self.groupIouThreshold.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"IoU threshold", None))
         self.groupCbbResize.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Resize", None))
