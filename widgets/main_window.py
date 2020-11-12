@@ -60,12 +60,13 @@ class MainWindow(QMainWindow):
         self.ui.centralStackWidget.addWidget(self.detection_screen)
         self.ui.centralStackWidget.addWidget(self.measurement_screen)
         self.ui.centralStackWidget.addWidget(self.test_detect_pair_screen)
+        self.ui.centralStackWidget.addWidget(self.asym_config_screen)
         self.ui.centralStackWidget.addWidget(
             self.color_preprocess_config_screen)
         self.ui.centralStackWidget.addWidget(self.color_param_calib_screen)
         self.ui.centralStackWidget.addWidget(self.error_detect_screen)
         self.ui.centralStackWidget.addWidget(self.progress_screen)
-        self.ui.centralStackWidget.addWidget(self.asym_config_screen)
+        
 
     # binding
     def binding(self):
@@ -92,30 +93,30 @@ class MainWindow(QMainWindow):
         self.measurement_screen.backscreen.connect(
             self.change_detection_screen)
         self.measurement_screen.nextscreen.connect(
-            self.change_detect_pair_screen)
+            self.skippable_change_detect_pair_screen) 
 
         self.test_detect_pair_screen.backscreen.connect(
             self.change_measurement_screen)
         self.test_detect_pair_screen.nextscreen.connect(
-            self.change_color_preprocess_config_screen)
-
-        self.color_preprocess_config_screen.backscreen.connect(
-            self.change_detect_pair_screen)
-        self.color_preprocess_config_screen.nextscreen.connect(
             self.change_asym_config_screen)
 
         self.asym_config_screen.backscreen.connect(
-            self.change_color_preprocess_config_screen)
+            self.change_detect_pair_screen)
         self.asym_config_screen.nextscreen.connect(
+            self.change_color_preprocess_config_screen)
+
+        self.color_preprocess_config_screen.backscreen.connect(
+            self.change_asym_config_screen)
+        self.color_preprocess_config_screen.nextscreen.connect(
             self.change_color_param_calib_screen)
 
         self.color_param_calib_screen.backscreen.connect(
-            self.change_asym_config_screen)
+            self.change_color_preprocess_config_screen)
         self.color_param_calib_screen.nextscreen.connect(
             self.change_error_detect_screen)
 
         self.error_detect_screen.backscreen.connect(
-            self.change_color_param_calib_screen)
+            self.skippable_color_param_calib_screen) 
         self.error_detect_screen.nextscreen.connect(
             self.change_progress_screen)
 
@@ -163,6 +164,24 @@ class MainWindow(QMainWindow):
     # event handler
     def exit_program(self):
         self.close()
+
+    def skippable_change_detect_pair_screen(self):
+        cfg = self.detector_cfg.get_current_cfg()
+        continue_screen = cfg["is_main"]
+        if continue_screen:
+            self.ui.centralStackWidget.setCurrentWidget(self.test_detect_pair_screen)
+        else:
+            # skip to screen 6 if only side camera is selected
+            self.ui.centralStackWidget.setCurrentWidget(self.error_detect_screen)
+
+    def skippable_color_param_calib_screen(self):
+        cfg = self.detector_cfg.get_current_cfg()
+        continue_screen = cfg["is_main"]
+        if continue_screen:
+            self.ui.centralStackWidget.setCurrentWidget(self.color_param_calib_screen)
+        else:
+            # skip to screen 6 if only side camera is selected
+            self.ui.centralStackWidget.setCurrentWidget(self.measurement_screen)
 
     def change_home_screen(self):
         self.ui.centralStackWidget.setCurrentWidget(self.home_screen)
