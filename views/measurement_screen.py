@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'measurement_screenMvcGON.ui'
+## Form generated from reading UI file 'measurement_screenBUpeuw.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -128,16 +128,23 @@ class Ui_MeasurementScreen(object):
 
         self.groupLeftActualLength = QGroupBox(self.containerMid)
         self.groupLeftActualLength.setObjectName(u"groupLeftActualLength")
-        self.verticalLayout_14 = QVBoxLayout(self.groupLeftActualLength)
-        self.verticalLayout_14.setObjectName(u"verticalLayout_14")
-        self.verticalLayout_14.setContentsMargins(-1, 0, -1, 0)
+        self.horizontalLayout_2 = QHBoxLayout(self.groupLeftActualLength)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.inpLeftActualLength = QDoubleSpinBox(self.groupLeftActualLength)
         self.inpLeftActualLength.setObjectName(u"inpLeftActualLength")
+        self.inpLeftActualLength.setEnabled(False)
         self.inpLeftActualLength.setDecimals(2)
         self.inpLeftActualLength.setMaximum(50.000000000000000)
 
-        self.verticalLayout_14.addWidget(self.inpLeftActualLength)
+        self.horizontalLayout_2.addWidget(self.inpLeftActualLength)
 
+        self.btnEditActualLength = QPushButton(self.groupLeftActualLength)
+        self.btnEditActualLength.setObjectName(u"btnEditActualLength")
+
+        self.horizontalLayout_2.addWidget(self.btnEditActualLength)
+
+        self.horizontalLayout_2.setStretch(0, 4)
+        self.horizontalLayout_2.setStretch(1, 2)
 
         self.gridLayout_2.addWidget(self.groupLeftActualLength, 1, 1, 1, 1)
 
@@ -314,6 +321,7 @@ class Ui_MeasurementScreen(object):
         self.chkMainCamera.setText(QCoreApplication.translate("MeasurementScreen", u"Is main camera", None))
         self.groupSliderWidth.setTitle(QCoreApplication.translate("MeasurementScreen", u"Maximum width(%):", None))
         self.groupLeftActualLength.setTitle(QCoreApplication.translate("MeasurementScreen", u"Left side actual length", None))
+        self.btnEditActualLength.setText(QCoreApplication.translate("MeasurementScreen", u"Edit", None))
         self.groupSliderPosition.setTitle(QCoreApplication.translate("MeasurementScreen", u"Detect position:", None))
         self.groupLeftDetectedLength.setTitle(QCoreApplication.translate("MeasurementScreen", u"Left side detected length (px)", None))
         self.inpLeftDetectedLength.setInputMask("")

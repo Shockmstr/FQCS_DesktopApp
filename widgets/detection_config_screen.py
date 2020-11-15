@@ -326,7 +326,6 @@ class DetectionConfigScreen(QWidget):
             self.camera_changed.emit(-1)
 
     def cbbCamera_changed(self):
-        # self.replace_camera_widget()
         index = self.ui.cbbCamera.currentData()
         self.__current_cfg["camera_uri"] = index
         self.camera_changed.emit(index)

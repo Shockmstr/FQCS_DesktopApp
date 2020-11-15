@@ -15,6 +15,7 @@ class MeasurementScreen(QWidget):
     backscreen: Signal
     nextscreen: Signal
     captured = Signal()
+    __actual_length_edited = False
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -49,8 +50,8 @@ class MeasurementScreen(QWidget):
             self.sld_position_change)
         self.ui.sldDetectRange.valueChanged.connect(
             self.sld_detect_range_change)
-        self.ui.inpLeftActualLength.textChanged.connect(
-            self.inp_actual_length_change)
+        self.ui.btnEditActualLength.clicked.connect(
+            self.btn_edit_actual_length_clicked)
         self.ui.inpAllowDiff.textChanged.connect(self.inp_allow_diff_changed)
         self.ui.inpLengthUnit.textChanged.connect(self.inp_length_unit_change)
         self.ui.chkMainCamera.stateChanged.connect(
@@ -95,14 +96,21 @@ class MeasurementScreen(QWidget):
                                               float(1 - float(value)))
         self.ui.groupSliderDetectRange.setTitle("Detect range: " + value)
 
-    def inp_actual_length_change(self, text):
-        value = float(self.ui.inpLeftActualLength.text())
-        total_px = float(self.ui.inpLeftDetectedLength.text())
-        if (total_px is None or total_px == 0):
-            return
-        self.__current_cfg["length_per_10px"] = 0 if (
-            value is None or value == 0) else helper.calculate_length_per10px(
-                total_px, value)
+    def btn_edit_actual_length_clicked(self, event):
+        if self.__actual_length_edited:
+            value = float(self.ui.inpLeftActualLength.text())
+            total_px = float(self.ui.inpLeftDetectedLength.text())
+            if (total_px is not None and total_px > 0):
+                self.__current_cfg["length_per_10px"] = 0 if (
+                    value is None
+                    or value == 0) else helper.calculate_length_per10px(
+                        total_px, value)
+            self.ui.inpLeftActualLength.setEnabled(False)
+            self.ui.btnEditActualLength.setText("Edit")
+        else:
+            self.ui.inpLeftActualLength.setEnabled(True)
+            self.ui.btnEditActualLength.setText("Save")
+        self.__actual_length_edited = not self.__actual_length_edited
 
     def inp_allow_diff_changed(self, text):
         value = float(self.ui.inpAllowDiff.text())
@@ -125,13 +133,15 @@ class MeasurementScreen(QWidget):
         contour, sizes = self.__process_image(image.copy())
         img_resized = cv2.resize(orig, dim)
         contour_resized = cv2.resize(contour, dim)
+        left_length, actual_length = 0, 0
         if len(sizes) > 0:
             length_per_10px = self.__current_cfg["length_per_10px"]
             left_length = sizes[0][0]
-            self.ui.inpLeftDetectedLength.setText(str(left_length))
-            self.ui.inpLeftActualLength.setValue(
-                0 if length_per_10px is None or length_per_10px == 0 else
-                helper.calculate_length(left_length, length_per_10px))
+            actual_length = 0 if length_per_10px is None or length_per_10px == 0 else helper.calculate_length(
+                left_length, length_per_10px)
+        self.ui.inpLeftDetectedLength.setText(str(left_length))
+        if not self.__actual_length_edited:
+            self.ui.inpLeftActualLength.setValue(actual_length)
 
         self.image1.imshow(img_resized)
         self.image2.imshow(contour_resized)
@@ -190,12 +200,11 @@ class MeasurementScreen(QWidget):
             c, rect, dimA, dimB, box, tl, tr, br, bl, minx, maxx, cenx = b
             sizes.append((dimA, dimB))
             length_per_10px = self.__current_cfg["length_per_10px"]
-            unit = "px"
+            unit = self.__current_cfg["length_unit"]
             if length_per_10px is not None and length_per_10px != 0:
                 dimA, dimB = helper.calculate_length(
                     dimA, length_per_10px), helper.calculate_length(
                         dimB, length_per_10px)
-                unit = self.__current_cfg["length_unit"]
             helper.draw_boxes_and_sizes(image, None, box, dimA, dimB, unit, tl,
                                         br)
         return image, sizes
@@ -217,4 +226,6 @@ class MeasurementScreen(QWidget):
         self.ui.sldDetectRange.setValue(detect_range)
         self.ui.inpAllowDiff.setValue(max_size_diff)
         self.ui.chkMainCamera.setChecked(self.__current_cfg["is_main"])
+        self.ui.inpLeftDetectedLength.setText(str(0))
+        self.ui.inpLeftActualLength.setValue(0)
         self.__set_btn_capture_text()

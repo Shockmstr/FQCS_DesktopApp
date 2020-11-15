@@ -26,7 +26,6 @@ class MainWindow(QMainWindow):
         self.__identity_service = identity_service
         self.__view_cam = None
         self.__video_camera = None
-        self.__last_camera_uri = None
         self.__detector_cfg = DetectorConfig.instance()
         self.__camera_timer = self.__detector_cfg.get_timer()
         self.ui = Ui_MainWindow()
@@ -99,6 +98,8 @@ class MainWindow(QMainWindow):
             self.change_measurement_screen)
         self.test_detect_pair_screen.nextscreen.connect(
             self.change_asym_config_screen)
+        self.test_detect_pair_screen.captured.connect(
+            self.toggle_capture_state)
 
         self.asym_config_screen.backscreen.connect(
             self.change_detect_pair_screen)
@@ -147,14 +148,14 @@ class MainWindow(QMainWindow):
         self.__video_camera = self.__detector_cfg.get_current_camera()
         if self.__video_camera is None: return
         if index is not None and index > -1:
-            if (self.__last_camera_uri !=
+            if (self.__detector_cfg.get_last_camera_uri() !=
                     index) or (not self.__video_camera.isOpened()):
                 # self.__video_camera.open(index)
                 # test only
                 self.__video_camera.open(
                     r"N:\Workspace\Capstone\FQCS-Research\FQCS.ColorDetection\test.mp4"
                 )
-                self.__last_camera_uri = index
+                self.__detector_cfg.set_last_camera_uri(index)
         else:
             if self.__view_cam is not None: self.__view_cam(None)
             self.__video_camera.release()

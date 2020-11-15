@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1440</width>
-    <height>789</height>
+    <height>848</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -214,8 +214,15 @@ font-weight:bold;</string>
 	border: 1px solid #A5A5A5
 }</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_16">
-            <item alignment="Qt::AlignTop">
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QPushButton" name="btnCapture">
+              <property name="text">
+               <string>CAPTURE</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QWidget" name="containerVerticalBtn" native="true">
               <layout class="QVBoxLayout" name="verticalLayout_17">
                <property name="leftMargin">
@@ -247,7 +254,7 @@ font-weight:bold;</string>
               </layout>
              </widget>
             </item>
-            <item alignment="Qt::AlignBottom">
+            <item>
              <widget class="QWidget" name="containerNavBtn" native="true">
               <layout class="QHBoxLayout" name="horizontalLayout_3">
                <property name="leftMargin">

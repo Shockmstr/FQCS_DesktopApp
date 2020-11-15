@@ -53,6 +53,12 @@ class DetectorConfigAbs():
     def validate_config_name(self, camera_name):
         pass
 
+    def get_last_camera_uri(self):
+        pass
+
+    def set_last_camera_uri(self, val):
+        pass
+
 
 class DetectorConfig(QObject, DetectorConfigAbs):
     manager_changed = Signal()
@@ -63,11 +69,18 @@ class DetectorConfig(QObject, DetectorConfigAbs):
     __current_cfg_name: str = None
     __video_cameras = []
     __camera_timer: QTimer
+    __last_camera_uri = None
 
     def __init__(self, parent=None):
         QObject.__init__(self, parent)
         self.__camera_timer = QTimer(self)
         return
+
+    def set_last_camera_uri(self, val):
+        self.__last_camera_uri = val
+
+    def get_last_camera_uri(self):
+        return self.__last_camera_uri
 
     def get_timer(self):
         return self.__camera_timer
@@ -129,6 +142,7 @@ class DetectorConfig(QObject, DetectorConfigAbs):
         self.__current_path = None
         self.release_cameras()
         self.__video_cameras = []
+        self.__last_camera_uri = None
 
     def validate_config_name(self, camera_name):
         err_text = None

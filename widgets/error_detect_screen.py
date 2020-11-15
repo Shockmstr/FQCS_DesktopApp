@@ -116,11 +116,11 @@ class ErrorDetectScreen(QWidget):
 
     # hander
     def btn_capture_clicked(self):
-        self.captured.emit()        
+        self.captured.emit()
         self.__set_btn_capture_text()
 
     def __set_btn_capture_text(self):
-        timer_active= DetectorConfig.instance().get_timer().isActive()
+        timer_active = DetectorConfig.instance().get_timer().isActive()
         self.ui.btnCapture.setText("CAPTURE" if not timer_active else "STOP")
 
     def inp_min_score_change(self):
@@ -155,7 +155,8 @@ class ErrorDetectScreen(QWidget):
         self.ui.inpModelChoice.setText(
             file_name.split("/")[-1].split("\\")[-1])
         self.__current_cfg["err_cfg"]["weights"] = file_name
-        await DetectorConfig.instance().manager.load_model(self.__current_cfg)
+        await DetectorConfig.instance().get_manager().load_model(
+            self.__current_cfg)
 
     def btn_choose_classes_clicked(self):
         url = helpers.file_chooser_open_file(self)
@@ -182,10 +183,12 @@ class ErrorDetectScreen(QWidget):
             return
         orig = cv2.resize(image, dim)
         self.image1.imshow(orig)
-        self.__process_image(image)
+        contour = self.__process_image(image)
+        contour = cv2.resize(contour, dim)
+        self.image2.imshow(contour)
 
     async def __detect_error(self, images):
-        manager = DetectorConfig.instance().manager
+        manager = DetectorConfig.instance().get_manager()
         err_task = manager.detect_errors(self.__current_cfg, images, None)
         boxes, scores, classes, valid_detections = await err_task
         err_cfg = self.__current_cfg["err_cfg"]
@@ -209,7 +212,7 @@ class ErrorDetectScreen(QWidget):
         self.image3.imshow(detected)
 
     def __process_pair(self, image):
-        manager = DetectorConfig.instance().manager
+        manager = DetectorConfig.instance().get_manager()
         boxes, proc = manager.extract_boxes(self.__current_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
             self.__current_cfg, boxes, image)
@@ -232,11 +235,10 @@ class ErrorDetectScreen(QWidget):
     def __process_image(self, image):
         manager = DetectorConfig.instance().get_manager()
         contour, detected_pair = self.__process_pair(image)
-        contour = cv2.resize(contour, self.dim)
-        self.image2.imshow(contour)
         if detected_pair is not None and manager.get_model() is not None:
             runnable = WorkerRunnable(self.__detect_error,
                                       detected_pair,
                                       parent=self)
             runnable.work_error.connect(lambda ex: print(ex))
             QThreadPool.globalInstance().start(runnable)
+        return contour

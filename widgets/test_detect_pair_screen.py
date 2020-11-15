@@ -16,6 +16,7 @@ class TestDetectPairScreen(QWidget):
     __detected_pair = None
     backscreen: Signal
     nextscreen: Signal
+    captured = Signal()
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -45,8 +46,17 @@ class TestDetectPairScreen(QWidget):
     def binding(self):
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnNext.clicked
+        self.ui.btnCapture.clicked.connect(self.btn_capture_clicked)
         self.ui.btnSaveSample.clicked.connect(self.btn_save_sample_clicked)
         self.ui.btnRetakeSample.clicked.connect(self.btn_retake_sample_clicked)
+
+    def btn_capture_clicked(self):
+        self.captured.emit()
+        self.__set_btn_capture_text()
+
+    def __set_btn_capture_text(self):
+        timer_active = DetectorConfig.instance().get_timer().isActive()
+        self.ui.btnCapture.setText("CAPTURE" if not timer_active else "STOP")
 
     def view_cam(self, image):
         # read image in BGR format
@@ -69,10 +79,11 @@ class TestDetectPairScreen(QWidget):
             self.__detected_pair = detected_pair
 
     def __load_config(self):
+        self.__set_btn_capture_text()
         return
 
     def __process_pair(self, image):
-        manager = DetectorConfig.instance().manager
+        manager = DetectorConfig.instance().get_manager()
         boxes, proc = manager.extract_boxes(self.__current_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
             self.__current_cfg, boxes, image)
