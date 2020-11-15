@@ -26,7 +26,7 @@ class ProgressScreen(QWidget):
         self.binding()
 
     def showEvent(self, event):
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
         self.__load_config()
 
     # data binding
@@ -91,7 +91,7 @@ class ProgressScreen(QWidget):
 
     async def process_image(self, image):
         manager = DetectorConfig.instance().get_manager()
-        main_cfg = manager.get_main_config()
+        idx, main_cfg = manager.get_main_config()
         contour, detected_pair, size_params, sim_params = self.__process_pair(
             image)
 

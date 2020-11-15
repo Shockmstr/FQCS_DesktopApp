@@ -24,9 +24,9 @@ class MainWindow(QMainWindow):
     def __init__(self, identity_service: IdentityService):
         QMainWindow.__init__(self)
         self.__identity_service = identity_service
-        self.__video_camera = cv2.VideoCapture()
         self.__camera_timer = QTimer()
         self.__process_cam = None
+        self.__video_camera = None
         self.__detector_cfg = DetectorConfig.instance()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -86,8 +86,7 @@ class MainWindow(QMainWindow):
         self.detection_screen.nextscreen.connect(
             self.change_measurement_screen)
         self.detection_screen.captured.connect(self.start_capture)
-        self.detection_screen.camera_changed.connect(
-            lambda index: self.__video_camera.open(index))
+        self.detection_screen.camera_changed.connect(self.camera_changed)
 
         self.measurement_screen.backscreen.connect(
             self.change_detection_screen)
@@ -125,31 +124,33 @@ class MainWindow(QMainWindow):
         return
 
     def closeEvent(self, event):
-        if self.__video_camera is not None and self.__video_camera.isOpened():
-            self.__video_camera.release()
+        video_cameras = self.__detector_cfg.get_video_cameras()
+        for vid in video_cameras:
+            vid.release()
+        DetectorConfig.instance().reset()
 
     def camera_timer_timeout(self):
-        if (self.__video_camera.isOpened() and self.__process_cam is not None):
+        if (self.__video_camera is not None and self.__video_camera.isOpened()
+                and self.__process_cam is not None):
             _, image = self.__video_camera.read()
             self.__process_cam(image)
 
-    # start/stop timer
-    def __control_timer(self, active):
-        # if timer is stopped
-        if active:
-            if (not self.__camera_timer.isActive()):
-                # start timer
-                self.__camera_timer.start(50)
-        # if timer is started
-        else:
-            self.__camera_timer.stop()
-
     # event handler
+    def camera_changed(self, index):
+        if self.__video_camera is not None:
+            self.__video_camera.release()
+        self.__video_camera = self.__detector_cfg.get_current_camera()
+        if self.__video_camera is None: return
+        if index is not None and index > -1:
+            self.__video_camera.open(index)
+        else:
+            self.__video_camera.release()
+
     def action_exit_triggered(self):
         self.close()
 
     def skipable_change_detect_pair_screen(self):
-        cfg = self.__detector_cfg.get_current_cfg()
+        idx, cfg = self.__detector_cfg.get_current_cfg()
         continue_screen = cfg["is_main"]
         if continue_screen:
             self.ui.centralStackWidget.setCurrentWidget(
@@ -160,7 +161,7 @@ class MainWindow(QMainWindow):
                 self.error_detect_screen)
 
     def skipable_color_param_calib_screen(self):
-        cfg = self.__detector_cfg.get_current_cfg()
+        idx, cfg = self.__detector_cfg.get_current_cfg()
         continue_screen = cfg["is_main"]
         if continue_screen:
             self.ui.centralStackWidget.setCurrentWidget(
@@ -204,35 +205,39 @@ class MainWindow(QMainWindow):
         currentWidget = self.ui.centralStackWidget.currentWidget()
         if (currentWidget == self.detection_screen):
             self.__process_cam = self.detection_screen.view_cam
-            self.__control_timer(True)
+            self.start_capture()
         elif (currentWidget == self.measurement_screen):
             self.__process_cam = self.measurement_screen.view_cam
-            self.__control_timer(True)
+            self.start_capture()
         elif (currentWidget == self.color_preprocess_config_screen):
+            self.__process_cam = None
+            self.stop_capture()
             self.color_preprocess_config_screen.view_image()
         elif (currentWidget == self.color_param_calib_screen):
             self.__process_cam = self.color_param_calib_screen.view_cam
-            self.__control_timer(True)
+            self.start_capture()
         elif (currentWidget == self.test_detect_pair_screen):
             self.__process_cam = self.test_detect_pair_screen.view_cam
-            self.__control_timer(True)
+            self.start_capture()
         elif (currentWidget == self.error_detect_screen):
             self.__process_cam = self.error_detect_screen.view_cam
-            self.__control_timer(True)
+            self.start_capture()
         elif (currentWidget == self.progress_screen):
             self.__process_cam = self.progress_screen.view_cam
-            self.__control_timer(True)
+            self.start_capture()
         elif (currentWidget == self.asym_config_screen):
             self.__process_cam = self.asym_config_screen.view_cam
-            self.__control_timer(True)
+            self.start_capture()
         else:
-            self.__control_timer(False)
+            self.stop_capture()
 
     def stop_capture(self):
-        self.__control_timer(False)
+        self.__camera_timer.stop()
 
     def start_capture(self):
-        self.__control_timer(True)
+        if (not self.__camera_timer.isActive()):
+            # start timer
+            self.__camera_timer.start(20)
 
     @asyncSlot()
     async def action_load_config_triggered(self):

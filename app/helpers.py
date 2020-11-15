@@ -48,10 +48,15 @@ def get_all_camera_index(num=10):
     return arr
 
 
-def hide_all_children(widget: QWidget):
+def hide_all_children(widget):
     for ch in widget.children():
         if hasattr(ch, 'hide'):
             ch.hide()
+            
+def show_all_children(widget):
+    for ch in widget.children():
+        if hasattr(ch, 'show'):
+            ch.show()
 
 
 def show_message(text, title="Message", icon=QMessageBox.Information):

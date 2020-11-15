@@ -15,7 +15,7 @@ class DetectionConfigScreen(QWidget):
     CONTRAST_STEP = 5
     THRESHOLD1_STEP = 5
     THRESHOLD2_STEP = 5
-    __table_index = -1
+    __last_selected_row = -1
     backscreen: Signal
     nextscreen: Signal
     captured: Signal
@@ -23,40 +23,31 @@ class DetectionConfigScreen(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
+        self.__cam_array = helpers.get_all_camera_index()
         self.__current_cfg = None
         self.ui = Ui_DetectionConfigScreen()
         self.ui.setupUi(self)
+        self.build()
         self.binding()
 
-    def showEvent(self, event):
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
-
-        table = self.ui.tblCameraConfig
-        table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
-        table.horizontalHeader().setSectionResizeMode(
-            1, QHeaderView.ResizeToContents)
-        table.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        table.clearSelection()
-
-        if self.__current_cfg is None:
-            helpers.hide_all_children(self.ui.containerMidRange)
-            helpers.hide_all_children(self.ui.containerMidEdge)
-            helpers.hide_all_children(self.ui.containerMidThresh)
-            helpers.hide_all_children(self.ui.containerLeft)
-            self.ui.btnCapture.hide()
-            self.ui.btnNext.hide()
-            return
+    def build(self):
+        self.image1 = ImageWidget()
+        self.image2 = ImageWidget()
+        self.image3 = ImageWidget()
+        self.imageLayout = self.ui.screen1.parentWidget().layout()
+        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+        self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+        self.imageLayout.replaceWidget(self.ui.screen3, self.image3)
+        self.ui.screen1.deleteLater()
+        self.ui.screen2.deleteLater()
+        self.ui.screen3.deleteLater()
 
         self.ui.cbbWidth.setPlaceholderText("Width")
         self.ui.cbbHeight.setPlaceholderText("Height")
         self.ui.cbbCamera.setPlaceholderText("Choose Cam")
-        self.ui.cbbWidth.setCurrentIndex(-1)
-        self.ui.cbbHeight.setCurrentIndex(-1)
-        self.ui.cbbCamera.setCurrentIndex(-1)
 
-        cam_array = helpers.get_all_camera_index()
         self.ui.cbbCamera.clear()
-        for camera in cam_array:
+        for camera in self.__cam_array:
             self.ui.cbbCamera.addItem("Camera " + str(camera), userData=camera)
 
         frame_resize_values = [
@@ -76,6 +67,20 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbMethod.addItem("Edge", userData="edge")
         self.ui.cbbMethod.addItem("Threshold", userData="thresh")
         self.ui.cbbMethod.addItem("Range", userData="range")
+
+    def showEvent(self, event):
+        _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+
+        table = self.ui.tblCameraConfig
+        table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        table.horizontalHeader().setSectionResizeMode(
+            1, QHeaderView.ResizeToContents)
+        table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        table.clearSelection()
+
+        if self.__current_cfg is None:
+            self.__show_config_section(False)
+            return
         self.__load_config()
 
     #BINDING
@@ -214,14 +219,15 @@ class DetectionConfigScreen(QWidget):
             self.ui.btnColorTo.setStyleSheet("background-color: " + color_hex)
 
     def btn_add_clicked(self):
-        manager = DetectorConfig.instance().get_manager()
+        detector_cfg = DetectorConfig.instance()
+        manager = detector_cfg.get_manager()
         table = self.ui.tblCameraConfig
         camera_name = self.ui.txtNewCamera.text().strip()
         err_text = None
         if camera_name is None or camera_name == "":
             err_text = "Invalid name"
         else:
-            existed_cfg = manager.get_config_by_name(camera_name)
+            idx, existed_cfg = manager.get_config_by_name(camera_name)
             if existed_cfg is not None:
                 err_text = "Name existed"
         if err_text is not None:
@@ -229,18 +235,27 @@ class DetectionConfigScreen(QWidget):
             return
         new_cfg = detector.default_detector_config()
         new_cfg["name"] = camera_name
-        manager.add_config(new_cfg)
+        detector_cfg.add_config(new_cfg)
         self.__add_new_row(table, camera_name, "")
 
     def tbl_camera_cell_clicked(self):
         table = self.ui.tblCameraConfig
         chosen_row = table.currentRow()
-        self.__table_index = chosen_row
+        if chosen_row == self.__last_selected_row: return
+        detector_cfg = DetectorConfig.instance()
+        column_count = table.columnCount()
         camera_name = table.item(chosen_row, 0).text()
-        manager = DetectorConfig.instance().get_manager()
-        config = manager.get_config_by_name(camera_name)
-        self.__current_cfg = config
-        DetectorConfig.instance().set_current_cfg_name(camera_name)
+        for i in range(column_count):
+            table.item(chosen_row, i).font().setBold(True)
+        if self.__last_selected_row != -1:
+            for i in range(column_count):
+                table.item(self.__last_selected_row, i).font().setBold(False)
+        self.__last_selected_row = chosen_row
+        detector_cfg.set_current_cfg_name(camera_name)
+        _, self.__current_cfg = detector_cfg.get_current_cfg()
+        self.__show_config_section(True)
+        self.__load_config()
+        table.selectRow(chosen_row)
 
     def cbbCamera_changed(self):
         # self.replace_camera_widget()
@@ -264,21 +279,13 @@ class DetectionConfigScreen(QWidget):
     # view camera
     def view_cam(self, image):
         # read image in BGR format
-        self.image1 = ImageWidget()
-        self.image2 = ImageWidget()
-        self.image3 = ImageWidget()
-        self.label_w = self.ui.screen1.width()
-        self.label_h = self.ui.screen1.height()
-        self.imageLayout = self.ui.screen1.parentWidget().layout()
-        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
-        self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
-        self.imageLayout.replaceWidget(self.ui.screen3, self.image3)
-        self.img = image
-        self.dim = (self.label_w, self.label_h)
-        contour, proc = self.__process_contours(self.img.copy())
-        img_resized = cv2.resize(self.img, self.dim)
-        contour_resized = cv2.resize(contour, self.dim)
-        proc_resized = cv2.resize(proc, self.dim)
+        label_w = self.image1.width()
+        label_h = self.image1.height()
+        dim = (label_w, label_h)
+        contour, proc = self.__process_contours(image.copy())
+        img_resized = cv2.resize(image, dim)
+        contour_resized = cv2.resize(contour, dim)
+        proc_resized = cv2.resize(proc, dim)
         self.image1.imshow(img_resized)
         self.image2.imshow(contour_resized)
         self.image3.imshow(proc_resized)
@@ -290,6 +297,22 @@ class DetectionConfigScreen(QWidget):
             c, rect, dimA, dimB, box, tl, tr, br, bl, minx, maxx, cenx = b
             helper.draw_boxes(image, box)
         return image, proc
+
+    def __show_config_section(self, shown):
+        if shown:
+            helpers.show_all_children(self.ui.containerMidRange)
+            helpers.show_all_children(self.ui.containerMidEdge)
+            helpers.show_all_children(self.ui.containerMidThresh)
+            helpers.show_all_children(self.ui.containerLeft)
+            self.ui.btnCapture.show()
+            self.ui.btnNext.show()
+        else:
+            helpers.hide_all_children(self.ui.containerMidRange)
+            helpers.hide_all_children(self.ui.containerMidEdge)
+            helpers.hide_all_children(self.ui.containerMidThresh)
+            helpers.hide_all_children(self.ui.containerLeft)
+            self.ui.btnCapture.hide()
+            self.ui.btnNext.hide()
 
     #load init configs
     def __load_config(self):
@@ -345,9 +368,10 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbWidth.setCurrentIndex(width_index)
 
         camera_uri = self.__current_cfg["camera_uri"]
-        if camera_uri < self.ui.cbbCamera.count():
+        if camera_uri is not None and camera_uri < self.ui.cbbCamera.count():
             self.ui.cbbCamera.setCurrentIndex(camera_uri)
-            self.camera_changed.emit(camera_uri)
+        else:
+            self.ui.cbbCamera.setCurrentIndex(-1)
 
         table = self.ui.tblCameraConfig
         table.clearContents()

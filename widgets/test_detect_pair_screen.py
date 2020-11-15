@@ -25,7 +25,7 @@ class TestDetectPairScreen(QWidget):
         self.binding()
 
     def showEvent(self, event):
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
         self.__load_config()
 
     # binding

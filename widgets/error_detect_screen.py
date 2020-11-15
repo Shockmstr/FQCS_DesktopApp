@@ -31,7 +31,7 @@ class ErrorDetectScreen(QWidget):
         self.binding()
 
     def showEvent(self, event):
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
         self.height_value = 0
         self.width_value = 0
         self.ui.cbbWidth.setPlaceholderText("Width")
