@@ -23,13 +23,23 @@ class DetectionConfigScreen(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
+        self.__current_cfg = None
         self.ui = Ui_DetectionConfigScreen()
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
         self.ui.setupUi(self)
-        self.build()
         self.binding()
 
-    def build(self):
+    def showEvent(self, event):
+        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+
+        table = self.ui.tblCameraConfig
+        table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        table.horizontalHeader().setSectionResizeMode(
+            1, QHeaderView.ResizeToContents)
+        table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        table.clearSelection()
+
+        if self.__current_cfg is None: return
+
         self.ui.cbbWidth.setPlaceholderText("Width")
         self.ui.cbbHeight.setPlaceholderText("Height")
         self.ui.cbbCamera.setPlaceholderText("Choose Cam")
@@ -59,22 +69,13 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbMethod.addItem("Edge", userData="edge")
         self.ui.cbbMethod.addItem("Threshold", userData="thresh")
         self.ui.cbbMethod.addItem("Range", userData="range")
-
-        table = self.ui.tblCameraConfig
-        table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
-        table.horizontalHeader().setSectionResizeMode(
-            1, QHeaderView.ResizeToContents)
-        table.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        table.clearSelection()
-
-        self.manager_changed()
+        self.__load_config()
 
     #BINDING
     def binding(self):
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnNext.clicked
         self.captured = self.ui.btnCapture.clicked
-        DetectorConfig.instance().manager_changed.connect(self.manager_changed)
         self.ui.sldBrightness.valueChanged.connect(
             self.sld_brightness_value_change)
         self.ui.sldContrast.valueChanged.connect(
@@ -270,9 +271,7 @@ class DetectionConfigScreen(QWidget):
         return image, proc
 
     #load init configs
-    def manager_changed(self):
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
-        if self.__current_cfg is None: return
+    def __load_config(self):
         #edge
         brightness = self.__current_cfg["d_cfg"]["alpha"]
         contrast = self.__current_cfg["d_cfg"]["beta"]

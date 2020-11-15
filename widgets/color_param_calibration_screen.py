@@ -24,20 +24,19 @@ class ColorParamCalibrationScreen(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__current_cfg = None
         self.ui = Ui_ColorParamCalibScreen()
         self.ui.setupUi(self)
-        self.build()
         self.binding()
 
-    def build(self):
-        self.manager_changed()
+    def showEvent(self, event):
+        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__load_config()
 
     # binding
     def binding(self):
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnNext.clicked
-        DetectorConfig.instance().manager_changed.connect(self.manager_changed)
         self.ui.cbbCamera.setPlaceholderText("Choose Cam")
         self.ui.cbbCamera.setCurrentIndex(-1)
         self.ui.cbbCamera.currentIndexChanged.connect(self.cbbCamera_chose)
@@ -80,9 +79,7 @@ class ColorParamCalibrationScreen(QWidget):
         self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
         index = self.ui.cbbCamera.currentData()
 
-    def manager_changed(self):
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
-        if self.__current_cfg is None: return
+    def __load_config(self):
         amplify_rate = self.__current_cfg["color_cfg"]["amplify_rate"]
         supp_thresh = self.__current_cfg["color_cfg"]["supp_thresh"]
         max_diff = self.__current_cfg["color_cfg"]["max_diff"]

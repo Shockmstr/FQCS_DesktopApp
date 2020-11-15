@@ -65,6 +65,9 @@ class MainWindow(QMainWindow):
         self.ui.centralStackWidget.addWidget(self.error_detect_screen)
         self.ui.centralStackWidget.addWidget(self.progress_screen)
 
+    def showEvent(self, event):
+        return
+
     # binding
     def binding(self):
         self.ui.actionExit.triggered.connect(self.action_exit_triggered)

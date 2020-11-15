@@ -15,10 +15,9 @@ class HomeScreen(QWidget):
         self.__identity_service = identity_service
         self.ui = Ui_HomeScreen()
         self.ui.setupUi(self)
-        self.build()
         self.binding()
 
-    def build(self):
+    def showEvent(self, event):
         return
 
     # data binding

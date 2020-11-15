@@ -21,16 +21,16 @@ class ColorPreprocessConfigScreen(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__current_cfg = None
         self.image1 = None
         self.image2 = None
         self.ui = Ui_color_preprocess_config_screen()
         self.ui.setupUi(self)
-        self.build()
         self.binding()
 
-    def build(self):
-        self.manager_changed()
+    def showEvent(self, event):
+        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__load_config()
 
     # binding
     def binding(self):
@@ -151,9 +151,7 @@ class ColorPreprocessConfigScreen(QWidget):
                                               False)
         return pre_sample_left, pre_sample_right
 
-    def manager_changed(self):
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
-        if self.__current_cfg is None: return
+    def __load_config(self):
         #load from default
         color_cfg = self.__current_cfg["color_cfg"]
         img_size = color_cfg["img_size"]

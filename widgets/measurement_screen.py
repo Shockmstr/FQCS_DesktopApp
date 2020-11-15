@@ -17,20 +17,19 @@ class MeasurementScreen(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__current_cfg = None
         self.ui = Ui_MeasurementScreen()
         self.ui.setupUi(self)
-        self.build()
         self.binding()
 
-    def build(self):
-        self.manager_changed()
+    def showEvent(self, event):
+        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__load_config()
 
     # binding
     def binding(self):
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnNext.clicked
-        DetectorConfig.instance().manager_changed.connect(self.manager_changed)
         self.ui.sldMaximumHeight.valueChanged.connect(
             self.sld_min_height_change)
         self.ui.sldMaximumWidth.valueChanged.connect(self.sld_min_width_change)
@@ -168,9 +167,7 @@ class MeasurementScreen(QWidget):
             helper.draw_boxes(image, box)
         return image
 
-    def manager_changed(self):
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
-        if self.__current_cfg is None: return
+    def __load_config(self):
         min_width = self.__current_cfg["min_width_per"] * 100
         min_height = self.__current_cfg["min_height_per"] * 100
         length_unit = self.__current_cfg["length_unit"]

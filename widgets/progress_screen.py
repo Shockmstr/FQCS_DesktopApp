@@ -20,19 +20,18 @@ class ProgressScreen(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
+        self.__current_cfg = None
         self.ui = Ui_ProgressScreen()
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
         self.ui.setupUi(self)
-        self.build()
         self.binding()
 
-    def build(self):
-        self.return_home = self.ui.btnReturnHome.clicked
-        self.manager_changed()
+    def showEvent(self, event):
+        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__load_config()
 
     # data binding
     def binding(self):
-        DetectorConfig.instance().manager_changed.connect(self.manager_changed)
+        self.return_home = self.ui.btnReturnHome.clicked
         self.ui.btnCapture.clicked.connect(self.btn_capture_clicked)
 
     def btn_capture_clicked(self):
@@ -158,6 +157,5 @@ class ProgressScreen(QWidget):
         images[0] = np.asarray(images[0], np.uint8)
         self.image3.imshow(images[0])
 
-    def manager_changed(self):
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
-        if self.__current_cfg is None: return
+    def __load_config(self):
+        return

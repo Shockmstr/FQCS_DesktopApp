@@ -23,10 +23,9 @@ class AsymConfigScreen(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__current_cfg = None
         self.ui = Ui_AsymConfigScreen()
         self.ui.setupUi(self)
-        self.build()
         self.binding()
 
     # binding
@@ -51,12 +50,11 @@ class AsymConfigScreen(QWidget):
         self.ui.grpBoxMinSimilarity.setTitle("Minimum similarity (%): " +
                                              str(value))
 
-    def build(self):
-        self.manager_changed()
-
-    def manager_changed(self):
+    def showEvent(self, event):
         self.__current_cfg = DetectorConfig.instance().get_current_cfg()
-        if self.__current_cfg is None: return
+        self.__load_config()
+
+    def __load_config(self):
         cfg = self.__current_cfg["sim_cfg"]
         c1 = cfg["C1"]
         c2 = cfg["C2"]

@@ -26,12 +26,12 @@ class ErrorDetectScreen(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.ui = Ui_ErrorDetectScreen()
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__current_cfg = None
         self.ui.setupUi(self)
-        self.build()
         self.binding()
 
-    def build(self):
+    def showEvent(self, event):
+        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
         self.height_value = 0
         self.width_value = 0
         self.ui.cbbWidth.setPlaceholderText("Width")
@@ -47,11 +47,9 @@ class ErrorDetectScreen(QWidget):
         self.ui.cbbWidth.clear()
         for value in frame_resize_values:
             self.ui.cbbWidth.addItem(value, userData=int(value))
-        self.manager_changed()
+        self.__load_config()
 
-    def manager_changed(self):
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
-        if self.__current_cfg is None: return
+    def __load_config(self):
         img_size = self.__current_cfg["err_cfg"]["img_size"]
         inp_shape = self.__current_cfg["err_cfg"]["inp_shape"]
         yolo_iou_threshold = self.__current_cfg["err_cfg"][
@@ -59,8 +57,8 @@ class ErrorDetectScreen(QWidget):
         yolo_max_boxes = self.__current_cfg["err_cfg"]["yolo_max_boxes"]
         yolo_score_threshold = self.__current_cfg["err_cfg"][
             "yolo_score_threshold"]
-        weights = self.__current_cfg["err_cfg"]["weights"].split("/")[-1].split(
-            "\\")[-1]
+        weights = self.__current_cfg["err_cfg"]["weights"].split(
+            "/")[-1].split("\\")[-1]
         classes = self.__current_cfg["err_cfg"]["classes"]
         num_classes = self.__current_cfg["err_cfg"]["num_classes"]
 
@@ -82,7 +80,6 @@ class ErrorDetectScreen(QWidget):
     def binding(self):
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnFinish.clicked
-        DetectorConfig.instance().manager_changed.connect(self.manager_changed)
         self.ui.inpMaxInstances.textChanged.connect(
             self.inp_max_instances_change)
         self.ui.inpMinimumScore.textChanged.connect(self.inp_min_score_change)
@@ -122,9 +119,9 @@ class ErrorDetectScreen(QWidget):
 
         print(self.height_value, self.width_value)
         self.__current_cfg["err_cfg"]["img_size"] = (self.width_value,
-                                                   self.height_value)
+                                                     self.height_value)
         self.__current_cfg["err_cfg"]["inp_shape"] = (self.height_value,
-                                                    self.width_value, 3)
+                                                      self.width_value, 3)
 
     @asyncSlot()
     async def btn_choose_model_clicked(self):
@@ -133,8 +130,8 @@ class ErrorDetectScreen(QWidget):
             self.ui.inpModelChoice.setText(
                 file_name.split("/")[-1].split("\\")[-1])
             self.__current_cfg["err_cfg"]["weights"] = file_name
-            await DetectorConfig.instance().manager.load_model(self.__current_cfg
-                                                               )
+            await DetectorConfig.instance().manager.load_model(
+                self.__current_cfg)
 
     def btn_choose_classes_clicked(self):
         file_name, _ = helpers.file_chooser_open_file(self)

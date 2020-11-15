@@ -20,19 +20,18 @@ class TestDetectPairScreen(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.ui = Ui_test_detect_pair_screen()
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__current_cfg = None
         self.ui.setupUi(self)
-        self.build()
         self.binding()
 
-    def build(self):
-        self.backscreen = self.ui.btnBack.clicked
-        self.nextscreen = self.ui.btnNext.clicked
-        self.manager_changed()
+    def showEvent(self, event):
+        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__load_config()
 
     # binding
     def binding(self):
-        DetectorConfig.instance().manager_changed.connect(self.manager_changed)
+        self.backscreen = self.ui.btnBack.clicked
+        self.nextscreen = self.ui.btnNext.clicked
         self.ui.btnSaveSample.clicked.connect(self.btn_save_sample_clicked)
         self.ui.btnRetakeSample.clicked.connect(self.btn_retake_sample_clicked)
 
@@ -59,9 +58,8 @@ class TestDetectPairScreen(QWidget):
             self.image3.imshow(detected_resized)
             self.__detected_pair = detected_pair
 
-    def manager_changed(self):
-        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
-        if self.__current_cfg is None: return
+    def __load_config(self):
+        return
 
     def __process_pair(self, image):
         manager = DetectorConfig.instance().manager
