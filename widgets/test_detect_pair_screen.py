@@ -91,8 +91,8 @@ class TestDetectPairScreen(QWidget):
             left, right = self.__detected_pair
             folder_path = DetectorConfig.instance().get_current_path()
             if folder_path is None:
-                folder_path = helpers.file_chooser_open_directory(self)
-                DetectorConfig.instance().set_current_path(folder_path)
+                helpers.show_message("You must save configuration first")
+                return
             left = cv2.flip(left, 1)
             cv2.imwrite(os.path.join(folder_path, detector.SAMPLE_LEFT_FILE),
                         left)

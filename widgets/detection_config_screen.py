@@ -76,7 +76,19 @@ class DetectionConfigScreen(QWidget):
         table.horizontalHeader().setSectionResizeMode(
             1, QHeaderView.ResizeToContents)
         table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        table.clearContents()
+        table.setRowCount(0)
+        manager = DetectorConfig.instance().get_manager()
+        cfgs = manager.get_configs()
+        for cfg in cfgs:
+            camera_name = cfg["name"]
+            is_main = cfg["is_main"]
+            if (is_main):
+                self.__add_new_row(table, camera_name, "Main Camera")
+            else:
+                self.__add_new_row(table, camera_name, "")
         table.clearSelection()
+        self.__last_selected_row = -1
 
         if self.__current_cfg is None:
             self.__show_config_section(False)
@@ -243,19 +255,12 @@ class DetectionConfigScreen(QWidget):
         chosen_row = table.currentRow()
         if chosen_row == self.__last_selected_row: return
         detector_cfg = DetectorConfig.instance()
-        column_count = table.columnCount()
         camera_name = table.item(chosen_row, 0).text()
-        for i in range(column_count):
-            table.item(chosen_row, i).font().setBold(True)
-        if self.__last_selected_row != -1:
-            for i in range(column_count):
-                table.item(self.__last_selected_row, i).font().setBold(False)
         self.__last_selected_row = chosen_row
         detector_cfg.set_current_cfg_name(camera_name)
         _, self.__current_cfg = detector_cfg.get_current_cfg()
         self.__show_config_section(True)
         self.__load_config()
-        table.selectRow(chosen_row)
 
     def cbbCamera_changed(self):
         # self.replace_camera_widget()
@@ -370,23 +375,9 @@ class DetectionConfigScreen(QWidget):
         camera_uri = self.__current_cfg["camera_uri"]
         if camera_uri is not None and camera_uri < self.ui.cbbCamera.count():
             self.ui.cbbCamera.setCurrentIndex(camera_uri)
+            self.camera_changed.emit(camera_uri)
         else:
             self.ui.cbbCamera.setCurrentIndex(-1)
-
-        table = self.ui.tblCameraConfig
-        table.clearContents()
-        table.setRowCount(0)
-        manager = DetectorConfig.instance().get_manager()
-
-        cfgs = manager.get_configs()
-        for cfg in cfgs:
-            camera_name = cfg["name"]
-            is_main = cfg["is_main"]
-            if (is_main):
-                self.__add_new_row(table, camera_name, "Main Camera")
-            else:
-                self.__add_new_row(table, camera_name, "")
-        table.clearSelection()
 
     def __add_new_row(self, table, camera_name, is_main):
         current_row = table.rowCount()

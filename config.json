@@ -1,119 +1,6 @@
 [
   {
-    "name": "Camera-2020-11-09 14:59:05.046790",
-    "camera_uri": 1,
-    "is_main": true,
-    "is_color_enable": true,
-    "is_defect_enable": true,
-    "min_width_per": 0.08,
-    "min_height_per": 0.13,
-    "stop_condition": 0,
-    "detect_range": [
-      0.09,
-      0.91
-    ],
-    "length_per_10px": 0.23809523809523808,
-    "length_unit": "cm",
-    "max_size_diff": 0.7,
-    "frame_width": 640,
-    "frame_height": 480,
-    "color_cfg": {
-      "img_size": [
-        32,
-        64
-      ],
-      "blur_val": 0.05,
-      "alpha_r": 1.0,
-      "alpha_l": 1.0,
-      "beta_r": -150,
-      "beta_l": -150,
-      "sat_adj": 2,
-      "supp_thresh": 10,
-      "amplify_thresh": [
-        952,
-        543,
-        510
-      ],
-      "amplify_rate": 20,
-      "max_diff": 0.2
-    },
-    "sim_cfg": {
-      "C1": 195.07500000000002,
-      "C2": 1755.675,
-      "psnr_trigger": 40,
-      "asym_amp_thresh": 0.98,
-      "asym_amp_rate": 7,
-      "min_similarity": 0.95,
-      "re_calc_factor_left": 1,
-      "re_calc_factor_right": 1,
-      "segments_list": [
-        4,
-        2,
-        1
-      ]
-    },
-    "detect_method": "thresh",
-    "err_cfg": {
-      "inp_shape": [
-        288,
-        288,
-        3
-      ],
-      "img_size": [
-        288,
-        288
-      ],
-      "num_classes": 1,
-      "yolo_max_boxes": 10,
-      "yolo_iou_threshold": 0.5,
-      "weights": "F:/Capstone/Project/FQCS_DesktopApp/yolo41.h5",
-      "yolo_score_threshold": 0.3,
-      "classes": [
-        "dirt"
-      ]
-    },
-    "d_cfg": {
-      "max_boxes": 10,
-      "bg_thresh": 151,
-      "adj_bg_thresh": 1.3499456463675212,
-      "thresh_inv": false,
-      "light_adj_thresh": 65,
-      "alpha": 1.0,
-      "beta": -40,
-      "threshold1": 45,
-      "threshold2": 100,
-      "kernel": [
-        21,
-        21
-      ],
-      "d_kernel": [
-        6,
-        6
-      ],
-      "e_kernel": null,
-      "color_inv": false,
-      "cr_from": [
-        0,
-        0,
-        0
-      ],
-      "cr_to": [
-        180,
-        127.5,
-        127.5
-      ],
-      "adj_cr_to": [
-        180,
-        127.5,
-        127.5
-      ]
-    },
-    "asym_amp_thresh": 0.9202876396431949,
-    "re_calc_factor_left": 1.3431616049753226,
-    "re_calc_factor_right": 1.5362763634229861
-  },
-  {
-    "name": "Camera-2020-11-09 14:59:05.046890",
+    "name": "Main cam",
     "camera_uri": 0,
     "is_main": false,
     "is_color_enable": true,
@@ -122,8 +9,8 @@
     "min_height_per": 0.7,
     "stop_condition": 0,
     "detect_range": [
-      0.1,
-      0.9
+      0.2,
+      0.8
     ],
     "length_per_10px": null,
     "length_unit": "cm",
@@ -138,8 +25,8 @@
       "blur_val": 0.05,
       "alpha_r": 1,
       "alpha_l": 1,
-      "beta_r": -100,
-      "beta_l": -100,
+      "beta_r": -150,
+      "beta_l": -150,
       "sat_adj": 2,
       "supp_thresh": 10,
       "amplify_thresh": [
@@ -147,7 +34,7 @@
         null,
         null
       ],
-      "amplify_rate": 10,
+      "amplify_rate": 20,
       "max_diff": 0.2
     },
     "sim_cfg": {
@@ -196,8 +83,118 @@
       "threshold1": 40,
       "threshold2": 100,
       "kernel": [
+        21,
+        21
+      ],
+      "d_kernel": [
         5,
         5
+      ],
+      "e_kernel": null,
+      "color_inv": false,
+      "cr_from": [
+        0,
+        0,
+        0
+      ],
+      "cr_to": [
+        180,
+        127.5,
+        127.5
+      ],
+      "adj_cr_to": [
+        180,
+        127.5,
+        127.5
+      ]
+    }
+  },
+  {
+    "name": "Side cam",
+    "camera_uri": 0,
+    "is_main": false,
+    "is_color_enable": true,
+    "is_defect_enable": true,
+    "min_width_per": 0.1,
+    "min_height_per": 0.7,
+    "stop_condition": 0,
+    "detect_range": [
+      0.2,
+      0.8
+    ],
+    "length_per_10px": null,
+    "length_unit": "cm",
+    "max_size_diff": 0.3,
+    "frame_width": 640,
+    "frame_height": 480,
+    "color_cfg": {
+      "img_size": [
+        32,
+        64
+      ],
+      "blur_val": 0.05,
+      "alpha_r": 1,
+      "alpha_l": 1,
+      "beta_r": -150,
+      "beta_l": -150,
+      "sat_adj": 2,
+      "supp_thresh": 10,
+      "amplify_thresh": [
+        null,
+        null,
+        null
+      ],
+      "amplify_rate": 20,
+      "max_diff": 0.2
+    },
+    "sim_cfg": {
+      "C1": 195.07500000000002,
+      "C2": 1755.675,
+      "psnr_trigger": 40,
+      "asym_amp_thresh": null,
+      "asym_amp_rate": 7,
+      "min_similarity": 0.95,
+      "re_calc_factor_left": 1,
+      "re_calc_factor_right": 1,
+      "segments_list": [
+        4,
+        2,
+        1
+      ]
+    },
+    "detect_method": "thresh",
+    "err_cfg": {
+      "inp_shape": [
+        320,
+        160,
+        3
+      ],
+      "img_size": [
+        160,
+        320
+      ],
+      "num_classes": 1,
+      "yolo_max_boxes": 10,
+      "yolo_iou_threshold": 0.5,
+      "weights": "yolov4.h5",
+      "yolo_score_threshold": 0.3,
+      "classes": [
+        "dirt"
+      ]
+    },
+    "d_cfg": {
+      "max_boxes": 10,
+      "bg_thresh": 62,
+      "adj_bg_thresh": 62,
+      "thresh_inv": false,
+      "light_adj_thresh": 88,
+      "alpha": 1.0,
+      "beta": 0,
+      "threshold1": 40,
+      "threshold2": 100,
+      "kernel": [
+        11,
+        11
       ],
       "d_kernel": [
         5,

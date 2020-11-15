@@ -6,9 +6,8 @@ import abc
 
 
 class DetectorConfigAbs():
-    current_path_changed: Signal
-    manager_changed: Signal
-    current_cfg_name_changed: Signal
+    def release_cameras(self):
+        pass
 
     def add_config(self, new_cfg):
         pass
@@ -43,12 +42,11 @@ class DetectorConfigAbs():
     def get_current_cfg(self):
         pass
 
+    def reset(self):
+        pass
+
 
 class DetectorConfig(QObject, DetectorConfigAbs):
-    current_path_changed = Signal(str)
-    manager_changed = Signal(FQCSManager)
-    current_cfg_name_changed = Signal(str)
-
     __instance: DetectorConfigAbs = None
     __current_path: str = None
     __manager: FQCSManager = None
@@ -58,6 +56,10 @@ class DetectorConfig(QObject, DetectorConfigAbs):
     def __init__(self, parent=None):
         QObject.__init__(self, parent)
         return
+
+    def release_cameras(self):
+        for vid in self.__video_cameras:
+            vid.release()
 
     def get_video_cameras(self):
         return self.__video_cameras.copy()
@@ -73,32 +75,34 @@ class DetectorConfig(QObject, DetectorConfigAbs):
 
     def set_current_path(self, val):
         self.__current_path = val
-        self.current_path_changed.emit(val)
 
     def get_manager(self):
         return self.__manager
 
     def set_manager(self, val):
         self.__manager = val
-        self.manager_changed.emit(val)
+        for cfg in self.__manager.get_configs():
+            self.__add_camera(cfg)
 
     def get_current_cfg_name(self):
         return self.__current_cfg_name
 
     def set_current_cfg_name(self, val):
         self.__current_cfg_name = val
-        self.current_cfg_name_changed.emit(val)
 
     def get_current_cfg(self):
         idx, cfg = self.__manager.get_config_by_name(self.__current_cfg_name)
         return idx, cfg
 
-    def add_config(self, new_cfg):
+    def __add_camera(self, cfg):
         vid = cv2.VideoCapture()
-        camera_uri = new_cfg["camera_uri"]
+        camera_uri = cfg["camera_uri"]
         if camera_uri is not None and camera_uri != -1:
             vid.open(camera_uri)
         self.__video_cameras.append(vid)
+
+    def add_config(self, new_cfg):
+        self.__add_camera(new_cfg)
         self.__manager.add_config(new_cfg)
 
     def remove_config(self, cfg):
@@ -111,6 +115,8 @@ class DetectorConfig(QObject, DetectorConfigAbs):
         self.__manager = FQCSManager()
         self.__current_cfg_name = None
         self.__current_path = None
+        self.release_cameras()
+        self.__video_cameras = []
 
     @staticmethod
     def instance() -> DetectorConfigAbs:

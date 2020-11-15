@@ -125,25 +125,26 @@ class ErrorDetectScreen(QWidget):
 
     @asyncSlot()
     async def btn_choose_model_clicked(self):
-        file_name, _ = helpers.file_chooser_open_file(self)
-        if file_name is not None:
-            self.ui.inpModelChoice.setText(
-                file_name.split("/")[-1].split("\\")[-1])
-            self.__current_cfg["err_cfg"]["weights"] = file_name
-            await DetectorConfig.instance().manager.load_model(
-                self.__current_cfg)
+        url = helpers.file_chooser_open_file(self)
+        if url.isEmpty(): return
+        file_name = url.toLocalFile()
+        self.ui.inpModelChoice.setText(
+            file_name.split("/")[-1].split("\\")[-1])
+        self.__current_cfg["err_cfg"]["weights"] = file_name
+        await DetectorConfig.instance().manager.load_model(self.__current_cfg)
 
     def btn_choose_classes_clicked(self):
-        file_name, _ = helpers.file_chooser_open_file(self)
-        if file_name is not None:
-            class_list = []
-            with open(file_name, newline='') as csvfile:
-                spamreader = csv.reader(csvfile, delimiter='\n')
-                for row in spamreader:
-                    class_list.extend(row)
-            self.__current_cfg["err_cfg"]["classes"] = class_list
-            self.__current_cfg["err_cfg"]["num_classes"] = len(class_list)
-            self.ui.inpClasses.setText(", ".join(class_list))
+        url = helpers.file_chooser_open_file(self)
+        if url.isEmpty(): return
+        file_name = url.toLocalFile()
+        class_list = []
+        with open(file_name, newline='') as csvfile:
+            spamreader = csv.reader(csvfile, delimiter='\n')
+            for row in spamreader:
+                class_list.extend(row)
+        self.__current_cfg["err_cfg"]["classes"] = class_list
+        self.__current_cfg["err_cfg"]["num_classes"] = len(class_list)
+        self.ui.inpClasses.setText(", ".join(class_list))
 
     def view_cam(self, image):
         # read image in BGR format

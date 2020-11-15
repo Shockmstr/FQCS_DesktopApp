@@ -124,10 +124,7 @@ class MainWindow(QMainWindow):
         return
 
     def closeEvent(self, event):
-        video_cameras = self.__detector_cfg.get_video_cameras()
-        for vid in video_cameras:
-            vid.release()
-        DetectorConfig.instance().reset()
+        self.__detector_cfg.reset()
 
     def camera_timer_timeout(self):
         if (self.__video_camera is not None and self.__video_camera.isOpened()
@@ -241,28 +238,30 @@ class MainWindow(QMainWindow):
 
     @asyncSlot()
     async def action_load_config_triggered(self):
-        file_path = helpers.file_chooser_open_directory(self)
-        if file_path is not None:
-            manager = FQCSManager(config_folder=file_path)
-            manager.load_sample_images()
-            configs = manager.get_configs()
-            for cfg in configs:
-                if cfg["is_main"] == True:
-                    self.__detector_cfg.set_current_cfg_name(cfg["name"])
-                    await manager.load_model(cfg)
-                    break
-            self.__detector_cfg.set_manager(manager)
-            self.__detector_cfg.set_current_path(file_path)
-        else:
-            print("Error loading config")
+        url = helpers.file_chooser_open_directory(self)
+        if url.isEmpty(): return
+        file_path = url.toLocalFile()
+        self.__detector_cfg.reset()
+        manager = FQCSManager(config_folder=file_path)
+        manager.load_sample_images()
+        configs = manager.get_configs()
+        for cfg in configs:
+            if cfg["is_main"] == True:
+                self.__detector_cfg.set_current_cfg_name(cfg["name"])
+                await manager.load_model(cfg)
+                break
+        self.__detector_cfg.set_manager(manager)
+        self.__detector_cfg.set_current_path(file_path)
+        self.change_home_screen()
 
     def action_save_triggered(self):
         manager = self.__detector_cfg.get_manager()
         configs = manager.get_configs()
         if configs is not None:
-            file_path = helpers.file_chooser_open_directory(self)
-            if (file_path):
-                manager.save_config(file_path)
-                self.__detector_cfg.set_current_path(file_path)
+            url = helpers.file_chooser_open_directory(self)
+            if url.isEmpty(): return
+            file_path = url.toLocalFile()
+            manager.save_config(file_path)
+            self.__detector_cfg.set_current_path(file_path)
         else:
             print("No config provided")

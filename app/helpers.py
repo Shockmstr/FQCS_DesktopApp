@@ -1,3 +1,4 @@
+from PySide2.QtCore import QUrl
 from PySide2.QtWidgets import QFileDialog, QWidget, QMessageBox
 import cv2
 import os
@@ -20,18 +21,18 @@ def sync_func(func, *args):
             return func()
 
 
-def file_chooser_open_directory(parent):
+def file_chooser_open_directory(parent) -> QUrl:
     dialog = QFileDialog(parent)
     dialog.setFileMode(QFileDialog.Directory)
     dialog.setOption(QFileDialog.ShowDirsOnly, True)
-    filename = dialog.getExistingDirectory()
-    return filename
+    url = dialog.getExistingDirectoryUrl()
+    return url
 
 
 def file_chooser_open_file(parent):
     dialog = QFileDialog(parent)
-    filename = dialog.getOpenFileName()
-    return filename
+    url = dialog.getOpenFileUrl()
+    return url
 
 
 def get_all_camera_index(num=10):
@@ -52,7 +53,8 @@ def hide_all_children(widget):
     for ch in widget.children():
         if hasattr(ch, 'hide'):
             ch.hide()
-            
+
+
 def show_all_children(widget):
     for ch in widget.children():
         if hasattr(ch, 'show'):
