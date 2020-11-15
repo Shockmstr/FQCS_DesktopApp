@@ -28,7 +28,20 @@ class ErrorDetectScreen(QWidget):
         self.ui = Ui_ErrorDetectScreen()
         self.__current_cfg = None
         self.ui.setupUi(self)
+        self.build()
         self.binding()
+
+    def build(self):
+        self.image1 = ImageWidget()
+        self.image2 = ImageWidget()
+        self.image3 = ImageWidget()
+        self.imageLayout = self.ui.screen1.parentWidget().layout()
+        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+        self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+        self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
+        self.ui.screen1.deleteLater()
+        self.ui.screen2.deleteLater()
+        self.ui.screen4.deleteLater()
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
@@ -148,20 +161,17 @@ class ErrorDetectScreen(QWidget):
 
     def view_cam(self, image):
         # read image in BGR format
-        self.image1 = ImageWidget()
-        self.image2 = ImageWidget()
-        self.image3 = ImageWidget()
-        self.label_w = self.ui.screen1.width()
-        self.label_h = self.ui.screen1.height()
-        self.imageLayout = self.ui.screen1.parentWidget().layout()
-        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
-        self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
-        self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
-        self.img = image
-        self.dim = (self.label_w, self.label_h)
-        orig = cv2.resize(self.img, self.dim)
+        label_w = self.image1.width()
+        label_h = self.image1.height()
+        dim = (label_w, label_h)
+        if image is None:
+            self.image1.imshow(image)
+            self.image2.imshow(image)
+            self.image3.imshow(image)
+            return
+        orig = cv2.resize(image, dim)
         self.image1.imshow(orig)
-        self.__process_image(self.img)
+        self.__process_image(image)
 
     async def __detect_error(self, images):
         manager = DetectorConfig.instance().manager

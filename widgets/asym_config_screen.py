@@ -26,7 +26,40 @@ class AsymConfigScreen(QWidget):
         self.__current_cfg = None
         self.ui = Ui_AsymConfigScreen()
         self.ui.setupUi(self)
+        self.build()
         self.binding()
+
+    def build(self):
+        self.image1 = ImageWidget()
+        self.imageLayout = self.ui.screen1.parentWidget().layout()
+        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+        self.ui.screen1.deleteLater()
+
+        self.image_detect_left = ImageWidget()
+        self.image_detect_right = ImageWidget()
+        self.image_sample_left = ImageWidget()
+        self.image_sample_right = ImageWidget()
+
+        self.screen2_layout = self.ui.screen2.layout()
+        self.screen2_layout.replaceWidget(self.ui.screen2Left,
+                                          self.image_detect_left)
+        self.screen2_layout.replaceWidget(self.ui.screen2Right,
+                                          self.image_detect_right)
+        self.ui.screen2Left.deleteLater()
+        self.ui.screen2Right.deleteLater()
+
+        self.screen3_layout = self.ui.screen3.layout()
+        self.screen3_layout.replaceWidget(self.ui.screen3Left,
+                                          self.image_sample_left)
+        self.screen3_layout.replaceWidget(self.ui.screen3Right,
+                                          self.image_sample_right)
+        self.ui.screen3Left.deleteLater()
+        self.ui.screen3Right.deleteLater()
+
+        self.image_detect_left.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.image_detect_right.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.image_sample_left.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.image_sample_right.ui.lblImage.setAlignment(Qt.AlignCenter)
 
     # binding
     def binding(self):
@@ -101,16 +134,19 @@ class AsymConfigScreen(QWidget):
 
     def view_cam(self, image):
         # read image in BGR format
-        self.image1 = ImageWidget()
-        self.label_w = self.ui.screen1.width()
-        self.label_h = self.ui.screen1.height()
-        self.imageLayout = self.ui.screen1.parentWidget().layout()
-        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
-        self.img = image
-        self.dim = (self.label_w, self.label_h)
-        img_size = (156, self.label_h - 30)
-        contour, detected, detected_pair = self.__process_pair(self.img.copy())
-        contour_resized = cv2.resize(contour, self.dim)
+        label_w = self.image1.width()
+        label_h = self.image1.height()
+        dim = (label_w, label_h)
+        if image is None:
+            self.image1.imshow(image)
+            self.image_detect_left.imshow(image)
+            self.image_detect_right.imshow(image)
+            self.image_sample_left.imshow(image)
+            self.image_sample_right.imshow(image)
+            return
+        img_size = (156, label_h - 30)
+        contour, detected, detected_pair = self.__process_pair(image.copy())
+        contour_resized = cv2.resize(contour, dim)
         self.image1.imshow(contour_resized)
         if detected_pair is not None:
             left, right = self.__preprocess_color(detected_pair[0],
@@ -159,31 +195,6 @@ class AsymConfigScreen(QWidget):
         self.ui.inpReCalcFactorRight.setValue(self.re_calc_factor_right)
 
     def showEvent(self, event):
-        self.image_detect_left = ImageWidget()
-        self.image_detect_right = ImageWidget()
-        self.image_sample_left = ImageWidget()
-        self.image_sample_right = ImageWidget()
-        self.label_w = self.ui.screen1.width()
-        self.label_h = self.ui.screen1.height()
-
-        self.screen2_layout = self.ui.screen2.layout()
-
-        self.screen2_layout.replaceWidget(self.ui.screen2Left,
-                                          self.image_detect_left)
-        self.screen2_layout.replaceWidget(self.ui.screen2Right,
-                                          self.image_detect_right)
-
-        self.screen3_layout = self.ui.screen3.layout()
-
-        self.screen3_layout.replaceWidget(self.ui.screen3Left,
-                                          self.image_sample_left)
-        self.screen3_layout.replaceWidget(self.ui.screen3Right,
-                                          self.image_sample_right)
-
-        self.image_detect_left.ui.lblImage.setAlignment(Qt.AlignCenter)
-        self.image_detect_right.ui.lblImage.setAlignment(Qt.AlignCenter)
-        self.image_sample_left.ui.lblImage.setAlignment(Qt.AlignCenter)
-        self.image_sample_right.ui.lblImage.setAlignment(Qt.AlignCenter)
         self.__view_image_sample()
 
     def __preprocess_color(self, sample_left, sample_right):

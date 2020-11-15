@@ -22,7 +22,20 @@ class TestDetectPairScreen(QWidget):
         self.ui = Ui_test_detect_pair_screen()
         self.__current_cfg = None
         self.ui.setupUi(self)
+        self.build()
         self.binding()
+
+    def build(self):
+        self.image1 = ImageWidget()
+        self.image2 = ImageWidget()
+        self.image3 = ImageWidget()
+        self.imageLayout = self.ui.screen1.parentWidget().layout()
+        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+        self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+        self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
+        self.ui.screen1.deleteLater()
+        self.ui.screen2.deleteLater()
+        self.ui.screen4.deleteLater()
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
@@ -37,24 +50,21 @@ class TestDetectPairScreen(QWidget):
 
     def view_cam(self, image):
         # read image in BGR format
-        self.image1 = ImageWidget()
-        self.image2 = ImageWidget()
-        self.image3 = ImageWidget()
-        self.label_w = self.ui.screen1.width()
-        self.label_h = self.ui.screen1.height()
-        self.dim = (self.label_w, self.label_h)
-        self.imageLayout = self.ui.screen1.parentWidget().layout()
-        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
-        self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
-        self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
-        self.img = image
-        contour, detected, detected_pair = self.__process_pair(self.img.copy())
-        img_resized = cv2.resize(self.img, self.dim)
-        contour_resized = cv2.resize(contour, self.dim)
+        label_w = self.image1.width()
+        label_h = self.image1.height()
+        dim = (label_w, label_h)
+        if image is None:
+            self.image1.imshow(image)
+            self.image2.imshow(image)
+            self.image3.imshow(image)
+            return
+        contour, detected, detected_pair = self.__process_pair(image.copy())
+        img_resized = cv2.resize(image, dim)
+        contour_resized = cv2.resize(contour, dim)
         self.image1.imshow(img_resized)
         self.image2.imshow(contour_resized)
         if detected is not None and self.__detected_pair is None:
-            detected_resized = cv2.resize(detected, self.dim)
+            detected_resized = cv2.resize(detected, dim)
             self.image3.imshow(detected_resized)
             self.__detected_pair = detected_pair
 

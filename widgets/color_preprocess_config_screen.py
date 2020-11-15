@@ -131,6 +131,9 @@ class ColorPreprocessConfigScreen(QWidget):
                                         interpolation=cv2.INTER_AREA)
             self.image1.imshow(modified_left)
             self.image2.imshow(modified_right)
+        else:
+            self.image1.imshow(None)
+            self.image2.imshow(None)
 
     def showEvent(self, event):
         self.image1 = ImageWidget()

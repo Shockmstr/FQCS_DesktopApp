@@ -27,7 +27,16 @@ class ColorParamCalibrationScreen(QWidget):
         self.__current_cfg = None
         self.ui = Ui_ColorParamCalibScreen()
         self.ui.setupUi(self)
+        self.build()
         self.binding()
+
+    def build(self):
+        self.image1 = ImageWidget()
+        self.imageLayout = self.ui.screen1.parentWidget().layout()
+        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+        self.ui.screen1.deleteLater()
+
+        return
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
@@ -72,12 +81,7 @@ class ColorParamCalibrationScreen(QWidget):
         self.__current_cfg["color_cfg"]["max_diff"] = value
 
     def cbbCamera_chose(self):
-        self.image1 = ImageWidget()
-        self.label_w = self.ui.screen1.width()
-        self.label_h = self.ui.screen1.height()
-        self.imageLayout = self.ui.screen1.parentWidget().layout()
-        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
-        index = self.ui.cbbCamera.currentData()
+        return
 
     def __load_config(self):
         amplify_rate = self.__current_cfg["color_cfg"]["amplify_rate"]
@@ -109,12 +113,19 @@ class ColorParamCalibrationScreen(QWidget):
 
     def view_cam(self, image):
         # read image in BGR format
-        self.replace_camera_widget()
-        self.img = image
-        self.dim = (self.label_w, self.label_h)
-        img_size = (156, self.label_h - 30)
-        contour, detected, detected_pair = self.__process_pair(self.img.copy())
-        contour_resized = cv2.resize(contour, self.dim)
+        label_w = self.image1.width()
+        label_h = self.image1.height()
+        dim = (label_w, label_h)
+        if image is None:
+            self.image1.imshow(image)
+            self.image_detect_left.imshow(image)
+            self.image_detect_right.imshow(image)
+            self.image_sample_left.imshow(image)
+            self.image_sample_right.imshow(image)
+            return
+        img_size = (156, label_h - 30)
+        contour, detected, detected_pair = self.__process_pair(image.copy())
+        contour_resized = cv2.resize(contour, dim)
         self.image1.imshow(contour_resized)
         if detected_pair is not None:
             left, right = self.__preprocess_color(detected_pair[0],

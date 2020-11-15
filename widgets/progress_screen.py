@@ -23,7 +23,17 @@ class ProgressScreen(QWidget):
         self.__current_cfg = None
         self.ui = Ui_ProgressScreen()
         self.ui.setupUi(self)
+        self.build()
         self.binding()
+
+    def build(self):
+        self.image1 = ImageWidget()
+        self.image2 = ImageWidget()
+        self.imageLayout = self.ui.screen1.parentWidget().layout()
+        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+        self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+        self.ui.screen1.deleteLater()
+        self.ui.screen2.deleteLater()
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
@@ -45,26 +55,16 @@ class ProgressScreen(QWidget):
             self.__camera_loaded = True
 
     def view_cam(self, image):
-        self.replace_camera_widget()
-        self.img = image
-        self.dim = (self.label_w, self.label_h)
-        img_resized = cv2.resize(self.img, self.dim)
+        label_w = self.image1.width()
+        label_h = self.image1.height()
+        dim = (label_w, label_h)
+        if image is None:
+            self.image1.imshow(image)
+            self.image2.imshow(image)
+            return
+        img_resized = cv2.resize(image, dim)
         self.image1.imshow(img_resized)
-        trio.run(self.process_image, self.img)
-
-    def replace_camera_widget(self):
-        if not self.CAMERA_LOADED:
-            self.image1 = ImageWidget()
-            self.image2 = ImageWidget()
-            self.image3 = ImageWidget()
-            self.label_w = self.ui.screen1.width()
-            self.label_h = self.ui.screen1.height()
-            self.imageLayout = self.ui.screen1.parentWidget().layout()
-            self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
-            self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
-            self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
-            self.ui.btnCapture.setText("STOP")
-            self.CAMERA_LOADED = True
+        trio.run(self.process_image, image)
 
     def __process_pair(self, image):
         manager = DetectorConfig.instance().manager

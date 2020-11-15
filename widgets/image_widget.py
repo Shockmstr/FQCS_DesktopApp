@@ -11,6 +11,9 @@ class ImageWidget(QWidget):
         self.ui.setupUi(self)
 
     def imshow(self, image):
+        if image is None:
+            self.ui.lblImage.clear()
+            return
         length = image.shape[2] if len(image.shape) > 2 else 1
         imformat = QImage.Format_Grayscale8 if length == 1 else QImage.Format_RGB888
         image = QImage(image.data, image.shape[1], image.shape[0],

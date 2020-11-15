@@ -22,6 +22,15 @@ class MeasurementScreen(QWidget):
         self.ui.setupUi(self)
         self.binding()
 
+    def build(self):
+        self.image1 = ImageWidget()
+        self.image2 = ImageWidget()
+        self.imageLayout = self.ui.screen1.parentWidget().layout()
+        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+        self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+        self.ui.screen1.deleteLater()
+        self.ui.screen2.deleteLater()
+
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
         self.__load_config()
@@ -95,21 +104,20 @@ class MeasurementScreen(QWidget):
     # view camera
     def view_cam(self, image):
         # read image in BGR format
-        self.image1 = ImageWidget()
-        self.image2 = ImageWidget()
-        self.label_w = self.ui.screen1.width()
-        self.label_h = self.ui.screen1.height()
-        self.imageLayout = self.ui.screen1.parentWidget().layout()
-        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
-        self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+        label_w = self.image1.width()
+        label_h = self.image1.height()
+        if image is None:
+            self.image1.imshow(image)
+            self.image2.imshow(image)
+            return
         orig = image.copy()
         orig = self.__draw_rectangle_on_image(orig)
         orig = self.__draw_position_line_on_image(orig)
         orig = self.__draw_detect_range(orig)
-        self.dim = (self.label_w, self.label_h)
+        dim = (label_w, label_h)
         contour = self.__process_image(image.copy())
-        img_resized = cv2.resize(orig, self.dim)
-        contour_resized = cv2.resize(contour, self.dim)
+        img_resized = cv2.resize(orig, dim)
+        contour_resized = cv2.resize(contour, dim)
         self.image1.imshow(img_resized)
         self.image2.imshow(contour_resized)
 

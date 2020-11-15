@@ -107,6 +107,9 @@ class DetectionConfigScreen(QWidget):
         table.clearSelection()
         table.itemSelectionChanged.emit()
         self.__last_selected_row = -1
+        self.image1.imshow(None)
+        self.image2.imshow(None)
+        self.image3.imshow(None)
 
     #BINDING
     def binding(self):
@@ -176,6 +179,9 @@ class DetectionConfigScreen(QWidget):
         chosen_row = table.currentRow()
         detector_cfg = DetectorConfig.instance()
         camera_name = table.item(chosen_row, 0).text()
+        _, cfg = detector_cfg.get_manager().get_config_by_name(camera_name)
+        detector_cfg.remove_config(cfg)
+        self.__reload_table()
 
     #edge detection method
     def chk_thresh_invert_state_change(self):
@@ -332,6 +338,11 @@ class DetectionConfigScreen(QWidget):
         label_w = self.image1.width()
         label_h = self.image1.height()
         dim = (label_w, label_h)
+        if image is None:
+            self.image1.imshow(image)
+            self.image2.imshow(image)
+            self.image3.imshow(image)
+            return
         contour, proc = self.__process_contours(image.copy())
         img_resized = cv2.resize(image, dim)
         contour_resized = cv2.resize(contour, dim)

@@ -193,8 +193,8 @@
       "threshold1": 40,
       "threshold2": 100,
       "kernel": [
-        11,
-        11
+        21,
+        21
       ],
       "d_kernel": [
         5,
