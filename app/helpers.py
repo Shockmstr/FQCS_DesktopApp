@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QFileDialog, QWidget
+from PySide2.QtWidgets import QFileDialog, QWidget, QMessageBox
 import cv2
 import os
 from app_models.detector_config import DetectorConfig
@@ -52,3 +52,12 @@ def hide_all_children(widget: QWidget):
     for ch in widget.children():
         if hasattr(ch, 'hide'):
             ch.hide()
+
+
+def show_message(text, title="Message", icon=QMessageBox.Information):
+    msg = QMessageBox()
+    msg.setIcon(icon)
+    msg.setText(text)
+    msg.setWindowTitle(title)
+    choice = msg.exec_()
+    return choice

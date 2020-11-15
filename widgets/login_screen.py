@@ -2,6 +2,7 @@ from PySide2.QtWidgets import QWidget, QMessageBox
 from PySide2.QtCore import Signal
 from services.identity_service import IdentityService
 from views.login_screen import Ui_LoginScreen
+from app import helpers
 
 
 class LoginScreen(QWidget):
@@ -29,13 +30,7 @@ class LoginScreen(QWidget):
             self.__identity_service.save_token_json(resp)
             self.__identity_service.check_token()
         else:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-
             if is_success is not None:
-                msg.setText("Invalid account or password")
+                helpers.show_message("Invalid account or password")
             else:
-                msg.setText("Something's wrong")
-
-            msg.setWindowTitle("Login fail")
-            choice = msg.exec_()
+                helpers.show_message("Something's wrong")

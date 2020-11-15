@@ -214,8 +214,22 @@ class DetectionConfigScreen(QWidget):
             self.ui.btnColorTo.setStyleSheet("background-color: " + color_hex)
 
     def btn_add_clicked(self):
+        manager = DetectorConfig.instance().get_manager()
         table = self.ui.tblCameraConfig
-        camera_name = self.ui.txtNewCamera.text()
+        camera_name = self.ui.txtNewCamera.text().strip()
+        err_text = None
+        if camera_name is None or camera_name == "":
+            err_text = "Invalid name"
+        else:
+            existed_cfg = manager.get_config_by_name(camera_name)
+            if existed_cfg is not None:
+                err_text = "Name existed"
+        if err_text is not None:
+            helpers.show_message(err_text)
+            return
+        new_cfg = detector.default_detector_config()
+        new_cfg["name"] = camera_name
+        manager.add_config(new_cfg)
         self.__add_new_row(table, camera_name, "")
 
     def tbl_camera_cell_clicked(self):
