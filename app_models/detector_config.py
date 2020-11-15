@@ -45,6 +45,9 @@ class DetectorConfigAbs():
     def reset(self):
         pass
 
+    def validate_config_name(self, camera_name):
+        pass
+
 
 class DetectorConfig(QObject, DetectorConfigAbs):
     __instance: DetectorConfigAbs = None
@@ -117,6 +120,16 @@ class DetectorConfig(QObject, DetectorConfigAbs):
         self.__current_path = None
         self.release_cameras()
         self.__video_cameras = []
+
+    def validate_config_name(self, camera_name):
+        err_text = None
+        if camera_name is None or camera_name == "":
+            err_text = "Invalid name"
+        else:
+            idx, existed_cfg = self.__manager.get_config_by_name(camera_name)
+            if existed_cfg is not None:
+                err_text = "Name existed"
+        return err_text
 
     @staticmethod
     def instance() -> DetectorConfigAbs:

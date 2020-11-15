@@ -1,8 +1,9 @@
 from PySide2.QtGui import QColor
-from PySide2.QtWidgets import QWidget, QColorDialog, QHeaderView, QTableWidgetItem, QAbstractItemView, QMessageBox
-from PySide2.QtCore import Signal
+from PySide2.QtWidgets import QWidget, QColorDialog, QHeaderView, QDialog, QTableWidgetItem, QAbstractItemView, QMessageBox, QAction, QMenu
+from PySide2.QtCore import Signal, Qt
 import numpy as np
 from views.detection_config_screen import Ui_DetectionConfigScreen
+from widgets.dialogs.dialog_edit_name import DialogEditName
 from widgets.image_widget import ImageWidget
 from FQCS import detector, helper
 from app_models.detector_config import DetectorConfig
@@ -68,14 +69,30 @@ class DetectionConfigScreen(QWidget):
         self.ui.cbbMethod.addItem("Threshold", userData="thresh")
         self.ui.cbbMethod.addItem("Range", userData="range")
 
-    def showEvent(self, event):
-        _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
-
         table = self.ui.tblCameraConfig
         table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         table.horizontalHeader().setSectionResizeMode(
             1, QHeaderView.ResizeToContents)
         table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        table.setContextMenuPolicy(Qt.CustomContextMenu)
+
+        # create context menu
+        self.tblPopMenu = QMenu(self)
+        self.tblPopActionEditName = QAction('Edit name', self)
+        self.tblPopActionRemove = QAction('Remove', self)
+        self.tblPopMenu.addAction(self.tblPopActionEditName)
+        self.tblPopMenu.addAction(self.tblPopActionRemove)
+
+    def showEvent(self, event):
+        _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__reload_table()
+        if self.__current_cfg is None:
+            self.__show_config_section(False)
+            return
+        self.__load_config()
+
+    def __reload_table(self):
+        table = self.ui.tblCameraConfig
         table.clearContents()
         table.setRowCount(0)
         manager = DetectorConfig.instance().get_manager()
@@ -88,12 +105,8 @@ class DetectionConfigScreen(QWidget):
             else:
                 self.__add_new_row(table, camera_name, "")
         table.clearSelection()
+        table.itemSelectionChanged.emit()
         self.__last_selected_row = -1
-
-        if self.__current_cfg is None:
-            self.__show_config_section(False)
-            return
-        self.__load_config()
 
     #BINDING
     def binding(self):
@@ -126,11 +139,44 @@ class DetectionConfigScreen(QWidget):
             self.chk_thresh_invert_state_change)
         self.ui.ckbInvertRange.stateChanged.connect(
             self.chk_range_invert_state_change)
-        self.ui.tblCameraConfig.cellClicked.connect(
-            self.tbl_camera_cell_clicked)
+        self.ui.tblCameraConfig.itemSelectionChanged.connect(
+            self.tbl_camera_item_selection_changed)
+        self.ui.tblCameraConfig.customContextMenuRequested.connect(
+            self.table_context_menu)
+        self.tblPopActionEditName.triggered.connect(
+            self.table_action_edit_name_triggered)
+        self.tblPopActionRemove.triggered.connect(
+            self.table_action_remove_triggered)
         self.ui.btnAdd.clicked.connect(self.btn_add_clicked)
 
     #HANDLERS
+    def table_context_menu(self, point):
+        self.tblPopMenu.exec_(self.ui.tblCameraConfig.mapToGlobal(point))
+
+    def table_action_edit_name_triggered(self):
+        table = self.ui.tblCameraConfig
+        chosen_row = table.currentRow()
+        detector_cfg = DetectorConfig.instance()
+        camera_name = table.item(chosen_row, 0).text()
+        dialog = DialogEditName(camera_name, parent=self)
+        choice = dialog.exec_()
+        if choice != QDialog.Accepted:
+            return
+        new_name = dialog.get_inp_edit_name().strip()
+        err_text = detector_cfg.validate_config_name(new_name)
+        if err_text is not None:
+            helpers.show_message(err_text)
+            return
+        _, cfg = detector_cfg.get_current_cfg()
+        cfg["name"] = new_name
+        self.__reload_table()
+
+    def table_action_remove_triggered(self, point):
+        table = self.ui.tblCameraConfig
+        chosen_row = table.currentRow()
+        detector_cfg = DetectorConfig.instance()
+        camera_name = table.item(chosen_row, 0).text()
+
     #edge detection method
     def chk_thresh_invert_state_change(self):
         if self.ui.ckbInvertThresh.isChecked():
@@ -235,13 +281,7 @@ class DetectionConfigScreen(QWidget):
         manager = detector_cfg.get_manager()
         table = self.ui.tblCameraConfig
         camera_name = self.ui.txtNewCamera.text().strip()
-        err_text = None
-        if camera_name is None or camera_name == "":
-            err_text = "Invalid name"
-        else:
-            idx, existed_cfg = manager.get_config_by_name(camera_name)
-            if existed_cfg is not None:
-                err_text = "Name existed"
+        err_text = detector_cfg.validate_config_name(camera_name)
         if err_text is not None:
             helpers.show_message(err_text)
             return
@@ -250,17 +290,22 @@ class DetectionConfigScreen(QWidget):
         detector_cfg.add_config(new_cfg)
         self.__add_new_row(table, camera_name, "")
 
-    def tbl_camera_cell_clicked(self):
+    def tbl_camera_item_selection_changed(self):
         table = self.ui.tblCameraConfig
         chosen_row = table.currentRow()
         if chosen_row == self.__last_selected_row: return
-        detector_cfg = DetectorConfig.instance()
-        camera_name = table.item(chosen_row, 0).text()
         self.__last_selected_row = chosen_row
-        detector_cfg.set_current_cfg_name(camera_name)
-        _, self.__current_cfg = detector_cfg.get_current_cfg()
-        self.__show_config_section(True)
-        self.__load_config()
+        detector_cfg = DetectorConfig.instance()
+        if chosen_row != -1:
+            camera_name = table.item(chosen_row, 0).text()
+            detector_cfg.set_current_cfg_name(camera_name)
+            _, self.__current_cfg = detector_cfg.get_current_cfg()
+            self.__show_config_section(True)
+            self.__load_config()
+        else:
+            detector_cfg.set_current_cfg_name(None)
+            self.__show_config_section(False)
+            self.camera_changed.emit(-1)
 
     def cbbCamera_changed(self):
         # self.replace_camera_widget()
@@ -382,5 +427,7 @@ class DetectionConfigScreen(QWidget):
     def __add_new_row(self, table, camera_name, is_main):
         current_row = table.rowCount()
         table.insertRow(current_row)
-        table.setItem(current_row, 0, QTableWidgetItem(camera_name))
-        table.setItem(current_row, 1, QTableWidgetItem(is_main))
+        name_item = QTableWidgetItem(camera_name)
+        is_main_item = QTableWidgetItem(is_main)
+        table.setItem(current_row, 0, name_item)
+        table.setItem(current_row, 1, is_main_item)
