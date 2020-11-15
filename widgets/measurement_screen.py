@@ -83,8 +83,8 @@ class MeasurementScreen(QWidget):
 
     def sld_position_change(self):
         value = self.ui.sldDectectPosition.value()
-        self.__current_cfg["stop_condition"] = value / 100 * self.label_width
-        self.ui.groupSliderPosition.setTitle("Detect position: " + str(value))
+        self.__current_cfg["stop_condition"] = -value
+        self.ui.groupSliderPosition.setTitle("Detect position: " + str(-value))
 
     def inp_length_unit_change(self):
         value = str(self.ui.inpLengthUnit.text())
@@ -149,48 +149,48 @@ class MeasurementScreen(QWidget):
 
     # draw functions
     def __draw_rectangle_on_image(self, image):
-        self.label_width = image.shape[1]
-        self.label_height = image.shape[0]
+        image_width = image.shape[1]
+        image_height = image.shape[0]
 
         height_value = self.ui.sldMaximumHeight.value()
         width_value = self.ui.sldMaximumWidth.value()
 
-        rect_width = int(self.label_width * width_value / 100)
-        rect_height = int(self.label_height * height_value / 100)
+        rect_width = int(image_width * width_value / 100)
+        rect_height = int(image_height * height_value / 100)
         # draw Green rectangle image into image
         return cv2.rectangle(image, (0, 0), (rect_width, rect_height),
                              (0, 0, 255), 3)
 
     def __draw_position_line_on_image(self, image):
         value = self.ui.sldDectectPosition.value()
-        self.label_width = image.shape[1]
-        self.label_height = image.shape[0]
+        image_width = image.shape[1]
+        image_height = image.shape[0]
 
-        position = int(self.label_width * (value + 50) / 100)
+        position = int(image_width / 2 + value)
 
-        return cv2.line(image, (position, 0), (position, self.label_height),
+        return cv2.line(image, (position, 0), (position, image_height),
                         (255, 0, 0), 3)
 
     def __draw_detect_range(self, image):
         # convert 0 - 50 to scale of 0.0 to 0.5 (step 0.01)
         # return value
-        self.label_width = image.shape[1]
-        self.label_height = image.shape[0]
+        image_width = image.shape[1]
+        image_height = image.shape[0]
 
         value = str(self.ui.sldDetectRange.value() / 100)
 
         left_line_ratio = float(value) / 1
         right_line_ratio = 1 - left_line_ratio
 
-        left_line_point = int(left_line_ratio * self.label_width)
-        right_line_point = int(right_line_ratio * self.label_width)
+        left_line_point = int(left_line_ratio * image_width)
+        right_line_point = int(right_line_ratio * image_width)
         self.__current_cfg["detect_range"] = (float(value),
                                               float(1 - float(value)))
 
         image = cv2.line(image, (left_line_point, 0),
-                         (left_line_point, self.label_height), (0, 255, 0), 3)
+                         (left_line_point, image_height), (0, 255, 0), 3)
         image = cv2.line(image, (right_line_point, 0),
-                         (right_line_point, self.label_height), (0, 255, 0), 3)
+                         (right_line_point, image_height), (0, 255, 0), 3)
         return image
 
     def __process_image(self, image):
@@ -217,13 +217,16 @@ class MeasurementScreen(QWidget):
         stop_condition = self.__current_cfg["stop_condition"]
         detect_range = self.__current_cfg["detect_range"][0] * 100
         max_size_diff = self.__current_cfg["max_size_diff"]
+        frame_width = self.__current_cfg["frame_width"]
 
         self.ui.sldMaximumWidth.setValue(min_width)
         self.ui.sldMaximumHeight.setValue(min_height)
         self.ui.inpLengthUnit.setText(length_unit)
         self.ui.groupInputAllowDiff.setTitle(
             f"Allow Difference ({length_unit})")
-        self.ui.sldDectectPosition.setValue(stop_condition)
+        self.ui.sldDectectPosition.setMinimum(-int(frame_width / 2))
+        self.ui.sldDectectPosition.setMaximum(int(frame_width / 2))
+        self.ui.sldDectectPosition.setValue(-stop_condition)
         self.ui.sldDetectRange.setValue(detect_range)
         self.ui.inpAllowDiff.setValue(max_size_diff)
         self.ui.chkMainCamera.setChecked(self.__current_cfg["is_main"])

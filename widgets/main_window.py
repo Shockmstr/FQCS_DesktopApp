@@ -139,6 +139,10 @@ class MainWindow(QMainWindow):
             if image is None:
                 self.__video_camera.set(cv2.CAP_PROP_POS_FRAMES, 0)
                 _, image = self.__video_camera.read()
+            _, current_cfg = self.__detector_cfg.get_current_cfg()
+            frame_width, frame_height = current_cfg[
+                "frame_width"], current_cfg["frame_height"]
+            image = cv2.resize(image, (frame_width, frame_height))
             self.__view_cam(image)
 
     # event handler
@@ -247,6 +251,7 @@ class MainWindow(QMainWindow):
         url = helpers.file_chooser_open_directory(self)
         if url.isEmpty(): return
         file_path = url.toLocalFile()
+        self.stop_capture()
         self.__detector_cfg.reset()
         manager = FQCSManager(config_folder=file_path)
         configs = manager.get_configs()

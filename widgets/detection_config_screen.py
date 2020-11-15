@@ -86,10 +86,10 @@ class DetectionConfigScreen(QWidget):
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__set_btn_capture_text()
         if self.__current_cfg is None:
             self.__show_config_section(False)
             return
-        self.__set_btn_capture_text()
         self.__load_config()
 
     def __reload_table(self):

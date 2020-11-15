@@ -85,6 +85,7 @@ class AsymConfigScreen(QWidget):
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__view_image_sample()
         self.__load_config()
 
     def __load_config(self):
@@ -117,12 +118,13 @@ class AsymConfigScreen(QWidget):
         self.ui.grpBoxAmpRate.setTitle("Amplification rate: " + str(amp_rate))
 
     def __view_image_sample(self):
-        manager = DetectorConfig.instance().manager
+        manager = DetectorConfig.instance().get_manager()
         left = manager.get_sample_left()
         right = manager.get_sample_right()
         self.__sample_left, self.__sample_right = self.__preprocess_color(
             left, right)
-        img_size = (156, self.label_h - 30)
+        label_h = self.image1.height()
+        img_size = (156, label_h - 30)
         m_left = cv2.resize(self.__sample_left,
                             img_size,
                             interpolation=cv2.INTER_AREA)
@@ -141,8 +143,6 @@ class AsymConfigScreen(QWidget):
             self.image1.imshow(image)
             self.image_detect_left.imshow(image)
             self.image_detect_right.imshow(image)
-            self.image_sample_left.imshow(image)
-            self.image_sample_right.imshow(image)
             return
         img_size = (156, label_h - 30)
         contour, detected, detected_pair = self.__process_pair(image.copy())
@@ -162,43 +162,41 @@ class AsymConfigScreen(QWidget):
     async def __detect_asym_diff(self, left, right):
         cfg = self.__current_cfg["sim_cfg"]
         min_sim = self.__current_cfg["sim_cfg"]['min_similarity']
-        manager = DetectorConfig.instance().manager
+        manager = DetectorConfig.instance().get_manager()
         left_result, right_result = await manager.detect_asym(
             self.__current_cfg, left, right, self.__sample_left,
             self.__sample_right, None)
-        is_asym_diff_left, __avg_asym_left, __avg_amp_left, recalc_left, res_list_l, amp_res_list_l = left_result
-        is_asym_diff_right, __avg_asym_right, __avg_amp_right, recalc_right, res_list_r, amp_res_list_r = right_result
+        is_asym_diff_left, avg_asym_left, avg_amp_left, recalc_left, res_list_l, amp_res_list_l = left_result
+        is_asym_diff_right, avg_asym_right, avg_amp_right, recalc_right, res_list_r, amp_res_list_r = right_result
         # find smaller value between the value of asym left and right
-        tmp_min = min(__avg_asym_left, __avg_asym_right)
+        tmp_min = min(avg_asym_left, avg_asym_right)
         print("tmpmin - ", tmp_min)
 
         # find the smallest ASYM value among all detected shoes
         if (tmp_min < self.__avg_min): self.__avg_min = tmp_min
-        print("avg_min - ", self.avg_min)
+        print("avg_min - ", self.__avg_min)
 
         # calculate calc_factor both side and then keep the highest only
         tmp_re_calc_factor_left = avg_asym_left / avg_amp_left
         tmp_re_calc_factor_right = avg_asym_right / avg_amp_right
-        if (tmp_re_calc_factor_left > self.re_calc_factor_left):
-            self.re_calc_factor_left = tmp_re_calc_factor_left
-        if (tmp_re_calc_factor_right > self.re_calc_factor_right):
-            self.re_calc_factor_right = tmp_re_calc_factor_right
+        if (tmp_re_calc_factor_left > self.__re_calc_factor_left):
+            self.__re_calc_factor_left = tmp_re_calc_factor_left
+        if (tmp_re_calc_factor_right > self.__re_calc_factor_right):
+            self.__re_calc_factor_right = tmp_re_calc_factor_right
 
         # update configure value
-        self.__current_cfg['asym_amp_thresh'] = self.avg_min
-        self.__current_cfg['re_calc_factor_left'] = self.re_calc_factor_left
-        self.__current_cfg['re_calc_factor_right'] = self.re_calc_factor_right
+        self.__current_cfg['asym_amp_thresh'] = self.__avg_min
+        self.__current_cfg['re_calc_factor_left'] = self.__re_calc_factor_left
+        self.__current_cfg[
+            're_calc_factor_right'] = self.__re_calc_factor_right
 
         # update result to screen
-        self.ui.inpAmpThresh.setValue(self.avg_min)
-        self.ui.inpReCalcFactorLeft.setValue(self.re_calc_factor_left)
-        self.ui.inpReCalcFactorRight.setValue(self.re_calc_factor_right)
-
-    def showEvent(self, event):
-        self.__view_image_sample()
+        self.ui.inpAmpThresh.setValue(self.__avg_min)
+        self.ui.inpReCalcFactorLeft.setValue(self.__re_calc_factor_left)
+        self.ui.inpReCalcFactorRight.setValue(self.__re_calc_factor_right)
 
     def __preprocess_color(self, sample_left, sample_right):
-        manager = DetectorConfig.instance().manager
+        manager = DetectorConfig.instance().get_manager()
         pre_sample_left = manager.preprocess(self.__current_cfg, sample_left,
                                              True)
         pre_sample_right = manager.preprocess(self.__current_cfg, sample_right,
@@ -206,7 +204,7 @@ class AsymConfigScreen(QWidget):
         return pre_sample_left, pre_sample_right
 
     def __process_pair(self, image):
-        manager = DetectorConfig.instance().manager
+        manager = DetectorConfig.instance().get_manager()
         boxes, proc = manager.extract_boxes(self.__current_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
             self.__current_cfg, boxes, image)

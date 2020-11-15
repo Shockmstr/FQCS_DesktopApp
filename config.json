@@ -12,9 +12,9 @@
       0.1,
       0.9
     ],
-    "length_per_10px": 0.42312453965617214,
+    "length_per_10px": 0.6409495548961425,
     "length_unit": "cm",
-    "max_size_diff": 0.3,
+    "max_size_diff": 0.7,
     "frame_width": 640,
     "frame_height": 480,
     "color_cfg": {
@@ -75,7 +75,7 @@
     "d_cfg": {
       "max_boxes": 10,
       "bg_thresh": 110,
-      "adj_bg_thresh": 149.2548054665242,
+      "adj_bg_thresh": 143.9397045272436,
       "thresh_inv": false,
       "light_adj_thresh": 65,
       "alpha": 1.0,
@@ -83,8 +83,8 @@
       "threshold1": 40,
       "threshold2": 100,
       "kernel": [
-        5,
-        5
+        21,
+        21
       ],
       "d_kernel": [
         5,
