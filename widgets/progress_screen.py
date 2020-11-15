@@ -12,38 +12,38 @@ import numpy as np
 from services.worker_runnable import WorkerRunnable
 
 
-
 class ProgressScreen(QWidget):
-    CAMERA_LOADED = False
     stopped = Signal()
     captured = Signal()
-    returned_home = Signal()
+    return_home = Signal()
+    __camera_loaded = False
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.ui = Ui_ProgressScreen()
-        self.detector_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
         self.ui.setupUi(self)
+        self.build()
         self.binding()
-        self.returned_home = self.ui.btnReturnHome.clicked
-        self.load_cfg()
-        if not self.CAMERA_LOADED:
-            self.ui.containerConfig.setEnabled(False)
 
+    def build(self):
+        self.return_home = self.ui.btnReturnHome.clicked
+        self.manager_changed()
 
     # data binding
     def binding(self):
-        self.ui.btnCapture.clicked.connect(self.cam_control)
+        DetectorConfig.instance().manager_changed.connect(self.manager_changed)
+        self.ui.btnCapture.clicked.connect(self.btn_capture_clicked)
 
-    def cam_control(self):
-        if self.CAMERA_LOADED == True:
+    def btn_capture_clicked(self):
+        if self.__camera_loaded == True:
             self.ui.btnCapture.setText("CAPTURE")
             self.stopped.emit()
-            self.CAMERA_LOADED = False
-        elif self.CAMERA_LOADED == False:
+            self.__camera_loaded = False
+        else:
             self.ui.btnCapture.setText("STOP")
             self.captured.emit()
-            self.CAMERA_LOADED = True
+            self.__camera_loaded = True
 
     def view_cam(self, image):
         self.replace_camera_widget()
@@ -66,14 +66,13 @@ class ProgressScreen(QWidget):
             self.imageLayout.replaceWidget(self.ui.screen4, self.image3)
             self.ui.btnCapture.setText("STOP")
             self.CAMERA_LOADED = True
-            self.ui.containerConfig.setEnabled(True)
 
     def __process_pair(self, image):
         manager = DetectorConfig.instance().manager
-        boxes, proc = manager.extract_boxes(self.detector_cfg, image)
+        boxes, proc = manager.extract_boxes(self.__current_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
-            self.detector_cfg, boxes, image)
-        unit = self.detector_cfg["length_unit"]
+            self.__current_cfg, boxes, image)
+        unit = self.__current_cfg["length_unit"]
         for idx, group in enumerate(final_grouped):
             for b_idx, b in enumerate(group):
                 c, rect, dimA, dimB, box, tl, tr, br, bl, minx, maxx, cenx = b
@@ -92,9 +91,10 @@ class ProgressScreen(QWidget):
         return image, None, None, None
 
     async def process_image(self, image):
-        manager = DetectorConfig.instance().manager
+        manager = DetectorConfig.instance().get_manager()
         main_cfg = manager.get_main_config()
-        contour, detected_pair, size_params, sim_params = self.__process_pair(image)
+        contour, detected_pair, size_params, sim_params = self.__process_pair(
+            image)
 
         if detected_pair is not None:
             left, right = detected_pair
@@ -108,7 +108,7 @@ class ProgressScreen(QWidget):
                 pass
 
             # similarity compare
-            if os.path.exists(manager.get_sample_left()):
+            if manager.get_sample_left() is not None:
                 sim_cfg = main_cfg["sim_cfg"]
                 pre_left, pre_right, pre_sample_left, pre_sample_right = manager.preprocess_images(
                     main_cfg, left, right)
@@ -134,20 +134,17 @@ class ProgressScreen(QWidget):
 
             # error detect
             if manager.get_model() is not None:
-                runnable = WorkerRunnable(self.show_error,
-                                        detected_pair,
-                                        parent=self)
+                runnable = WorkerRunnable(self.__detect_error,
+                                          detected_pair,
+                                          parent=self)
                 runnable.work_error.connect(lambda ex: print(ex))
                 QThreadPool.globalInstance().start(runnable)
 
-
-            
-
-    async def show_error(self, images):
+    async def __detect_error(self, images):
         manager = DetectorConfig.instance().manager
-        err_task = manager.detect_errors(self.detector_cfg, images, None)
+        err_task = manager.detect_errors(self.__current_cfg, images, None)
         boxes, scores, classes, valid_detections = await err_task
-        err_cfg = self.detector_cfg["err_cfg"]
+        err_cfg = self.__current_cfg["err_cfg"]
         helper.draw_yolo_results(images,
                                  boxes,
                                  scores,
@@ -161,6 +158,6 @@ class ProgressScreen(QWidget):
         images[0] = np.asarray(images[0], np.uint8)
         self.image3.imshow(images[0])
 
-    def load_cfg(self):
-        self.detector_cfg = DetectorConfig.instance().get_current_cfg()
-        if self.detector_cfg is None: return
+    def manager_changed(self):
+        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        if self.__current_cfg is None: return

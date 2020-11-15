@@ -14,48 +14,50 @@ import trio
 
 class AsymConfigScreen(QWidget):
     MIN_SIMILARITY_STEP = 0.01
-    CAMERA_LOADED = False
-    IMAGE_LOADED = False
-    detected_pair = None
+    __detected_pair = None
+    __avg_min = 1
+    __re_calc_factor_left = 0
+    __re_calc_factor_right = 0
     backscreen: Signal
     nextscreen: Signal
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.detector_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
         self.ui = Ui_AsymConfigScreen()
         self.ui.setupUi(self)
-        self.backscreen = self.ui.btnBack.clicked
-        self.nextscreen = self.ui.btnNext.clicked
+        self.build()
         self.binding()
-        self.load_cfg()
-        if not self.CAMERA_LOADED:
-            self.ui.containerConfig.setEnabled(False)
 
     # binding
     def binding(self):
+        self.backscreen = self.ui.btnBack.clicked
+        self.nextscreen = self.ui.btnNext.clicked
         self.ui.sldAmpRate.valueChanged.connect(
-            self.amplification_rate_changed)
+            self.sld_amplification_rate_changed)
         self.ui.sldMinSimilarity.valueChanged.connect(
-            self.min_similarity_changed)
+            self.sld_min_similarity_changed)
 
     # handlers
-    def amplification_rate_changed(self):
+    def sld_amplification_rate_changed(self):
         value = self.ui.sldAmpRate.value()
-        self.detector_cfg["sim_cfg"]["asym_amp_rate"] = value
+        self.__current_cfg["sim_cfg"]["asym_amp_rate"] = value
         self.ui.grpBoxAmpRate.setTitle("Amplification rate: " + str(value))
 
-    def min_similarity_changed(self):
+    def sld_min_similarity_changed(self):
         value = round(
             self.ui.sldMinSimilarity.value() * self.MIN_SIMILARITY_STEP, 2)
-        self.detector_cfg["sim_cfg"]["min_similarity"] = value
+        self.__current_cfg["sim_cfg"]["min_similarity"] = value
         self.ui.grpBoxMinSimilarity.setTitle("Minimum similarity (%): " +
                                              str(value))
 
-    def load_cfg(self):
-        self.detector_cfg = DetectorConfig.instance().get_current_cfg()
-        if self.detector_cfg is None: return
-        cfg = self.detector_cfg["sim_cfg"]
+    def build(self):
+        self.manager_changed()
+
+    def manager_changed(self):
+        self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        if self.__current_cfg is None: return
+        cfg = self.__current_cfg["sim_cfg"]
         c1 = cfg["C1"]
         c2 = cfg["C2"]
         psnr = cfg["psnr_trigger"]
@@ -83,17 +85,17 @@ class AsymConfigScreen(QWidget):
         self.ui.sldAmpRate.setValue(int(amp_rate))
         self.ui.grpBoxAmpRate.setTitle("Amplification rate: " + str(amp_rate))
 
-    def view_image_sample(self):
+    def __view_image_sample(self):
         manager = DetectorConfig.instance().manager
         left = manager.get_sample_left()
         right = manager.get_sample_right()
-        self.sample_left, self.sample_right = self.preprocess_color(
+        self.__sample_left, self.__sample_right = self.__preprocess_color(
             left, right)
         img_size = (156, self.label_h - 30)
-        m_left = cv2.resize(self.sample_left,
+        m_left = cv2.resize(self.__sample_left,
                             img_size,
                             interpolation=cv2.INTER_AREA)
-        m_right = cv2.resize(self.sample_right,
+        m_right = cv2.resize(self.__sample_right,
                              img_size,
                              interpolation=cv2.INTER_AREA)
         self.image_sample_left.imshow(m_left)
@@ -101,7 +103,11 @@ class AsymConfigScreen(QWidget):
 
     def view_cam(self, image):
         # read image in BGR format
-        self.replace_camera_widget()
+        self.image1 = ImageWidget()
+        self.label_w = self.ui.screen1.width()
+        self.label_h = self.ui.screen1.height()
+        self.imageLayout = self.ui.screen1.parentWidget().layout()
+        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
         self.img = image
         self.dim = (self.label_w, self.label_h)
         img_size = (156, self.label_h - 30)
@@ -109,89 +115,45 @@ class AsymConfigScreen(QWidget):
         contour_resized = cv2.resize(contour, self.dim)
         self.image1.imshow(contour_resized)
         if detected_pair is not None:
-            left, right = self.preprocess_color(detected_pair[0],
-                                                detected_pair[1])
+            left, right = self.__preprocess_color(detected_pair[0],
+                                                  detected_pair[1])
             left = cv2.flip(left, 1)
-            trio.run(self.detect_asym_diff, left, right)
+            trio.run(self.__detect_asym_diff, left, right)
             left = cv2.resize(left, img_size)
             right = cv2.resize(right, img_size)
             self.image_detect_left.imshow(left)
             self.image_detect_right.imshow(right)
-            self.detected_pair = detected_pair
+            self.__detected_pair = detected_pair
 
-    def replace_image_widget(self):
-        if not self.CAMERA_LOADED:
-            self.image_detect_left = ImageWidget()
-            self.image_detect_right = ImageWidget()
-            self.image_sample_left = ImageWidget()
-            self.image_sample_right = ImageWidget()
-            #
-            self.label_w = self.ui.screen1.width()
-            self.label_h = self.ui.screen1.height()
-
-            self.screen2_layout = self.ui.screen2.layout()
-
-            self.screen2_layout.replaceWidget(self.ui.screen2Left,
-                                              self.image_detect_left)
-            self.screen2_layout.replaceWidget(self.ui.screen2Right,
-                                              self.image_detect_right)
-
-            self.screen3_layout = self.ui.screen3.layout()
-
-            self.screen3_layout.replaceWidget(self.ui.screen3Left,
-                                              self.image_sample_left)
-            self.screen3_layout.replaceWidget(self.ui.screen3Right,
-                                              self.image_sample_right)
-
-            self.image_detect_left.ui.lblImage.setAlignment(Qt.AlignCenter)
-            self.image_detect_right.ui.lblImage.setAlignment(Qt.AlignCenter)
-            self.image_sample_left.ui.lblImage.setAlignment(Qt.AlignCenter)
-            self.image_sample_right.ui.lblImage.setAlignment(Qt.AlignCenter)
-            self.IMAGE_LOADED = True
-
-    def replace_camera_widget(self):
-        if not self.CAMERA_LOADED:
-            self.image1 = ImageWidget()
-            self.label_w = self.ui.screen1.width()
-            self.label_h = self.ui.screen1.height()
-            self.imageLayout = self.ui.screen1.parentWidget().layout()
-            self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
-            self.CAMERA_LOADED = True
-            self.ui.containerConfig.setEnabled(True)
-
-    avg_min = 1
-    re_calc_factor_left = 0
-    re_calc_factor_right = 0
-
-    async def detect_asym_diff(self, left, right):
-        cfg = self.detector_cfg["sim_cfg"]
-        min_sim = self.detector_cfg["sim_cfg"]['min_similarity']
+    async def __detect_asym_diff(self, left, right):
+        cfg = self.__current_cfg["sim_cfg"]
+        min_sim = self.__current_cfg["sim_cfg"]['min_similarity']
         manager = DetectorConfig.instance().manager
         left_result, right_result = await manager.detect_asym(
-            self.detector_cfg, left, right, self.sample_left,
-            self.sample_right, None)
-        is_asym_diff_left, self.avg_asym_left, self.avg_amp_left, recalc_left, res_list_l, amp_res_list_l = left_result
-        is_asym_diff_right, self.avg_asym_right, self.avg_amp_right, recalc_right, res_list_r, amp_res_list_r = right_result
+            self.__current_cfg, left, right, self.__sample_left,
+            self.__sample_right, None)
+        is_asym_diff_left, __avg_asym_left, __avg_amp_left, recalc_left, res_list_l, amp_res_list_l = left_result
+        is_asym_diff_right, __avg_asym_right, __avg_amp_right, recalc_right, res_list_r, amp_res_list_r = right_result
         # find smaller value between the value of asym left and right
-        self.tmp_min = min(self.avg_asym_left, self.avg_asym_right)
-        print("tmpmin - ", self.tmp_min)
+        tmp_min = min(__avg_asym_left, __avg_asym_right)
+        print("tmpmin - ", tmp_min)
 
         # find the smallest ASYM value among all detected shoes
-        if (self.tmp_min < self.avg_min): self.avg_min = self.tmp_min
+        if (tmp_min < self.__avg_min): self.__avg_min = tmp_min
         print("avg_min - ", self.avg_min)
 
         # calculate calc_factor both side and then keep the highest only
-        self.tmp_re_calc_factor_left = self.avg_asym_left / self.avg_amp_left
-        self.tmp_re_calc_factor_right = self.avg_asym_right / self.avg_amp_right
-        if (self.tmp_re_calc_factor_left > self.re_calc_factor_left):
-            self.re_calc_factor_left = self.tmp_re_calc_factor_left
-        if (self.tmp_re_calc_factor_right > self.re_calc_factor_right):
-            self.re_calc_factor_right = self.tmp_re_calc_factor_right
+        tmp_re_calc_factor_left = avg_asym_left / avg_amp_left
+        tmp_re_calc_factor_right = avg_asym_right / avg_amp_right
+        if (tmp_re_calc_factor_left > self.re_calc_factor_left):
+            self.re_calc_factor_left = tmp_re_calc_factor_left
+        if (tmp_re_calc_factor_right > self.re_calc_factor_right):
+            self.re_calc_factor_right = tmp_re_calc_factor_right
 
         # update configure value
-        self.detector_cfg['asym_amp_thresh'] = self.avg_min
-        self.detector_cfg['re_calc_factor_left'] = self.re_calc_factor_left
-        self.detector_cfg['re_calc_factor_right'] = self.re_calc_factor_right
+        self.__current_cfg['asym_amp_thresh'] = self.avg_min
+        self.__current_cfg['re_calc_factor_left'] = self.re_calc_factor_left
+        self.__current_cfg['re_calc_factor_right'] = self.re_calc_factor_right
 
         # update result to screen
         self.ui.inpAmpThresh.setValue(self.avg_min)
@@ -199,23 +161,47 @@ class AsymConfigScreen(QWidget):
         self.ui.inpReCalcFactorRight.setValue(self.re_calc_factor_right)
 
     def showEvent(self, event):
-        self.replace_image_widget()
-        self.view_image_sample()
+        self.image_detect_left = ImageWidget()
+        self.image_detect_right = ImageWidget()
+        self.image_sample_left = ImageWidget()
+        self.image_sample_right = ImageWidget()
+        self.label_w = self.ui.screen1.width()
+        self.label_h = self.ui.screen1.height()
 
-    def preprocess_color(self, sample_left, sample_right):
+        self.screen2_layout = self.ui.screen2.layout()
+
+        self.screen2_layout.replaceWidget(self.ui.screen2Left,
+                                          self.image_detect_left)
+        self.screen2_layout.replaceWidget(self.ui.screen2Right,
+                                          self.image_detect_right)
+
+        self.screen3_layout = self.ui.screen3.layout()
+
+        self.screen3_layout.replaceWidget(self.ui.screen3Left,
+                                          self.image_sample_left)
+        self.screen3_layout.replaceWidget(self.ui.screen3Right,
+                                          self.image_sample_right)
+
+        self.image_detect_left.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.image_detect_right.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.image_sample_left.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.image_sample_right.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.__view_image_sample()
+
+    def __preprocess_color(self, sample_left, sample_right):
         manager = DetectorConfig.instance().manager
-        pre_sample_left = manager.preprocess(self.detector_cfg, sample_left,
+        pre_sample_left = manager.preprocess(self.__current_cfg, sample_left,
                                              True)
-        pre_sample_right = manager.preprocess(self.detector_cfg, sample_right,
+        pre_sample_right = manager.preprocess(self.__current_cfg, sample_right,
                                               False)
         return pre_sample_left, pre_sample_right
 
     def __process_pair(self, image):
         manager = DetectorConfig.instance().manager
-        boxes, proc = manager.extract_boxes(self.detector_cfg, image)
+        boxes, proc = manager.extract_boxes(self.__current_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
-            self.detector_cfg, boxes, image)
-        unit = self.detector_cfg["length_unit"]
+            self.__current_cfg, boxes, image)
+        unit = self.__current_cfg["length_unit"]
         for idx, group in enumerate(final_grouped):
             for b_idx, b in enumerate(group):
                 c, rect, dimA, dimB, box, tl, tr, br, bl, minx, maxx, cenx = b
