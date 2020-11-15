@@ -13,10 +13,8 @@ from services.worker_runnable import WorkerRunnable
 
 
 class ProgressScreen(QWidget):
-    stopped = Signal()
     captured = Signal()
     return_home = Signal()
-    __camera_loaded = False
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -45,14 +43,12 @@ class ProgressScreen(QWidget):
         self.ui.btnCapture.clicked.connect(self.btn_capture_clicked)
 
     def btn_capture_clicked(self):
-        if self.__camera_loaded == True:
-            self.ui.btnCapture.setText("CAPTURE")
-            self.stopped.emit()
-            self.__camera_loaded = False
-        else:
-            self.ui.btnCapture.setText("STOP")
-            self.captured.emit()
-            self.__camera_loaded = True
+        self.captured.emit()        
+        self.__set_btn_capture_text()
+
+    def __set_btn_capture_text(self):
+        timer_active= DetectorConfig.instance().get_timer().isActive()
+        self.ui.btnCapture.setText("CAPTURE" if not timer_active else "STOP")
 
     def view_cam(self, image):
         label_w = self.image1.width()
@@ -158,4 +154,5 @@ class ProgressScreen(QWidget):
         self.image3.imshow(images[0])
 
     def __load_config(self):
+        self.__set_btn_capture_text()
         return

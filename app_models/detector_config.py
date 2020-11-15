@@ -1,4 +1,4 @@
-from PySide2.QtCore import Signal, QObject
+from PySide2.QtCore import Signal, QObject, QTimer
 from FQCS import detector
 from FQCS.manager import FQCSManager
 import cv2
@@ -6,6 +6,11 @@ import abc
 
 
 class DetectorConfigAbs():
+    manager_changed: Signal
+
+    def get_timer(self):
+        pass
+
     def release_cameras(self):
         pass
 
@@ -50,15 +55,22 @@ class DetectorConfigAbs():
 
 
 class DetectorConfig(QObject, DetectorConfigAbs):
+    manager_changed = Signal()
+
     __instance: DetectorConfigAbs = None
     __current_path: str = None
     __manager: FQCSManager = None
     __current_cfg_name: str = None
     __video_cameras = []
+    __camera_timer: QTimer
 
     def __init__(self, parent=None):
         QObject.__init__(self, parent)
+        self.__camera_timer = QTimer(self)
         return
+
+    def get_timer(self):
+        return self.__camera_timer
 
     def release_cameras(self):
         for vid in self.__video_cameras:
@@ -99,9 +111,6 @@ class DetectorConfig(QObject, DetectorConfigAbs):
 
     def __add_camera(self, cfg):
         vid = cv2.VideoCapture()
-        camera_uri = cfg["camera_uri"]
-        if camera_uri is not None and camera_uri != -1:
-            vid.open(camera_uri)
         self.__video_cameras.append(vid)
 
     def add_config(self, new_cfg):

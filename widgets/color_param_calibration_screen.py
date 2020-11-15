@@ -13,11 +13,10 @@ from views.color_param_calibration_screen import Ui_ColorParamCalibScreen
 
 
 class ColorParamCalibrationScreen(QWidget):
-    CAMERA_LOADED = False
-    IMAGE_LOADED = False
     __detected_pair = None
     backscreen: Signal
     nextscreen: Signal
+    captured = Signal()
     __max_blue = 0
     __max_green = 0
     __max_red = 0
@@ -35,7 +34,6 @@ class ColorParamCalibrationScreen(QWidget):
         self.imageLayout = self.ui.screen1.parentWidget().layout()
         self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
         self.ui.screen1.deleteLater()
-
         return
 
     def showEvent(self, event):
@@ -46,6 +44,7 @@ class ColorParamCalibrationScreen(QWidget):
     def binding(self):
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnNext.clicked
+        self.ui.btnCapture.clicked.connect(self.btn_capture_clicked)
         self.ui.cbbCamera.setPlaceholderText("Choose Cam")
         self.ui.cbbCamera.setCurrentIndex(-1)
         self.ui.cbbCamera.currentIndexChanged.connect(self.cbbCamera_chose)
@@ -56,6 +55,14 @@ class ColorParamCalibrationScreen(QWidget):
         self.ui.ampThreshBlue.textChanged.connect(self.amp_threshold_change)
         self.ui.ampThreshGreen.textChanged.connect(self.amp_threshold_change)
         self.ui.ampThreshRed.textChanged.connect(self.amp_threshold_change)
+
+    def btn_capture_clicked(self):
+        self.captured.emit()        
+        self.__set_btn_capture_text()
+
+    def __set_btn_capture_text(self):
+        timer_active= DetectorConfig.instance().get_timer().isActive()
+        self.ui.btnCapture.setText("CAPTURE" if not timer_active else "STOP")
 
     def amp_threshold_change(self):
         amp_thresh_green_value = float(self.ui.ampThreshGreen.text())
@@ -99,6 +106,7 @@ class ColorParamCalibrationScreen(QWidget):
                                        str(amplify_rate))
         self.ui.grpSldAllowDiff.setTitle("Allowed Difference (%): " +
                                          str(max_diff))
+        self.__set_btn_capture_text()
 
     def __view_image_sample(self):
         manager = DetectorConfig.instance().manager

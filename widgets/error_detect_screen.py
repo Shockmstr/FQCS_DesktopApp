@@ -22,6 +22,7 @@ from services.worker_runnable import WorkerRunnable
 class ErrorDetectScreen(QWidget):
     backscreen: Signal
     nextscreen: Signal
+    captured = Signal()
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -88,11 +89,13 @@ class ErrorDetectScreen(QWidget):
         self.ui.inpMaxInstances.setValue(yolo_max_boxes)
         self.ui.inpMinimumScore.setValue(yolo_score_threshold * 10)
         self.ui.inpClasses.setText(", ".join(classes))
+        self.__set_btn_capture_text()
 
     # binding
     def binding(self):
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnFinish.clicked
+        self.ui.btnCapture.clicked.connect(self.btn_capture_clicked)
         self.ui.inpMaxInstances.textChanged.connect(
             self.inp_max_instances_change)
         self.ui.inpMinimumScore.textChanged.connect(self.inp_min_score_change)
@@ -112,6 +115,14 @@ class ErrorDetectScreen(QWidget):
         self.__current_cfg["is_defect_enable"] = checked
 
     # hander
+    def btn_capture_clicked(self):
+        self.captured.emit()        
+        self.__set_btn_capture_text()
+
+    def __set_btn_capture_text(self):
+        timer_active= DetectorConfig.instance().get_timer().isActive()
+        self.ui.btnCapture.setText("CAPTURE" if not timer_active else "STOP")
+
     def inp_min_score_change(self):
         value = self.ui.inpMinimumScore.value()
         self.__current_cfg["err_cfg"]["yolo_score_threshold"] = value / 10

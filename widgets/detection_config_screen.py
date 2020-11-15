@@ -19,7 +19,7 @@ class DetectionConfigScreen(QWidget):
     __last_selected_row = -1
     backscreen: Signal
     nextscreen: Signal
-    captured: Signal
+    captured = Signal()
     camera_changed = Signal(object)
 
     def __init__(self, parent=None):
@@ -75,6 +75,7 @@ class DetectionConfigScreen(QWidget):
             1, QHeaderView.ResizeToContents)
         table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         table.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.__reload_table()
 
         # create context menu
         self.tblPopMenu = QMenu(self)
@@ -85,7 +86,6 @@ class DetectionConfigScreen(QWidget):
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
-        self.__reload_table()
         if self.__current_cfg is None:
             self.__show_config_section(False)
             return
@@ -115,7 +115,8 @@ class DetectionConfigScreen(QWidget):
     def binding(self):
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnNext.clicked
-        self.captured = self.ui.btnCapture.clicked
+        self.ui.btnCapture.clicked.connect(self.btn_capture_clicked)
+        DetectorConfig.instance().manager_changed.connect(self.manager_changed)
         self.ui.sldBrightness.valueChanged.connect(
             self.sld_brightness_value_change)
         self.ui.sldContrast.valueChanged.connect(
@@ -153,6 +154,17 @@ class DetectionConfigScreen(QWidget):
         self.ui.btnAdd.clicked.connect(self.btn_add_clicked)
 
     #HANDLERS
+    def btn_capture_clicked(self):
+        self.captured.emit()
+        self.__set_btn_capture_text()
+
+    def __set_btn_capture_text(self):
+        timer_active = DetectorConfig.instance().get_timer().isActive()
+        self.ui.btnCapture.setText("CAPTURE" if not timer_active else "STOP")
+
+    def manager_changed(self):
+        self.__reload_table()
+
     def table_context_menu(self, point):
         self.tblPopMenu.exec_(self.ui.tblCameraConfig.mapToGlobal(point))
 
@@ -434,6 +446,7 @@ class DetectionConfigScreen(QWidget):
             self.camera_changed.emit(camera_uri)
         else:
             self.ui.cbbCamera.setCurrentIndex(-1)
+        self.__set_btn_capture_text()
 
     def __add_new_row(self, table, camera_name, is_main):
         current_row = table.rowCount()

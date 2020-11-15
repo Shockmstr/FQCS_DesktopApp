@@ -24,10 +24,11 @@ class MainWindow(QMainWindow):
     def __init__(self, identity_service: IdentityService):
         QMainWindow.__init__(self)
         self.__identity_service = identity_service
-        self.__camera_timer = QTimer()
         self.__view_cam = None
         self.__video_camera = None
+        self.__last_camera_uri = None
         self.__detector_cfg = DetectorConfig.instance()
+        self.__camera_timer = self.__detector_cfg.get_timer()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.build()
@@ -85,13 +86,14 @@ class MainWindow(QMainWindow):
         self.detection_screen.backscreen.connect(self.change_home_screen)
         self.detection_screen.nextscreen.connect(
             self.change_measurement_screen)
-        self.detection_screen.captured.connect(self.start_capture)
+        self.detection_screen.captured.connect(self.toggle_capture_state)
         self.detection_screen.camera_changed.connect(self.camera_changed)
 
         self.measurement_screen.backscreen.connect(
             self.change_detection_screen)
         self.measurement_screen.nextscreen.connect(
             self.skipable_change_detect_pair_screen)
+        self.measurement_screen.captured.connect(self.toggle_capture_state)
 
         self.test_detect_pair_screen.backscreen.connect(
             self.change_measurement_screen)
@@ -112,15 +114,17 @@ class MainWindow(QMainWindow):
             self.change_color_preprocess_config_screen)
         self.color_param_calib_screen.nextscreen.connect(
             self.change_error_detect_screen)
+        self.color_param_calib_screen.captured.connect(
+            self.toggle_capture_state)
 
         self.error_detect_screen.backscreen.connect(
             self.skipable_color_param_calib_screen)
         self.error_detect_screen.nextscreen.connect(
             self.change_progress_screen)
+        self.error_detect_screen.captured.connect(self.toggle_capture_state)
 
         self.progress_screen.return_home.connect(self.change_home_screen)
-        self.progress_screen.captured.connect(self.start_capture)
-        self.progress_screen.stopped.connect(self.stop_capture)
+        self.progress_screen.captured.connect(self.toggle_capture_state)
         return
 
     def closeEvent(self, event):
@@ -130,6 +134,10 @@ class MainWindow(QMainWindow):
         if (self.__view_cam is not None and self.__video_camera is not None
                 and self.__video_camera.isOpened()):
             _, image = self.__video_camera.read()
+            # test only
+            if image is None:
+                self.__video_camera.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                _, image = self.__video_camera.read()
             self.__view_cam(image)
 
     # event handler
@@ -139,7 +147,14 @@ class MainWindow(QMainWindow):
         self.__video_camera = self.__detector_cfg.get_current_camera()
         if self.__video_camera is None: return
         if index is not None and index > -1:
-            self.__video_camera.open(index)
+            if (self.__last_camera_uri !=
+                    index) or (not self.__video_camera.isOpened()):
+                # self.__video_camera.open(index)
+                # test only
+                self.__video_camera.open(
+                    r"N:\Workspace\Capstone\FQCS-Research\FQCS.ColorDetection\test.mp4"
+                )
+                self.__last_camera_uri = index
         else:
             if self.__view_cam is not None: self.__view_cam(None)
             self.__video_camera.release()
@@ -205,11 +220,9 @@ class MainWindow(QMainWindow):
         def __change_view_cam(func):
             self.__view_cam = func
             self.__view_cam(None)
-            self.start_capture()
 
         def __remove_view_cam():
             self.__view_cam = None
-            self.stop_capture()
 
         if hasattr(currentWidget, 'view_cam'):
             __change_view_cam(currentWidget.view_cam)
@@ -222,6 +235,12 @@ class MainWindow(QMainWindow):
     def start_capture(self):
         if (not self.__camera_timer.isActive()):
             # start timer
+            self.__camera_timer.start(20)
+
+    def toggle_capture_state(self):
+        if self.__camera_timer.isActive():
+            self.__camera_timer.stop()
+        else:
             self.__camera_timer.start(20)
 
     @asyncSlot()
@@ -240,6 +259,7 @@ class MainWindow(QMainWindow):
                 break
         self.__detector_cfg.set_manager(manager)
         self.__detector_cfg.set_current_path(file_path)
+        self.__detector_cfg.manager_changed.emit()
         self.change_home_screen()
 
     def action_save_triggered(self):
