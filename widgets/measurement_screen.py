@@ -139,7 +139,7 @@ class MeasurementScreen(QWidget):
             left_length = sizes[0][0]
             actual_length = 0 if length_per_10px is None or length_per_10px == 0 else helper.calculate_length(
                 left_length, length_per_10px)
-        self.ui.inpLeftDetectedLength.setText(str(left_length))
+        self.ui.inpLeftDetectedLength.setText(f"{left_length:.2f}")
         if not self.__actual_length_edited:
             self.ui.inpLeftActualLength.setValue(actual_length)
 
@@ -228,4 +228,7 @@ class MeasurementScreen(QWidget):
         self.ui.chkMainCamera.setChecked(self.__current_cfg["is_main"])
         self.ui.inpLeftDetectedLength.setText(str(0))
         self.ui.inpLeftActualLength.setValue(0)
+        self.ui.inpLeftActualLength.setEnabled(False)
+        self.ui.btnEditActualLength.setText("Edit")
+        self.__actual_length_edited = False
         self.__set_btn_capture_text()

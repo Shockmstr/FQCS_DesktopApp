@@ -2,17 +2,17 @@
   {
     "name": "Test",
     "camera_uri": 0,
-    "is_main": false,
+    "is_main": true,
     "is_color_enable": true,
     "is_defect_enable": true,
     "min_width_per": 0.1,
     "min_height_per": 0.7,
     "stop_condition": 0,
     "detect_range": [
-      0.2,
-      0.8
+      0.1,
+      0.9
     ],
-    "length_per_10px": 0.4257483655168726,
+    "length_per_10px": null,
     "length_unit": "cm",
     "max_size_diff": 0.3,
     "frame_width": 640,
@@ -55,13 +55,13 @@
     "detect_method": "thresh",
     "err_cfg": {
       "inp_shape": [
-        320,
-        160,
+        null,
+        null,
         3
       ],
       "img_size": [
-        160,
-        320
+        null,
+        null
       ],
       "num_classes": 1,
       "yolo_max_boxes": 10,
@@ -75,7 +75,7 @@
     "d_cfg": {
       "max_boxes": 10,
       "bg_thresh": 110,
-      "adj_bg_thresh": 157.22594684829062,
+      "adj_bg_thresh": 129.75646323005697,
       "thresh_inv": false,
       "light_adj_thresh": 65,
       "alpha": 1.0,
@@ -83,8 +83,8 @@
       "threshold1": 40,
       "threshold2": 100,
       "kernel": [
-        11,
-        11
+        21,
+        21
       ],
       "d_kernel": [
         5,

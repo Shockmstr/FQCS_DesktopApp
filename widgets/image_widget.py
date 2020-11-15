@@ -20,6 +20,3 @@ class ImageWidget(QWidget):
                        length * image.shape[1],
                        imformat).rgbSwapped()  # 1: width, 0:height, 2:channel
         self.ui.lblImage.setPixmap(QPixmap.fromImage(image))
-
-    def imreset(self):
-        self.ui.lblImage.clear()

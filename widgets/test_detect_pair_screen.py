@@ -40,6 +40,8 @@ class TestDetectPairScreen(QWidget):
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__detected_pair = None
+        self.image3.imshow(None)
         self.__load_config()
 
     # binding
@@ -120,8 +122,8 @@ class TestDetectPairScreen(QWidget):
             cv2.imwrite(os.path.join(folder_path, detector.SAMPLE_RIGHT_FILE),
                         right)
             DetectorConfig.instance().get_manager().load_sample_images()
-            print(f"save successful at {folder_path}")
+            helpers.show_message("Save successfully")
 
     def btn_retake_sample_clicked(self):
         self.__detected_pair = None
-        self.image3.imreset()
+        self.image3.imshow(None)

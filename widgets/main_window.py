@@ -143,8 +143,6 @@ class MainWindow(QMainWindow):
 
     # event handler
     def camera_changed(self, index):
-        if self.__video_camera is not None:
-            self.__video_camera.release()
         self.__video_camera = self.__detector_cfg.get_current_camera()
         if self.__video_camera is None: return
         if index is not None and index > -1:
@@ -251,7 +249,6 @@ class MainWindow(QMainWindow):
         file_path = url.toLocalFile()
         self.__detector_cfg.reset()
         manager = FQCSManager(config_folder=file_path)
-        manager.load_sample_images()
         configs = manager.get_configs()
         for cfg in configs:
             if cfg["is_main"] == True:
