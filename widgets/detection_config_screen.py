@@ -38,7 +38,14 @@ class DetectionConfigScreen(QWidget):
         table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         table.clearSelection()
 
-        if self.__current_cfg is None: return
+        if self.__current_cfg is None:
+            helpers.hide_all_children(self.ui.containerMidRange)
+            helpers.hide_all_children(self.ui.containerMidEdge)
+            helpers.hide_all_children(self.ui.containerMidThresh)
+            helpers.hide_all_children(self.ui.containerLeft)
+            self.ui.btnCapture.hide()
+            self.ui.btnNext.hide()
+            return
 
         self.ui.cbbWidth.setPlaceholderText("Width")
         self.ui.cbbHeight.setPlaceholderText("Height")

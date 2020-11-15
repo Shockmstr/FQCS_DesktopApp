@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QFileDialog
+from PySide2.QtWidgets import QFileDialog, QWidget
 import cv2
 import os
 from app_models.detector_config import DetectorConfig
@@ -48,10 +48,7 @@ def get_all_camera_index(num=10):
     return arr
 
 
-def get_current_sample_image_path(self):
-    currentPath = DetectorConfig.instance().current_path
-    if (currentPath == None):
-        currentPath = os.sep.join(
-            [ROOT_DIR,
-             "resources"])  #default = current working directory/resouces
-    return currentPath
+def hide_all_children(widget: QWidget):
+    for ch in widget.children():
+        if hasattr(ch, 'hide'):
+            ch.hide()
