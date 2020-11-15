@@ -36,6 +36,7 @@ class MeasurementScreen(QWidget):
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__set_btn_capture_text()
         self.__load_config()
 
     # binding
@@ -231,4 +232,3 @@ class MeasurementScreen(QWidget):
         self.ui.inpLeftActualLength.setEnabled(False)
         self.ui.btnEditActualLength.setText("Edit")
         self.__actual_length_edited = False
-        self.__set_btn_capture_text()

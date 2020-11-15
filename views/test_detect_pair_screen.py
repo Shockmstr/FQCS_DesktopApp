@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'test_detect_pair_screengyeaEi.ui'
+## Form generated from reading UI file 'test_detect_pair_screenygMGNv.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -55,35 +55,12 @@ class Ui_test_detect_pair_screen(object):
         self.widget.setObjectName(u"widget")
         self.horizontalLayout_2 = QHBoxLayout(self.widget)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.groupCbDisplayType = QGroupBox(self.widget)
-        self.groupCbDisplayType.setObjectName(u"groupCbDisplayType")
-        self.verticalLayout_6 = QVBoxLayout(self.groupCbDisplayType)
-        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
-        self.verticalLayout_6.setContentsMargins(-1, 0, -1, 0)
-        self.cbDisplayType = QComboBox(self.groupCbDisplayType)
-        self.cbDisplayType.addItem("")
-        self.cbDisplayType.addItem("")
-        self.cbDisplayType.setObjectName(u"cbDisplayType")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.cbDisplayType.sizePolicy().hasHeightForWidth())
-        self.cbDisplayType.setSizePolicy(sizePolicy)
-        self.cbDisplayType.setAutoFillBackground(False)
-        self.cbDisplayType.setStyleSheet(u"height:22px")
-
-        self.verticalLayout_6.addWidget(self.cbDisplayType, 0, Qt.AlignTop)
-
-
-        self.horizontalLayout_2.addWidget(self.groupCbDisplayType, 0, Qt.AlignTop)
-
         self.widget_2 = QWidget(self.widget)
         self.widget_2.setObjectName(u"widget_2")
 
         self.horizontalLayout_2.addWidget(self.widget_2)
 
-        self.horizontalLayout_2.setStretch(0, 1)
-        self.horizontalLayout_2.setStretch(1, 2)
+        self.horizontalLayout_2.setStretch(0, 2)
 
         self.gridLayout.addWidget(self.widget, 1, 0, 1, 1)
 
@@ -213,10 +190,6 @@ class Ui_test_detect_pair_screen(object):
         self.screen2.setText(QCoreApplication.translate("test_detect_pair_screen", u"SCREEN", None))
         self.screen1.setText(QCoreApplication.translate("test_detect_pair_screen", u"SCREEN", None))
         self.screen4.setText(QCoreApplication.translate("test_detect_pair_screen", u"SCREEN", None))
-        self.groupCbDisplayType.setTitle(QCoreApplication.translate("test_detect_pair_screen", u"Display type:", None))
-        self.cbDisplayType.setItemText(0, QCoreApplication.translate("test_detect_pair_screen", u"Item 1", None))
-        self.cbDisplayType.setItemText(1, QCoreApplication.translate("test_detect_pair_screen", u"Item 2", None))
-
         self.lblTitle.setText(QCoreApplication.translate("test_detect_pair_screen", u"TEST AND DEFINE SAMPLE", None))
         self.btnCapture.setText(QCoreApplication.translate("test_detect_pair_screen", u"CAPTURE", None))
         self.btnSaveSample.setText(QCoreApplication.translate("test_detect_pair_screen", u"SAVE SAMPLE", None))

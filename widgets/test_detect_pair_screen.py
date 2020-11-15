@@ -42,6 +42,19 @@ class TestDetectPairScreen(QWidget):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
         self.__detected_pair = None
         self.image3.imshow(None)
+        manager = DetectorConfig.instance().get_manager()
+        left = manager.get_sample_left()
+        right = manager.get_sample_right()
+        if left is not None:
+            label_w = self.image1.width()
+            label_h = self.image1.height()
+            dim = (label_w, label_h)
+            self.__detected_pair = [left, right]
+            detected = self.__concat_left_right(left, right)
+            detected_resized = cv2.resize(detected, dim)
+            self.image3.imshow(detected_resized)
+        self.__set_btn_next_enabled()
+        self.__set_btn_capture_text()
         self.__load_config()
 
     # binding
@@ -60,6 +73,12 @@ class TestDetectPairScreen(QWidget):
         timer_active = DetectorConfig.instance().get_timer().isActive()
         self.ui.btnCapture.setText("CAPTURE" if not timer_active else "STOP")
 
+    def __set_btn_next_enabled(self):
+        manager = DetectorConfig.instance().get_manager()
+        left = manager.get_sample_left()
+        has_sample = left is not None
+        self.ui.btnNext.setEnabled(has_sample)
+
     def view_cam(self, image):
         # read image in BGR format
         label_w = self.image1.width()
@@ -68,7 +87,7 @@ class TestDetectPairScreen(QWidget):
         if image is None:
             self.image1.imshow(image)
             self.image2.imshow(image)
-            self.image3.imshow(image)
+            # self.image3.imshow(image)
             return
         contour, detected, detected_pair = self.__process_pair(image.copy())
         img_resized = cv2.resize(image, dim)
@@ -81,7 +100,6 @@ class TestDetectPairScreen(QWidget):
             self.__detected_pair = detected_pair
 
     def __load_config(self):
-        self.__set_btn_capture_text()
         return
 
     def __process_pair(self, image):
@@ -102,12 +120,16 @@ class TestDetectPairScreen(QWidget):
             left, right = pair
             left, right = left[0], right[0]
             left = cv2.flip(left, 1)
-            max_width = max((left.shape[0], right.shape[0]))
-            temp_left = imutils.resize(left, height=max_width)
-            temp_right = imutils.resize(right, height=max_width)
-            detected = np.concatenate((temp_left, temp_right), axis=1)
+            detected = self.__concat_left_right(left, right)
             return image, detected, [left, right]
         return image, None, None
+
+    def __concat_left_right(self, left, right):
+        max_width = max((left.shape[0], right.shape[0]))
+        temp_left = imutils.resize(left, height=max_width)
+        temp_right = imutils.resize(right, height=max_width)
+        detected = np.concatenate((temp_left, temp_right), axis=1)
+        return detected
 
     def btn_save_sample_clicked(self):
         if self.__detected_pair is not None:
@@ -123,6 +145,7 @@ class TestDetectPairScreen(QWidget):
                         right)
             DetectorConfig.instance().get_manager().load_sample_images()
             helpers.show_message("Save successfully")
+            self.__set_btn_next_enabled()
 
     def btn_retake_sample_clicked(self):
         self.__detected_pair = None

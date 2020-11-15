@@ -89,6 +89,7 @@ class DetectionConfigScreen(QWidget):
         if self.__current_cfg is None:
             self.__show_config_section(False)
             return
+        self.__set_btn_capture_text()
         self.__load_config()
 
     def __reload_table(self):
@@ -445,7 +446,6 @@ class DetectionConfigScreen(QWidget):
             self.camera_changed.emit(camera_uri)
         else:
             self.ui.cbbCamera.setCurrentIndex(-1)
-        self.__set_btn_capture_text()
 
     def __add_new_row(self, table, camera_name, is_main):
         current_row = table.rowCount()

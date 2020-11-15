@@ -38,6 +38,7 @@ class ColorParamCalibrationScreen(QWidget):
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__set_btn_capture_text()
         self.__load_config()
 
     # binding
@@ -106,7 +107,6 @@ class ColorParamCalibrationScreen(QWidget):
                                        str(amplify_rate))
         self.ui.grpSldAllowDiff.setTitle("Allowed Difference (%): " +
                                          str(max_diff))
-        self.__set_btn_capture_text()
 
     def __view_image_sample(self):
         manager = DetectorConfig.instance().manager

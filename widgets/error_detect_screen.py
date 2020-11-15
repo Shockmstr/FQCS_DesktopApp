@@ -61,6 +61,7 @@ class ErrorDetectScreen(QWidget):
         self.ui.cbbWidth.clear()
         for value in frame_resize_values:
             self.ui.cbbWidth.addItem(value, userData=int(value))
+        self.__set_btn_capture_text()
         self.__load_config()
 
     def __load_config(self):
@@ -89,7 +90,6 @@ class ErrorDetectScreen(QWidget):
         self.ui.inpMaxInstances.setValue(yolo_max_boxes)
         self.ui.inpMinimumScore.setValue(yolo_score_threshold * 10)
         self.ui.inpClasses.setText(", ".join(classes))
-        self.__set_btn_capture_text()
 
     # binding
     def binding(self):

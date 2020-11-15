@@ -35,6 +35,7 @@ class ProgressScreen(QWidget):
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__set_btn_capture_text()
         self.__load_config()
 
     # data binding
@@ -154,5 +155,4 @@ class ProgressScreen(QWidget):
         self.image3.imshow(images[0])
 
     def __load_config(self):
-        self.__set_btn_capture_text()
         return
