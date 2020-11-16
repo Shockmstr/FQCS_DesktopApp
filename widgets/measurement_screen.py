@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QWidget
-from PySide2.QtCore import Signal
+from PySide2.QtCore import Signal, Qt
 from widgets.image_widget import ImageWidget
 import numpy as np
 import os
@@ -9,6 +9,7 @@ from app_models.detector_config import DetectorConfig
 from views.measurement_screen import Ui_MeasurementScreen
 from views.detection_config_screen import Ui_DetectionConfigScreen
 from FQCS import detector, helper, manager
+from app import helpers
 
 
 class MeasurementScreen(QWidget):
@@ -68,8 +69,25 @@ class MeasurementScreen(QWidget):
 
     def chk_main_camera_state_changed(self):
         is_checked = self.ui.chkMainCamera.isChecked()
+        is_main = self.__current_cfg["is_main"]
+        if is_main != is_checked and self.__actual_length_edited:
+            helpers.show_message("You must save actual length first")
+            self.ui.chkMainCamera.setCheckState(
+                Qt.CheckState.Checked if not is_checked else Qt.CheckState.
+                Unchecked)
+            return
+        elif is_main == is_checked:
+            return
         DetectorConfig.instance().get_manager().set_main_config(
             self.__current_cfg["name"] if is_checked else None)
+        self.__change_ui_based_on_is_main()
+
+    def __change_ui_based_on_is_main(self):
+        is_main = self.__current_cfg["is_main"]
+        self.ui.sldDectectPosition.setEnabled(is_main)
+        self.ui.inpAllowDiff.setEnabled(is_main)
+        self.ui.btnEditActualLength.setEnabled(is_main)
+        self.ui.inpLengthUnit.setEnabled(is_main)
 
     def sld_min_width_change(self):
         value = self.ui.sldMaximumWidth.value()
@@ -235,3 +253,4 @@ class MeasurementScreen(QWidget):
         self.ui.inpLeftActualLength.setEnabled(False)
         self.ui.btnEditActualLength.setText("Edit")
         self.__actual_length_edited = False
+        self.__change_ui_based_on_is_main()

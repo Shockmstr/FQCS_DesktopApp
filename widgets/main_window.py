@@ -213,6 +213,12 @@ class MainWindow(QMainWindow):
         self.ui.centralStackWidget.setCurrentWidget(self.error_detect_screen)
 
     def change_progress_screen(self):
+        err_mess = self.progress_screen.validate_show()
+        if err_mess is not None:
+            helpers.show_message(err_mess)
+            return
+        self.__video_camera = None
+        self.stop_capture()
         self.ui.centralStackWidget.setCurrentWidget(self.progress_screen)
 
     def change_asym_config_screen(self):

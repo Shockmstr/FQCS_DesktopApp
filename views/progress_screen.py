@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'progress_screenLMeusb.ui'
+## Form generated from reading UI file 'progress_screenZpkXjg.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -29,106 +29,16 @@ class Ui_ProgressScreen(object):
         self.containerScreen.setAutoFillBackground(False)
         self.gridLayout = QGridLayout(self.containerScreen)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.horizontalWidget = QWidget(self.containerScreen)
-        self.horizontalWidget.setObjectName(u"horizontalWidget")
-        self.horizontalLayout_2 = QHBoxLayout(self.horizontalWidget)
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.widget_2 = QWidget(self.horizontalWidget)
-        self.widget_2.setObjectName(u"widget_2")
-        self.verticalLayout_6 = QVBoxLayout(self.widget_2)
-        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
-        self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
-        self.groupCbbDisplayType = QGroupBox(self.widget_2)
-        self.groupCbbDisplayType.setObjectName(u"groupCbbDisplayType")
-        self.verticalLayout_4 = QVBoxLayout(self.groupCbbDisplayType)
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_4.setContentsMargins(-1, 0, -1, 0)
-        self.cbbDisplayType = QComboBox(self.groupCbbDisplayType)
-        self.cbbDisplayType.addItem("")
-        self.cbbDisplayType.addItem("")
-        self.cbbDisplayType.setObjectName(u"cbbDisplayType")
-        self.cbbDisplayType.setAutoFillBackground(False)
-        self.cbbDisplayType.setStyleSheet(u"height:22px")
-        self.cbbDisplayType.setEditable(True)
-
-        self.verticalLayout_4.addWidget(self.cbbDisplayType)
-
-
-        self.verticalLayout_6.addWidget(self.groupCbbDisplayType, 0, Qt.AlignTop)
-
-
-        self.horizontalLayout_2.addWidget(self.widget_2)
-
-        self.widget = QWidget(self.horizontalWidget)
-        self.widget.setObjectName(u"widget")
-
-        self.horizontalLayout_2.addWidget(self.widget)
-
-
-        self.gridLayout.addWidget(self.horizontalWidget, 1, 0, 1, 1)
-
-        self.screen2 = QLabel(self.containerScreen)
-        self.screen2.setObjectName(u"screen2")
-        self.screen2.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
-        self.screen2.setAlignment(Qt.AlignCenter)
-
-        self.gridLayout.addWidget(self.screen2, 0, 1, 1, 1)
-
-        self.screen1 = QLabel(self.containerScreen)
-        self.screen1.setObjectName(u"screen1")
-        self.screen1.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
-        self.screen1.setAlignment(Qt.AlignCenter)
-
-        self.gridLayout.addWidget(self.screen1, 0, 0, 1, 1)
-
-        self.widget_3 = QWidget(self.containerScreen)
-        self.widget_3.setObjectName(u"widget_3")
-        self.grpImageResult = QWidget(self.widget_3)
-        self.grpImageResult.setObjectName(u"grpImageResult")
-        self.grpImageResult.setGeometry(QRect(0, 50, 701, 261))
-        self.horizontalLayout_4 = QHBoxLayout(self.grpImageResult)
-        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.detected_L = QLabel(self.grpImageResult)
-        self.detected_L.setObjectName(u"detected_L")
-        self.detected_L.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
-        self.detected_L.setAlignment(Qt.AlignCenter)
-
-        self.horizontalLayout_4.addWidget(self.detected_L)
-
-        self.sample_L = QLabel(self.grpImageResult)
-        self.sample_L.setObjectName(u"sample_L")
-        self.sample_L.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
-        self.sample_L.setAlignment(Qt.AlignCenter)
-
-        self.horizontalLayout_4.addWidget(self.sample_L)
-
-        self.line = QFrame(self.grpImageResult)
-        self.line.setObjectName(u"line")
-        self.line.setFrameShape(QFrame.VLine)
-        self.line.setFrameShadow(QFrame.Sunken)
-
-        self.horizontalLayout_4.addWidget(self.line)
-
-        self.detected_R = QLabel(self.grpImageResult)
-        self.detected_R.setObjectName(u"detected_R")
-        self.detected_R.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
-        self.detected_R.setAlignment(Qt.AlignCenter)
-
-        self.horizontalLayout_4.addWidget(self.detected_R)
-
-        self.sample_R = QLabel(self.grpImageResult)
-        self.sample_R.setObjectName(u"sample_R")
-        self.sample_R.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
-        self.sample_R.setAlignment(Qt.AlignCenter)
-
-        self.horizontalLayout_4.addWidget(self.sample_R)
-
-        self.groubCbbCamera = QGroupBox(self.widget_3)
+        self.sectionSideResult = QWidget(self.containerScreen)
+        self.sectionSideResult.setObjectName(u"sectionSideResult")
+        self.verticalLayout_3 = QVBoxLayout(self.sectionSideResult)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.groubCbbCamera = QGroupBox(self.sectionSideResult)
         self.groubCbbCamera.setObjectName(u"groubCbbCamera")
-        self.groubCbbCamera.setGeometry(QRect(0, 0, 335, 47))
-        self.verticalLayout_5 = QVBoxLayout(self.groubCbbCamera)
-        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.verticalLayout_5.setContentsMargins(-1, 0, -1, 0)
+        self.horizontalLayout_5 = QHBoxLayout(self.groubCbbCamera)
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.horizontalLayout_5.setContentsMargins(-1, 0, -1, 0)
         self.cbbCamera = QComboBox(self.groubCbbCamera)
         self.cbbCamera.addItem("")
         self.cbbCamera.addItem("")
@@ -137,11 +47,122 @@ class Ui_ProgressScreen(object):
         self.cbbCamera.setStyleSheet(u"height:22px")
         self.cbbCamera.setEditable(True)
 
-        self.verticalLayout_5.addWidget(self.cbbCamera)
+        self.horizontalLayout_5.addWidget(self.cbbCamera)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_5.addItem(self.horizontalSpacer)
+
+        self.horizontalLayout_5.setStretch(0, 1)
+        self.horizontalLayout_5.setStretch(1, 1)
+
+        self.verticalLayout_3.addWidget(self.groubCbbCamera)
+
+        self.lblSideResult = QLabel(self.sectionSideResult)
+        self.lblSideResult.setObjectName(u"lblSideResult")
+
+        self.verticalLayout_3.addWidget(self.lblSideResult)
+
+        self.verticalLayout_3.setStretch(0, 1)
+        self.verticalLayout_3.setStretch(1, 9)
+
+        self.gridLayout.addWidget(self.sectionSideResult, 1, 1, 1, 1)
+
+        self.screen1 = QLabel(self.containerScreen)
+        self.screen1.setObjectName(u"screen1")
+        self.screen1.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
+        self.screen1.setAlignment(Qt.AlignCenter)
+
+        self.gridLayout.addWidget(self.screen1, 0, 0, 1, 1)
+
+        self.sectionInfo = QWidget(self.containerScreen)
+        self.sectionInfo.setObjectName(u"sectionInfo")
+        self.verticalLayout_5 = QVBoxLayout(self.sectionInfo)
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.groupCbbDisplayType = QGroupBox(self.sectionInfo)
+        self.groupCbbDisplayType.setObjectName(u"groupCbbDisplayType")
+        self.horizontalLayout_2 = QHBoxLayout(self.groupCbbDisplayType)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(-1, 0, -1, 0)
+        self.cbbDisplayType = QComboBox(self.groupCbbDisplayType)
+        self.cbbDisplayType.addItem("")
+        self.cbbDisplayType.addItem("")
+        self.cbbDisplayType.addItem("")
+        self.cbbDisplayType.setObjectName(u"cbbDisplayType")
+        self.cbbDisplayType.setAutoFillBackground(False)
+        self.cbbDisplayType.setStyleSheet(u"height:22px")
+        self.cbbDisplayType.setEditable(True)
+
+        self.horizontalLayout_2.addWidget(self.cbbDisplayType)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer_2)
+
+        self.horizontalLayout_2.setStretch(0, 1)
+        self.horizontalLayout_2.setStretch(1, 1)
+
+        self.verticalLayout_5.addWidget(self.groupCbbDisplayType)
+
+        self.inpResult = QTextEdit(self.sectionInfo)
+        self.inpResult.setObjectName(u"inpResult")
+        self.inpResult.setEnabled(True)
+        self.inpResult.setReadOnly(True)
+        self.inpResult.setOverwriteMode(False)
+        self.inpResult.setAcceptRichText(True)
+
+        self.verticalLayout_5.addWidget(self.inpResult)
 
 
-        self.gridLayout.addWidget(self.widget_3, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.sectionInfo, 1, 0, 1, 1)
 
+        self.sectionMainResult = QWidget(self.containerScreen)
+        self.sectionMainResult.setObjectName(u"sectionMainResult")
+        self.horizontalLayout_7 = QHBoxLayout(self.sectionMainResult)
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.horizontalLayout_7.setContentsMargins(0, 0, 0, 0)
+        self.detected_L = QLabel(self.sectionMainResult)
+        self.detected_L.setObjectName(u"detected_L")
+        self.detected_L.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
+        self.detected_L.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_7.addWidget(self.detected_L)
+
+        self.sample_L = QLabel(self.sectionMainResult)
+        self.sample_L.setObjectName(u"sample_L")
+        self.sample_L.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
+        self.sample_L.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_7.addWidget(self.sample_L)
+
+        self.line = QFrame(self.sectionMainResult)
+        self.line.setObjectName(u"line")
+        self.line.setFrameShape(QFrame.VLine)
+        self.line.setFrameShadow(QFrame.Sunken)
+
+        self.horizontalLayout_7.addWidget(self.line)
+
+        self.detected_R = QLabel(self.sectionMainResult)
+        self.detected_R.setObjectName(u"detected_R")
+        self.detected_R.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
+        self.detected_R.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_7.addWidget(self.detected_R)
+
+        self.sample_R = QLabel(self.sectionMainResult)
+        self.sample_R.setObjectName(u"sample_R")
+        self.sample_R.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
+        self.sample_R.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_7.addWidget(self.sample_R)
+
+
+        self.gridLayout.addWidget(self.sectionMainResult, 0, 1, 1, 1)
+
+        self.gridLayout.setRowStretch(0, 1)
+        self.gridLayout.setRowStretch(1, 1)
+        self.gridLayout.setColumnStretch(0, 1)
+        self.gridLayout.setColumnStretch(1, 1)
 
         self.verticalLayout.addWidget(self.containerScreen)
 
@@ -248,22 +269,31 @@ class Ui_ProgressScreen(object):
 
     def retranslateUi(self, ProgressScreen):
         ProgressScreen.setWindowTitle(QCoreApplication.translate("ProgressScreen", u"Form", None))
-        self.groupCbbDisplayType.setTitle(QCoreApplication.translate("ProgressScreen", u"Display Type", None))
-        self.cbbDisplayType.setItemText(0, QCoreApplication.translate("ProgressScreen", u"Item 1", None))
-        self.cbbDisplayType.setItemText(1, QCoreApplication.translate("ProgressScreen", u"Item 2", None))
-
-        self.cbbDisplayType.setCurrentText(QCoreApplication.translate("ProgressScreen", u"Item 1", None))
-        self.screen2.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
-        self.screen1.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
-        self.detected_L.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
-        self.sample_L.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
-        self.detected_R.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
-        self.sample_R.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
-        self.groubCbbCamera.setTitle(QCoreApplication.translate("ProgressScreen", u"Camera", None))
+        self.groubCbbCamera.setTitle(QCoreApplication.translate("ProgressScreen", u"Show result from side camera", None))
         self.cbbCamera.setItemText(0, QCoreApplication.translate("ProgressScreen", u"Item 1", None))
         self.cbbCamera.setItemText(1, QCoreApplication.translate("ProgressScreen", u"Item 2", None))
 
         self.cbbCamera.setCurrentText(QCoreApplication.translate("ProgressScreen", u"Item 1", None))
+        self.lblSideResult.setText(QCoreApplication.translate("ProgressScreen", u"Result placeholder", None))
+        self.screen1.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
+        self.groupCbbDisplayType.setTitle(QCoreApplication.translate("ProgressScreen", u"Display Type", None))
+        self.cbbDisplayType.setItemText(0, QCoreApplication.translate("ProgressScreen", u"Original", None))
+        self.cbbDisplayType.setItemText(1, QCoreApplication.translate("ProgressScreen", u"Detection", None))
+        self.cbbDisplayType.setItemText(2, QCoreApplication.translate("ProgressScreen", u"Contours", None))
+
+        self.cbbDisplayType.setCurrentText(QCoreApplication.translate("ProgressScreen", u"Original", None))
+        self.inpResult.setMarkdown(QCoreApplication.translate("ProgressScreen", u"**RESULT**\n"
+"\n"
+"", None))
+        self.inpResult.setHtml(QCoreApplication.translate("ProgressScreen", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:5px; margin-bottom:5px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">RESULT</span></p></body></html>", None))
+        self.detected_L.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
+        self.sample_L.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
+        self.detected_R.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
+        self.sample_R.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
         self.lblTitle.setText(QCoreApplication.translate("ProgressScreen", u"PROGRESS", None))
         self.btnCapture.setText(QCoreApplication.translate("ProgressScreen", u"CAPTURE", None))
         self.btnReturnHome.setText(QCoreApplication.translate("ProgressScreen", u"RETURN HOME", None))
