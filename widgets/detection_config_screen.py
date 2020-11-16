@@ -396,8 +396,8 @@ class DetectionConfigScreen(QWidget):
         thresh2 = self.__current_cfg["d_cfg"]["threshold2"]
         blur = self.__current_cfg["d_cfg"]["kernel"][0]
         dilate = self.__current_cfg["d_cfg"]["d_kernel"].shape[1]
-        erode = self.__current_cfg["d_cfg"]["e_kernel"] and self.__current_cfg[
-            "d_cfg"]["e_kernel"].shape[1]
+        erode = self.__current_cfg["d_cfg"]["e_kernel"].shape[
+            1] if self.__current_cfg["d_cfg"]["e_kernel"] is not None else 0
         #threshold
         bkg = self.__current_cfg["d_cfg"]["bg_thresh"]
         light_thresh = self.__current_cfg["d_cfg"]["light_adj_thresh"]
@@ -417,9 +417,9 @@ class DetectionConfigScreen(QWidget):
         self.ui.sldContrast.setValue(contrast / self.CONTRAST_STEP)
         self.ui.sldThreshold1.setValue(thresh1 / self.THRESHOLD1_STEP)
         self.ui.sldThreshold2.setValue(thresh2 / self.THRESHOLD2_STEP)
-        self.ui.sldBlur.setValue(blur)
+        self.ui.sldBlur.setValue((blur - 1) / 2)
         self.ui.sldDilate.setValue(dilate)
-        self.ui.sldErode.setValue(erode or 0)
+        self.ui.sldErode.setValue(erode)
 
         self.ui.sldBkgThresh.setValue(bkg)
         self.ui.sldLightAdj.setValue(light_thresh)

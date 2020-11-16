@@ -14,12 +14,9 @@ import trio
 
 class AsymConfigScreen(QWidget):
     MIN_SIMILARITY_STEP = 0.01
-    __detected_pair = None
-    __avg_min = 1
-    __re_calc_factor_left = 0
-    __re_calc_factor_right = 0
     backscreen: Signal
     nextscreen: Signal
+    captured = Signal()
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -65,12 +62,30 @@ class AsymConfigScreen(QWidget):
     def binding(self):
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnNext.clicked
+        self.ui.btnCapture.clicked.connect(self.btn_capture_clicked)
         self.ui.sldAmpRate.valueChanged.connect(
             self.sld_amplification_rate_changed)
         self.ui.sldMinSimilarity.valueChanged.connect(
             self.sld_min_similarity_changed)
+        self.ui.inpReCalcFactorRight.textChanged.connect(
+            self.inp_re_calc_right_changed)
+        self.ui.inpReCalcFactorLeft.textChanged.connect(
+            self.inp_re_calc_left_changed)
+        self.ui.inpAmpThresh.textChanged.connect(
+            self.inp_asym_amp_thresh_changed)
+        self.ui.inpC1.textChanged.connect(self.inp_C1_changed)
+        self.ui.inpC2.textChanged.connect(self.inp_C2_changed)
+        self.ui.inpPSNR.textChanged.connect(self.inp_PSNR_changed)
 
     # handlers
+    def btn_capture_clicked(self):
+        self.captured.emit()
+        self.__set_btn_capture_text()
+
+    def __set_btn_capture_text(self):
+        timer_active = DetectorConfig.instance().get_timer().isActive()
+        self.ui.btnCapture.setText("CAPTURE" if not timer_active else "STOP")
+
     def sld_amplification_rate_changed(self):
         value = self.ui.sldAmpRate.value()
         self.__current_cfg["sim_cfg"]["asym_amp_rate"] = value
@@ -85,31 +100,33 @@ class AsymConfigScreen(QWidget):
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__set_btn_capture_text()
         self.__view_image_sample()
         self.__load_config()
 
     def __load_config(self):
-        cfg = self.__current_cfg["sim_cfg"]
-        c1 = cfg["C1"]
-        c2 = cfg["C2"]
-        psnr = cfg["psnr_trigger"]
-        amp_thresh = cfg["asym_amp_thresh"]
-        amp_rate = cfg["asym_amp_rate"]
-        min_similarity = cfg["min_similarity"]
-        re_calc_factor_left = cfg["re_calc_factor_left"]
-        re_calc_factor_right = cfg["re_calc_factor_right"]
-        segments_list = cfg["segments_list"]
+        sim_cfg = self.__current_cfg["sim_cfg"]
+        c1 = sim_cfg["C1"]
+        c2 = sim_cfg["C2"]
+        psnr = sim_cfg["psnr_trigger"]
+        amp_thresh = sim_cfg["asym_amp_thresh"]
+        amp_rate = sim_cfg["asym_amp_rate"]
+        min_similarity = sim_cfg["min_similarity"]
+        re_calc_factor_left = sim_cfg["re_calc_factor_left"]
+        re_calc_factor_right = sim_cfg["re_calc_factor_right"]
+        segments_list = sim_cfg["segments_list"]
         #---------------------------------------#
         min_similarity_slider_val = round(
             min_similarity / self.MIN_SIMILARITY_STEP, 0)
-        if (amp_thresh is None): amp_thresh = 0
+        if (amp_thresh is None): amp_thresh = 1
+        sim_cfg["asym_amp_thresh"] = amp_thresh
         #---------------------------------------#
         self.ui.inpC1.setValue(c1)
         self.ui.inpC2.setValue(c2)
-        self.ui.inpPSNR.setValue(int(psnr))
-        self.ui.inpAmpThresh.setValue(int(amp_thresh))
-        self.ui.inpReCalcFactorLeft.setValue(int(re_calc_factor_left))
-        self.ui.inpReCalcFactorRight.setValue(int(re_calc_factor_right))
+        self.ui.inpPSNR.setValue(float(psnr))
+        self.ui.inpAmpThresh.setValue(float(amp_thresh))
+        self.ui.inpReCalcFactorLeft.setValue(float(re_calc_factor_left))
+        self.ui.inpReCalcFactorRight.setValue(float(re_calc_factor_right))
         self.ui.inpSegments.setText(segments_list.__str__())
         self.ui.sldMinSimilarity.setValue(int(min_similarity_slider_val))
         self.ui.grpBoxMinSimilarity.setTitle("Minimum similarity (%): " +
@@ -134,6 +151,36 @@ class AsymConfigScreen(QWidget):
         self.image_sample_left.imshow(m_left)
         self.image_sample_right.imshow(m_right)
 
+    def inp_re_calc_left_changed(self):
+        value = self.ui.inpReCalcFactorLeft.value()
+        self.__current_cfg["sim_cfg"]["re_calc_factor_left"] = value
+        return
+
+    def inp_re_calc_right_changed(self):
+        value = self.ui.inpReCalcFactorRight.value()
+        self.__current_cfg["sim_cfg"]["re_calc_factor_right"] = value
+        return
+
+    def inp_asym_amp_thresh_changed(self):
+        value = self.ui.inpAmpThresh.value()
+        self.__current_cfg["sim_cfg"]["asym_amp_thresh"] = value
+        return
+
+    def inp_C1_changed(self):
+        value = self.ui.inpC1.value()
+        self.__current_cfg["sim_cfg"]["C1"] = value
+        return
+
+    def inp_C2_changed(self):
+        value = self.ui.inpC2.value()
+        self.__current_cfg["sim_cfg"]["C2"] = value
+        return
+
+    def inp_PSNR_changed(self):
+        value = self.ui.inpPSNR.value()
+        self.__current_cfg["sim_cfg"]["psnr_trigger"] = value
+        return
+
     def view_cam(self, image):
         # read image in BGR format
         label_w = self.image1.width()
@@ -157,43 +204,28 @@ class AsymConfigScreen(QWidget):
             right = cv2.resize(right, img_size)
             self.image_detect_left.imshow(left)
             self.image_detect_right.imshow(right)
-            self.__detected_pair = detected_pair
 
     async def __detect_asym_diff(self, left, right):
-        cfg = self.__current_cfg["sim_cfg"]
-        min_sim = self.__current_cfg["sim_cfg"]['min_similarity']
+        sim_cfg = self.__current_cfg["sim_cfg"]
+        min_sim = sim_cfg['min_similarity']
         manager = DetectorConfig.instance().get_manager()
         left_result, right_result = await manager.detect_asym(
             self.__current_cfg, left, right, self.__sample_left,
             self.__sample_right, None)
         is_asym_diff_left, avg_asym_left, avg_amp_left, recalc_left, res_list_l, amp_res_list_l = left_result
         is_asym_diff_right, avg_asym_right, avg_amp_right, recalc_right, res_list_r, amp_res_list_r = right_result
-        # find smaller value between the value of asym left and right
-        tmp_min = min(avg_asym_left, avg_asym_right)
-        print("tmpmin - ", tmp_min)
-
-        # find the smallest ASYM value among all detected shoes
-        if (tmp_min < self.__avg_min): self.__avg_min = tmp_min
-        print("avg_min - ", self.__avg_min)
 
         # calculate calc_factor both side and then keep the highest only
         tmp_re_calc_factor_left = avg_asym_left / avg_amp_left
         tmp_re_calc_factor_right = avg_asym_right / avg_amp_right
-        if (tmp_re_calc_factor_left > self.__re_calc_factor_left):
-            self.__re_calc_factor_left = tmp_re_calc_factor_left
-        if (tmp_re_calc_factor_right > self.__re_calc_factor_right):
-            self.__re_calc_factor_right = tmp_re_calc_factor_right
-
-        # update configure value
-        self.__current_cfg['asym_amp_thresh'] = self.__avg_min
-        self.__current_cfg['re_calc_factor_left'] = self.__re_calc_factor_left
-        self.__current_cfg[
-            're_calc_factor_right'] = self.__re_calc_factor_right
+        if (tmp_re_calc_factor_left > sim_cfg['re_calc_factor_left']):
+            sim_cfg['re_calc_factor_left'] = tmp_re_calc_factor_left
+        if (tmp_re_calc_factor_right > sim_cfg['re_calc_factor_right']):
+            sim_cfg['re_calc_factor_right'] = tmp_re_calc_factor_right
 
         # update result to screen
-        self.ui.inpAmpThresh.setValue(self.__avg_min)
-        self.ui.inpReCalcFactorLeft.setValue(self.__re_calc_factor_left)
-        self.ui.inpReCalcFactorRight.setValue(self.__re_calc_factor_right)
+        self.ui.inpReCalcFactorLeft.setValue(sim_cfg["re_calc_factor_left"])
+        self.ui.inpReCalcFactorRight.setValue(sim_cfg["re_calc_factor_right"])
 
     def __preprocess_color(self, sample_left, sample_right):
         manager = DetectorConfig.instance().get_manager()

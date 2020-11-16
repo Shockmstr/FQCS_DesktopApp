@@ -97,22 +97,23 @@ class MainWindow(QMainWindow):
         self.test_detect_pair_screen.backscreen.connect(
             self.change_measurement_screen)
         self.test_detect_pair_screen.nextscreen.connect(
-            self.change_asym_config_screen)
+            self.change_color_preprocess_config_screen)
         self.test_detect_pair_screen.captured.connect(
             self.toggle_capture_state)
 
-        self.asym_config_screen.backscreen.connect(
-            self.change_detect_pair_screen)
-        self.asym_config_screen.nextscreen.connect(
-            self.change_color_preprocess_config_screen)
-
         self.color_preprocess_config_screen.backscreen.connect(
-            self.change_asym_config_screen)
+            self.change_detect_pair_screen)
         self.color_preprocess_config_screen.nextscreen.connect(
+            self.change_asym_config_screen)
+
+        self.asym_config_screen.backscreen.connect(
+            self.change_color_preprocess_config_screen)
+        self.asym_config_screen.nextscreen.connect(
             self.change_color_param_calib_screen)
+        self.asym_config_screen.captured.connect(self.toggle_capture_state)
 
         self.color_param_calib_screen.backscreen.connect(
-            self.change_color_preprocess_config_screen)
+            self.change_asym_config_screen)
         self.color_param_calib_screen.nextscreen.connect(
             self.change_error_detect_screen)
         self.color_param_calib_screen.captured.connect(
@@ -155,7 +156,7 @@ class MainWindow(QMainWindow):
                 # self.__video_camera.open(index)
                 # test only
                 self.__video_camera.open(
-                    r"N:\Workspace\Capstone\FQCS-Research\FQCS.ColorDetection\test.mp4"
+                    r"N:\Workspace\Capstone\FQCS-Research\FQCS.ColorDetection\test1.mp4"
                 )
                 self.__detector_cfg.set_last_camera_uri(index)
         else:

@@ -55,42 +55,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1">
-        <item alignment="Qt::AlignTop">
-         <widget class="QGroupBox" name="groupCbbTemplate">
-          <property name="title">
-           <string>Display Type:</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_20">
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QComboBox" name="cbbDisplayType">
-             <property name="autoFillBackground">
-              <bool>false</bool>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">height:22px</string>
-             </property>
-             <item>
-              <property name="text">
-               <string>Item 1</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Item 2</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1">
         <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
@@ -319,7 +284,7 @@ font-weight:bold;</string>
                <item>
                 <widget class="QSlider" name="sldAmpRate">
                  <property name="maximum">
-                  <number>100</number>
+                  <number>30</number>
                  </property>
                  <property name="pageStep">
                   <number>5</number>
@@ -425,7 +390,7 @@ font-weight:bold;</string>
 	border: 1px solid #A5A5A5
 }</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_16">
+           <layout class="QVBoxLayout" name="verticalLayout_3">
             <item alignment="Qt::AlignTop">
              <widget class="QWidget" name="containerVerticalBtn" native="true">
               <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -441,6 +406,13 @@ font-weight:bold;</string>
                <property name="bottomMargin">
                 <number>0</number>
                </property>
+               <item>
+                <widget class="QPushButton" name="btnCapture">
+                 <property name="text">
+                  <string>CAPTURE</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>

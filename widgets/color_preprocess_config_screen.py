@@ -26,10 +26,23 @@ class ColorPreprocessConfigScreen(QWidget):
         self.image2 = None
         self.ui = Ui_color_preprocess_config_screen()
         self.ui.setupUi(self)
+        self.build()
         self.binding()
+
+    def build(self):
+        self.image1 = ImageWidget()
+        self.image2 = ImageWidget()
+        self.imageLayout = self.ui.screen1.parentWidget().layout()
+        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+        self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+        self.image1.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.image2.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.ui.screen1.deleteLater()
+        self.ui.screen2.deleteLater()
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__view_image()
         self.__load_config()
 
     # binding
@@ -47,8 +60,6 @@ class ColorPreprocessConfigScreen(QWidget):
             self.sld_contrast_right_value_change)
         self.ui.sldSaturation.valueChanged.connect(
             self.sld_saturation_value_change)
-        self.ui.chkColorCompare.stateChanged.connect(
-            self.chk_color_compare_state_change)
 
         resize_number = ["32", "64", "128", "256", "512", "1024"]
         self.ui.cbbResizeWidth.clear()
@@ -63,10 +74,6 @@ class ColorPreprocessConfigScreen(QWidget):
 
         self.ui.cbbResizeWidth.activated.connect(self.cbbResize_chosen)
         self.ui.cbbResizeHeight.activated.connect(self.cbbResize_chosen)
-
-    def chk_color_compare_state_change(self):
-        checked = self.ui.chkColorCompare.isChecked()
-        self.__current_cfg["is_color_enable"] = True
 
     # handler
     def sld_blur_value_change(self):
@@ -116,13 +123,14 @@ class ColorPreprocessConfigScreen(QWidget):
             self.__view_image()
 
     def __view_image(self):
-        manager = DetectorConfig.instance().manager
-        if (self.image1 is not None and self.image2 is not None):
-            left = manager.get_sample_left()
-            right = manager.get_sample_right()
+        manager = DetectorConfig.instance().get_manager()
+        left = manager.get_sample_left()
+        right = manager.get_sample_right()
+        if (left is not None and right is not None):
             modified_left, modified_right = self.__preprocess_color(
                 left, right)
-            img_size = (256, self.label_h - 50)
+            label_h = self.image1.height()
+            img_size = (256, label_h - 50)
             modified_left = cv2.resize(modified_left,
                                        img_size,
                                        interpolation=cv2.INTER_AREA)
@@ -135,19 +143,8 @@ class ColorPreprocessConfigScreen(QWidget):
             self.image1.imshow(None)
             self.image2.imshow(None)
 
-    def showEvent(self, event):
-        self.image1 = ImageWidget()
-        self.image2 = ImageWidget()
-        self.label_w = self.ui.screen1.width()
-        self.label_h = self.ui.screen1.height()
-        self.imageLayout = self.ui.screen1.parentWidget().layout()
-        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
-        self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
-        self.image1.ui.lblImage.setAlignment(Qt.AlignCenter)
-        self.image2.ui.lblImage.setAlignment(Qt.AlignCenter)
-
     def __preprocess_color(self, sample_left, sample_right):
-        manager = DetectorConfig.instance().manager
+        manager = DetectorConfig.instance().get_manager()
         pre_sample_left = manager.preprocess(self.__current_cfg, sample_left,
                                              True)
         pre_sample_right = manager.preprocess(self.__current_cfg, sample_right,

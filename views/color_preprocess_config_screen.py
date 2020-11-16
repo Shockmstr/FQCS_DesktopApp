@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'color_preprocess_config_screenpJYSDo.ui'
+## Form generated from reading UI file 'color_preprocess_config_screenawZvrA.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -84,16 +84,10 @@ class Ui_color_preprocess_config_screen(object):
 "}")
         self.verticalLayout_10 = QVBoxLayout(self.containerLeft)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
-        self.chkColorCompare = QCheckBox(self.containerLeft)
-        self.chkColorCompare.setObjectName(u"chkColorCompare")
-
-        self.verticalLayout_10.addWidget(self.chkColorCompare, 0, Qt.AlignTop)
-
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_10.addItem(self.verticalSpacer)
 
-        self.verticalLayout_10.setStretch(0, 1)
 
         self.horizontalLayout.addWidget(self.containerLeft)
 
@@ -290,7 +284,6 @@ class Ui_color_preprocess_config_screen(object):
         self.screen1.setText(QCoreApplication.translate("color_preprocess_config_screen", u"SCREEN", None))
         self.screen2.setText(QCoreApplication.translate("color_preprocess_config_screen", u"SCREEN", None))
         self.lblTitle.setText(QCoreApplication.translate("color_preprocess_config_screen", u"COLOR COMPARISION - PREPROCESS", None))
-        self.chkColorCompare.setText(QCoreApplication.translate("color_preprocess_config_screen", u"Enable Color Comparison", None))
         self.groupCbbResize.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Resize (Width - Height)", None))
         self.cbbResizeWidth.setItemText(0, QCoreApplication.translate("color_preprocess_config_screen", u"Item 1", None))
         self.cbbResizeWidth.setItemText(1, QCoreApplication.translate("color_preprocess_config_screen", u"Item 2", None))
