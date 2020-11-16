@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'progress_screenZpkXjg.ui'
+## Form generated from reading UI file 'progress_screenvnPdsK.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -45,7 +45,7 @@ class Ui_ProgressScreen(object):
         self.cbbCamera.setObjectName(u"cbbCamera")
         self.cbbCamera.setAutoFillBackground(False)
         self.cbbCamera.setStyleSheet(u"height:22px")
-        self.cbbCamera.setEditable(True)
+        self.cbbCamera.setEditable(False)
 
         self.horizontalLayout_5.addWidget(self.cbbCamera)
 
@@ -91,7 +91,7 @@ class Ui_ProgressScreen(object):
         self.cbbDisplayType.setObjectName(u"cbbDisplayType")
         self.cbbDisplayType.setAutoFillBackground(False)
         self.cbbDisplayType.setStyleSheet(u"height:22px")
-        self.cbbDisplayType.setEditable(True)
+        self.cbbDisplayType.setEditable(False)
 
         self.horizontalLayout_2.addWidget(self.cbbDisplayType)
 
@@ -156,6 +156,10 @@ class Ui_ProgressScreen(object):
 
         self.horizontalLayout_7.addWidget(self.sample_R)
 
+        self.horizontalLayout_7.setStretch(0, 1)
+        self.horizontalLayout_7.setStretch(1, 1)
+        self.horizontalLayout_7.setStretch(3, 1)
+        self.horizontalLayout_7.setStretch(4, 1)
 
         self.gridLayout.addWidget(self.sectionMainResult, 0, 1, 1, 1)
 

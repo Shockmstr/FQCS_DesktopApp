@@ -13,6 +13,7 @@ from widgets.color_preprocess_config_screen import ColorPreprocessConfigScreen
 from widgets.detection_config_screen import DetectionConfigScreen
 from widgets.color_param_calibration_screen import ColorParamCalibrationScreen
 from widgets.error_detect_screen import ErrorDetectScreen
+from widgets.side_error_detect_screen import SideErrorDetectScreen
 from widgets.progress_screen import ProgressScreen
 from widgets.asym_config_screen import AsymConfigScreen
 from services.identity_service import IdentityService
@@ -52,6 +53,8 @@ class MainWindow(QMainWindow):
         self.progress_screen = ProgressScreen(self)
         # screen 8
         self.asym_config_screen = AsymConfigScreen(self)
+        # screen 9
+        self.side_error_detect_screen = SideErrorDetectScreen(self)
 
         # add to Stacked Widget
         self.ui.centralStackWidget.addWidget(self.home_screen)
@@ -63,6 +66,7 @@ class MainWindow(QMainWindow):
             self.color_preprocess_config_screen)
         self.ui.centralStackWidget.addWidget(self.color_param_calib_screen)
         self.ui.centralStackWidget.addWidget(self.error_detect_screen)
+        self.ui.centralStackWidget.addWidget(self.side_error_detect_screen)
         self.ui.centralStackWidget.addWidget(self.progress_screen)
 
     def showEvent(self, event):
@@ -120,13 +124,19 @@ class MainWindow(QMainWindow):
             self.toggle_capture_state)
 
         self.error_detect_screen.backscreen.connect(
-            self.skipable_color_param_calib_screen)
+            self.change_color_param_calib_screen)
         self.error_detect_screen.nextscreen.connect(
             self.change_progress_screen)
         self.error_detect_screen.captured.connect(self.toggle_capture_state)
 
+        self.side_error_detect_screen.backscreen.connect(
+            self.change_measurement_screen)
+        self.side_error_detect_screen.nextscreen.connect(
+            self.change_progress_screen)
+        self.side_error_detect_screen.captured.connect(
+            self.toggle_capture_state)
+
         self.progress_screen.return_home.connect(self.change_home_screen)
-        self.progress_screen.captured.connect(self.toggle_capture_state)
         return
 
     def closeEvent(self, event):
@@ -173,20 +183,13 @@ class MainWindow(QMainWindow):
             self.ui.centralStackWidget.setCurrentWidget(
                 self.test_detect_pair_screen)
         else:
+            err_text = self.side_error_detect_screen.validate_show()
+            if err_text is not None:
+                helpers.show_message(err_text)
+                return
             # skip to screen 6 if only side camera is selected
             self.ui.centralStackWidget.setCurrentWidget(
-                self.error_detect_screen)
-
-    def skipable_color_param_calib_screen(self):
-        idx, cfg = self.__detector_cfg.get_current_cfg()
-        continue_screen = cfg["is_main"]
-        if continue_screen:
-            self.ui.centralStackWidget.setCurrentWidget(
-                self.color_param_calib_screen)
-        else:
-            # skip to screen 6 if only side camera is selected
-            self.ui.centralStackWidget.setCurrentWidget(
-                self.measurement_screen)
+                self.side_error_detect_screen)
 
     def change_home_screen(self):
         self.ui.centralStackWidget.setCurrentWidget(self.home_screen)

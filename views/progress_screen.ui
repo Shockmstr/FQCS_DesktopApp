@@ -77,7 +77,7 @@
                <string notr="true">height:22px</string>
               </property>
               <property name="editable">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
               <property name="currentText">
                <string>Item 1</string>
@@ -157,7 +157,7 @@
                <string notr="true">height:22px</string>
               </property>
               <property name="editable">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
               <property name="currentText">
                <string>Original</string>
@@ -228,7 +228,7 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="0" column="1">
        <widget class="QWidget" name="sectionMainResult" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,1,0,1,1">
          <property name="leftMargin">
           <number>0</number>
          </property>
