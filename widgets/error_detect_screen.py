@@ -222,23 +222,10 @@ class ErrorDetectScreen(QWidget):
 
         label_w = self.image3.width()
         label_h = self.image3.height()
-        dim = (label_w, label_h)
-        final_img = None
         for idx, img in enumerate(images):
             images[idx] *= 255.
             images[idx] = np.asarray(images[idx], np.uint8)
-            height, width, _ = images[idx].shape
-            scale = label_h / height
-            width *= scale
-            if final_img is None:
-                final_img = cv2.resize(images[idx], (int(width), label_h))
-            else:
-                final_img = np.concatenate(
-                    (final_img, cv2.resize(images[idx],
-                                           (int(width), label_h))),
-                    axis=1)
-        if final_img.shape[1] > label_w:
-            final_img = cv2.resize(final_img, dim)
+        final_img = helpers.concat_images(images, label_w, label_h)
         self.image3.imshow(final_img)
 
     async def __detect_error_on_picture(self, images):
@@ -255,23 +242,10 @@ class ErrorDetectScreen(QWidget):
                                  min_score=err_cfg["yolo_score_threshold"])
         label_w = self.image3.width()
         label_h = self.image3.height()
-        dim = (label_w, label_h)
-        final_img = None
         for idx, img in enumerate(images):
             images[idx] *= 255.
             images[idx] = np.asarray(images[idx], np.uint8)
-            height, width, _ = images[idx].shape
-            scale = label_h / height
-            width *= scale
-            if final_img is None:
-                final_img = cv2.resize(images[idx], (int(width), label_h))
-            else:
-                final_img = np.concatenate(
-                    (final_img, cv2.resize(images[idx],
-                                           (int(width), label_h))),
-                    axis=1)
-        if final_img.shape[1] > label_w:
-            final_img = cv2.resize(final_img, dim)
+        final_img = helpers.concat_images(images, label_w, label_h)
         self.image3.imshow(final_img)
 
     def __process_pair(self, image):

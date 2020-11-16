@@ -6,6 +6,7 @@ from app_models.detector_config import DetectorConfig
 from app_constants import ROOT_DIR
 import trio
 import asyncio
+import numpy as np
 
 
 def sync_func(func, *args):
@@ -33,6 +34,24 @@ def file_chooser_open_file(parent, f_filter=None):
     dialog = QFileDialog(parent)
     url = dialog.getOpenFileUrl(filter=f_filter)
     return url
+
+
+def concat_images(images, label_w, label_h):
+    dim = (label_w, label_h)
+    final_img = None
+    for idx, img in enumerate(images):
+        height, width, _ = images[idx].shape
+        scale = label_h / height
+        width *= scale
+        if final_img is None:
+            final_img = cv2.resize(images[idx], (int(width), label_h))
+        else:
+            final_img = np.concatenate(
+                (final_img, cv2.resize(images[idx], (int(width), label_h))),
+                axis=1)
+    if final_img.shape[1] > label_w:
+        final_img = cv2.resize(final_img, dim)
+    return final_img
 
 
 def get_all_camera_index(num=10):

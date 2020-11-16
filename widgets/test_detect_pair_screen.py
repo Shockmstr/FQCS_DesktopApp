@@ -48,11 +48,10 @@ class TestDetectPairScreen(QWidget):
         if left is not None:
             label_w = self.image1.width()
             label_h = self.image1.height()
-            dim = (label_w, label_h)
-            self.__detected_pair = [left, right]
-            detected = self.__concat_left_right(left, right)
-            detected_resized = cv2.resize(detected, dim)
-            self.image3.imshow(detected_resized)
+            images = [left, right]
+            self.__detected_pair = images
+            final_img = helpers.concat_images(images, label_w, label_h)
+            self.image3.imshow(final_img)
         self.__set_btn_next_enabled()
         self.__set_btn_capture_text()
         self.__load_config()
@@ -95,8 +94,7 @@ class TestDetectPairScreen(QWidget):
         self.image1.imshow(img_resized)
         self.image2.imshow(contour_resized)
         if detected is not None and self.__detected_pair is None:
-            detected_resized = cv2.resize(detected, dim)
-            self.image3.imshow(detected_resized)
+            self.image3.imshow(detected)
             self.__detected_pair = detected_pair
 
     def __load_config(self):
@@ -120,16 +118,12 @@ class TestDetectPairScreen(QWidget):
             left, right = pair
             left, right = left[0], right[0]
             left = cv2.flip(left, 1)
-            detected = self.__concat_left_right(left, right)
-            return image, detected, [left, right]
+            label_w = self.image3.width()
+            label_h = self.image3.height()
+            images = [left, right]
+            final_img = helpers.concat_images(images, label_w, label_h)
+            return image, final_img, images
         return image, None, None
-
-    def __concat_left_right(self, left, right):
-        max_width = max((left.shape[0], right.shape[0]))
-        temp_left = imutils.resize(left, height=max_width)
-        temp_right = imutils.resize(right, height=max_width)
-        detected = np.concatenate((temp_left, temp_right), axis=1)
-        return detected
 
     def btn_save_sample_clicked(self):
         if self.__detected_pair is not None:
@@ -138,7 +132,6 @@ class TestDetectPairScreen(QWidget):
             if folder_path is None:
                 helpers.show_message("You must save configuration first")
                 return
-            left = cv2.flip(left, 1)
             cv2.imwrite(os.path.join(folder_path, detector.SAMPLE_LEFT_FILE),
                         left)
             cv2.imwrite(os.path.join(folder_path, detector.SAMPLE_RIGHT_FILE),

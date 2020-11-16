@@ -210,7 +210,6 @@ class AsymConfigScreen(QWidget):
         if detected_pair is not None:
             left, right = self.__preprocess_color(detected_pair[0],
                                                   detected_pair[1])
-            left = cv2.flip(left, 1)
             trio.run(self.__detect_asym_diff, left, right)
             left = cv2.resize(left, img_size)
             right = cv2.resize(right, img_size)
@@ -276,9 +275,10 @@ class AsymConfigScreen(QWidget):
             left, right = pair
             left, right = left[0], right[0]
             left = cv2.flip(left, 1)
-            max_width = max((left.shape[0], right.shape[0]))
-            temp_left = imutils.resize(left, height=max_width)
-            temp_right = imutils.resize(right, height=max_width)
-            detected = np.concatenate((temp_left, temp_right), axis=1)
-            return image, detected, [left, right]
+            label_w = self.image1.width()
+            label_h = self.image1.height()
+            images = [left, right]
+            self.__detected_pair = images
+            final_img = helpers.concat_images(images, label_w, label_h)
+            return image, final_img, images
         return image, None, None
