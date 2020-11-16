@@ -10,6 +10,8 @@ import os
 import imutils
 import trio
 from views.color_param_calibration_screen import Ui_ColorParamCalibScreen
+import datetime
+from app_constants import ISO_DATE_FORMAT
 
 
 class ColorParamCalibrationScreen(QWidget):
@@ -20,6 +22,7 @@ class ColorParamCalibrationScreen(QWidget):
     __max_blue = 0
     __max_green = 0
     __max_red = 0
+    __amp_thresh_edited = False
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -63,6 +66,7 @@ class ColorParamCalibrationScreen(QWidget):
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.ui.inpResult.setHtml("<b>RESULT</b>")
         self.__view_image_sample()
         self.__set_btn_capture_text()
         self.__load_config()
@@ -72,9 +76,6 @@ class ColorParamCalibrationScreen(QWidget):
         self.backscreen = self.ui.btnBack.clicked
         self.nextscreen = self.ui.btnNext.clicked
         self.ui.btnCapture.clicked.connect(self.btn_capture_clicked)
-        self.ui.cbbCamera.setPlaceholderText("Choose Cam")
-        self.ui.cbbCamera.setCurrentIndex(-1)
-        self.ui.cbbCamera.currentIndexChanged.connect(self.cbbCamera_chose)
         self.ui.inpSuppThreshold.textChanged.connect(
             self.inp_sup_thresh_change)
         self.ui.sldAllowDiff.valueChanged.connect(self.sld_allow_diff_change)
@@ -82,6 +83,10 @@ class ColorParamCalibrationScreen(QWidget):
         self.ui.ampThreshBlue.textChanged.connect(self.amp_threshold_change)
         self.ui.ampThreshGreen.textChanged.connect(self.amp_threshold_change)
         self.ui.ampThreshRed.textChanged.connect(self.amp_threshold_change)
+        self.ui.chkColorCompare.stateChanged.connect(
+            self.chk_color_enabled_state_changed)
+        self.ui.btnEditAmpThresh.clicked.connect(
+            self.btn_edit_amp_thresh_clicked)
 
     def btn_capture_clicked(self):
         self.captured.emit()
@@ -96,8 +101,8 @@ class ColorParamCalibrationScreen(QWidget):
         amp_thresh_red_value = float(self.ui.ampThreshRed.text())
         amp_thresh_blue_value = float(self.ui.ampThreshBlue.text())
         self.__current_cfg["color_cfg"]["amplify_thresh"] = (
-            amp_thresh_red_value, amp_thresh_green_value,
-            amp_thresh_blue_value)
+            amp_thresh_blue_value, amp_thresh_green_value,
+            amp_thresh_red_value)
 
     def sld_amp_rate_change(self):
         value = self.ui.sldAmpRate.value()
@@ -114,25 +119,38 @@ class ColorParamCalibrationScreen(QWidget):
                                          str(value))
         self.__current_cfg["color_cfg"]["max_diff"] = value / 100
 
-    def cbbCamera_chose(self):
-        return
+    def chk_color_enabled_state_changed(self):
+        checked = self.ui.chkColorCompare.isChecked()
+        self.__current_cfg["is_color_enable"] = checked
 
     def __load_config(self):
-        amplify_rate = self.__current_cfg["color_cfg"]["amplify_rate"]
-        supp_thresh = self.__current_cfg["color_cfg"]["supp_thresh"]
-        max_diff = self.__current_cfg["color_cfg"]["max_diff"]
+        color_cfg = self.__current_cfg["color_cfg"]
+        amplify_rate = color_cfg["amplify_rate"]
+        supp_thresh = color_cfg["supp_thresh"]
+        max_diff = color_cfg["max_diff"]
+        is_color_enable = self.__current_cfg["is_color_enable"]
+        amp_thresh = color_cfg["amplify_thresh"]
+        color_cfg["amplify_thresh"] = (amp_thresh[0] or 1000, amp_thresh[1]
+                                       or 1000, amp_thresh[2] or 1000)
+        amp_thresh = color_cfg["amplify_thresh"]
 
         self.ui.sldAllowDiff.setValue(max_diff * 100)
         self.ui.sldAmpRate.setValue(amplify_rate)
         self.ui.inpSuppThreshold.setValue(supp_thresh)
-        self.ui.ampThreshBlue.setValue(0)  # self-created value
-        self.ui.ampThreshGreen.setValue(0)  # self-created value
-        self.ui.ampThreshRed.setValue(0)  # self-created value
+        self.ui.ampThreshBlue.setValue(amp_thresh[0])
+        self.ui.ampThreshGreen.setValue(amp_thresh[1])
+        self.ui.ampThreshRed.setValue(amp_thresh[2])
 
         self.ui.grpSldAmpRate.setTitle("Amplification Rate: " +
                                        str(amplify_rate))
         self.ui.grpSldAllowDiff.setTitle("Allowed Difference (%): " +
                                          str(max_diff * 100))
+        self.ui.chkColorCompare.setChecked(is_color_enable)
+
+        self.ui.btnEditAmpThresh.setText("Edit")
+        self.ui.ampThreshRed.setEnabled(False)
+        self.ui.ampThreshGreen.setEnabled(False)
+        self.ui.ampThreshBlue.setEnabled(False)
 
     def __view_image_sample(self):
         manager = DetectorConfig.instance().get_manager()
@@ -180,21 +198,55 @@ class ColorParamCalibrationScreen(QWidget):
 
         left_task, right_task = await manager.compare_colors(
             self.__current_cfg, img_left, img_right, sample_left, sample_right,
-            False, None)
+            not self.__amp_thresh_edited, None)
         _, avg_diff_l, left_hist, is_diff_l = left_task
         _, avg_diff_r, right_hist, is_diff_r = right_task
         blue = max(left_hist[0], right_hist[0])
         green = max(left_hist[1], right_hist[1])
         red = max(left_hist[2], right_hist[2])
-        if (blue > self.__max_blue): self.__max_blue = blue
-        if (green > self.__max_green): self.__max_green = green
-        if (red > self.__max_red): self.__max_red = red
-        amp_thresh = (float(self.__max_red), float(self.__max_green),
-                      float(self.__max_blue))
-        self.ui.ampThreshRed.setValue(amp_thresh[0])
-        self.ui.ampThreshGreen.setValue(amp_thresh[1])
-        self.ui.ampThreshBlue.setValue(amp_thresh[2])
-        self.__current_cfg["color_cfg"]["amplify_thresh"] = amp_thresh
+        max_blue, max_green, max_red = self.__max_blue, self.__max_green, self.__max_red
+        if (blue > max_blue): max_blue = blue
+        if (green > max_green): max_green = green
+        if (red > max_red): max_red = red
+        amp_thresh = (float(max_blue), float(max_green), float(max_red))
+        if self.__amp_thresh_edited:
+            self.__max_blue = max_blue
+            self.__max_red = max_red
+            self.__max_green = max_green
+            self.ui.ampThreshBlue.setValue(amp_thresh[0])
+            self.ui.ampThreshGreen.setValue(amp_thresh[1])
+            self.ui.ampThreshRed.setValue(amp_thresh[2])
+            self.__current_cfg["color_cfg"]["amplify_thresh"] = amp_thresh
+
+        # result display
+        cur = datetime.datetime.now()
+        cur_date_str = cur.strftime(ISO_DATE_FORMAT)
+        result_text = f"<>RESULT</><br/>" + f"<b>Time</b>: {cur_date_str}<br/>"
+        avg_diff_l *= 100
+        avg_diff_r *= 100
+        r, g, b = amp_thresh[0], amp_thresh[1], amp_thresh[2]
+        result_text += f"<b>Current different value</b>: {r:.2f}, {g:.2f}, {b:.2f}<br/>"
+        result_text += f"<b>Left different</b>: {avg_diff_l:.2f}%<br/>"
+        result_text += f"<b>Right different</b>: {avg_diff_r:.2f}%<br/>"
+        if not self.__amp_thresh_edited:
+            left_result_text = "PASSED" if not is_diff_l else "FAILED"
+            right_result_text = "PASSED" if not is_diff_r else "FAILED"
+            result_text += f"<b>Result</b>: Left {left_result_text} - Right {right_result_text}"
+        self.ui.inpResult.setHtml(result_text)
+
+    def btn_edit_amp_thresh_clicked(self, event):
+        if self.__amp_thresh_edited:
+            self.ui.ampThreshRed.setEnabled(False)
+            self.ui.ampThreshGreen.setEnabled(False)
+            self.ui.ampThreshBlue.setEnabled(False)
+            self.ui.btnEditAmpThresh.setText("Edit")
+            self.__amp_thresh_edited = False
+        else:
+            self.ui.ampThreshRed.setEnabled(True)
+            self.ui.ampThreshGreen.setEnabled(True)
+            self.ui.ampThreshBlue.setEnabled(True)
+            self.ui.btnEditAmpThresh.setText("Save")
+            self.__amp_thresh_edited = True
 
     #image process function
     def __preprocess_color(self, sample_left, sample_right):

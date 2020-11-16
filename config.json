@@ -30,9 +30,9 @@
       "sat_adj": 2,
       "supp_thresh": 10,
       "amplify_thresh": [
-        null,
-        null,
-        null
+        59.118526458740234,
+        36.83748245239258,
+        51.633323669433594
       ],
       "amplify_rate": 20,
       "max_diff": 0.2
@@ -44,8 +44,8 @@
       "asym_amp_thresh": 1.0,
       "asym_amp_rate": 30,
       "min_similarity": 0.95,
-      "re_calc_factor_left": 1.361937889324479,
-      "re_calc_factor_right": 1.2019646625211995,
+      "re_calc_factor_left": 1.36,
+      "re_calc_factor_right": 1.2,
       "segments_list": [
         4,
         2,
@@ -75,7 +75,7 @@
     "d_cfg": {
       "max_boxes": 10,
       "bg_thresh": 110,
-      "adj_bg_thresh": 151.0784188034188,
+      "adj_bg_thresh": 158.8052687633547,
       "thresh_inv": false,
       "light_adj_thresh": 65,
       "alpha": 1.0,

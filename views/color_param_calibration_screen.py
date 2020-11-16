@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'color_param_calibration_screenfEhIpp.ui'
+## Form generated from reading UI file 'color_param_calibration_screenrXrrKP.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -35,34 +35,6 @@ class Ui_ColorParamCalibScreen(object):
         self.screen1.setAlignment(Qt.AlignCenter)
 
         self.gridLayout.addWidget(self.screen1, 0, 0, 1, 1)
-
-        self.horizontalLayout_4 = QHBoxLayout()
-        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.grpboxDisplayType = QGroupBox(self.containerScreen)
-        self.grpboxDisplayType.setObjectName(u"grpboxDisplayType")
-        self.verticalLayout_3 = QVBoxLayout(self.grpboxDisplayType)
-        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalLayout_3.setContentsMargins(-1, 0, -1, 0)
-        self.cbbCamera = QComboBox(self.grpboxDisplayType)
-        self.cbbCamera.addItem("")
-        self.cbbCamera.addItem("")
-        self.cbbCamera.setObjectName(u"cbbCamera")
-        self.cbbCamera.setAutoFillBackground(False)
-        self.cbbCamera.setStyleSheet(u"height:22px")
-
-        self.verticalLayout_3.addWidget(self.cbbCamera)
-
-
-        self.horizontalLayout_4.addWidget(self.grpboxDisplayType, 0, Qt.AlignTop)
-
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_4.addItem(self.horizontalSpacer)
-
-        self.horizontalLayout_4.setStretch(0, 2)
-        self.horizontalLayout_4.setStretch(1, 3)
-
-        self.gridLayout.addLayout(self.horizontalLayout_4, 1, 0, 1, 1)
 
         self.screen2 = QWidget(self.containerScreen)
         self.screen2.setObjectName(u"screen2")
@@ -99,6 +71,22 @@ class Ui_ColorParamCalibScreen(object):
 
 
         self.gridLayout.addWidget(self.screen3, 1, 1, 1, 1)
+
+        self.sectionInfo = QWidget(self.containerScreen)
+        self.sectionInfo.setObjectName(u"sectionInfo")
+        self.verticalLayout_3 = QVBoxLayout(self.sectionInfo)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.inpResult = QTextEdit(self.sectionInfo)
+        self.inpResult.setObjectName(u"inpResult")
+        self.inpResult.setEnabled(True)
+        self.inpResult.setReadOnly(True)
+        self.inpResult.setOverwriteMode(False)
+        self.inpResult.setAcceptRichText(True)
+
+        self.verticalLayout_3.addWidget(self.inpResult)
+
+
+        self.gridLayout.addWidget(self.sectionInfo, 1, 0, 1, 1)
 
         self.gridLayout.setRowStretch(0, 1)
         self.gridLayout.setRowStretch(1, 1)
@@ -159,6 +147,22 @@ class Ui_ColorParamCalibScreen(object):
 "}")
         self.gridLayout_2 = QGridLayout(self.containerMid)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.grpSldAllowDiff = QGroupBox(self.containerMid)
+        self.grpSldAllowDiff.setObjectName(u"grpSldAllowDiff")
+        self.verticalLayout_13 = QVBoxLayout(self.grpSldAllowDiff)
+        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
+        self.verticalLayout_13.setContentsMargins(-1, 0, -1, 0)
+        self.sldAllowDiff = QSlider(self.grpSldAllowDiff)
+        self.sldAllowDiff.setObjectName(u"sldAllowDiff")
+        self.sldAllowDiff.setMinimum(1)
+        self.sldAllowDiff.setMaximum(50)
+        self.sldAllowDiff.setOrientation(Qt.Horizontal)
+
+        self.verticalLayout_13.addWidget(self.sldAllowDiff)
+
+
+        self.gridLayout_2.addWidget(self.grpSldAllowDiff, 3, 0, 1, 1)
+
         self.grpSldSupThresh = QGroupBox(self.containerMid)
         self.grpSldSupThresh.setObjectName(u"grpSldSupThresh")
         self.verticalLayout_11 = QVBoxLayout(self.grpSldSupThresh)
@@ -171,6 +175,22 @@ class Ui_ColorParamCalibScreen(object):
 
 
         self.gridLayout_2.addWidget(self.grpSldSupThresh, 0, 0, 1, 1)
+
+        self.grpSldAmpRate = QGroupBox(self.containerMid)
+        self.grpSldAmpRate.setObjectName(u"grpSldAmpRate")
+        self.verticalLayout_12 = QVBoxLayout(self.grpSldAmpRate)
+        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
+        self.verticalLayout_12.setContentsMargins(-1, 0, -1, 0)
+        self.sldAmpRate = QSlider(self.grpSldAmpRate)
+        self.sldAmpRate.setObjectName(u"sldAmpRate")
+        self.sldAmpRate.setMinimum(1)
+        self.sldAmpRate.setMaximum(50)
+        self.sldAmpRate.setOrientation(Qt.Horizontal)
+
+        self.verticalLayout_12.addWidget(self.sldAmpRate)
+
+
+        self.gridLayout_2.addWidget(self.grpSldAmpRate, 1, 0, 1, 1)
 
         self.groupInputTemplate_2 = QGroupBox(self.containerMid)
         self.groupInputTemplate_2.setObjectName(u"groupInputTemplate_2")
@@ -200,40 +220,13 @@ class Ui_ColorParamCalibScreen(object):
 
         self.horizontalLayout_2.addWidget(self.ampThreshBlue)
 
+        self.btnEditAmpThresh = QPushButton(self.groupInputTemplate_2)
+        self.btnEditAmpThresh.setObjectName(u"btnEditAmpThresh")
+
+        self.horizontalLayout_2.addWidget(self.btnEditAmpThresh)
+
 
         self.gridLayout_2.addWidget(self.groupInputTemplate_2, 0, 1, 1, 1)
-
-        self.grpSldAllowDiff = QGroupBox(self.containerMid)
-        self.grpSldAllowDiff.setObjectName(u"grpSldAllowDiff")
-        self.verticalLayout_13 = QVBoxLayout(self.grpSldAllowDiff)
-        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
-        self.verticalLayout_13.setContentsMargins(-1, 0, -1, 0)
-        self.sldAllowDiff = QSlider(self.grpSldAllowDiff)
-        self.sldAllowDiff.setObjectName(u"sldAllowDiff")
-        self.sldAllowDiff.setMinimum(1)
-        self.sldAllowDiff.setMaximum(50)
-        self.sldAllowDiff.setOrientation(Qt.Horizontal)
-
-        self.verticalLayout_13.addWidget(self.sldAllowDiff)
-
-
-        self.gridLayout_2.addWidget(self.grpSldAllowDiff, 3, 0, 1, 1)
-
-        self.grpSldAmpRate = QGroupBox(self.containerMid)
-        self.grpSldAmpRate.setObjectName(u"grpSldAmpRate")
-        self.verticalLayout_12 = QVBoxLayout(self.grpSldAmpRate)
-        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
-        self.verticalLayout_12.setContentsMargins(-1, 0, -1, 0)
-        self.sldAmpRate = QSlider(self.grpSldAmpRate)
-        self.sldAmpRate.setObjectName(u"sldAmpRate")
-        self.sldAmpRate.setMinimum(1)
-        self.sldAmpRate.setMaximum(50)
-        self.sldAmpRate.setOrientation(Qt.Horizontal)
-
-        self.verticalLayout_12.addWidget(self.sldAmpRate)
-
-
-        self.gridLayout_2.addWidget(self.grpSldAmpRate, 1, 0, 1, 1)
 
         self.gridLayout_2.setRowStretch(0, 1)
         self.gridLayout_2.setRowStretch(1, 1)
@@ -306,23 +299,28 @@ class Ui_ColorParamCalibScreen(object):
     def retranslateUi(self, ColorParamCalibScreen):
         ColorParamCalibScreen.setWindowTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Form", None))
         self.screen1.setText(QCoreApplication.translate("ColorParamCalibScreen", u"SCREEN", None))
-        self.grpboxDisplayType.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Display Type", None))
-        self.cbbCamera.setItemText(0, QCoreApplication.translate("ColorParamCalibScreen", u"Item 1", None))
-        self.cbbCamera.setItemText(1, QCoreApplication.translate("ColorParamCalibScreen", u"Item 2", None))
-
         self.screen2Left.setText(QCoreApplication.translate("ColorParamCalibScreen", u"PushButton", None))
         self.screen2Right.setText(QCoreApplication.translate("ColorParamCalibScreen", u"PushButton", None))
         self.screen3Left.setText(QCoreApplication.translate("ColorParamCalibScreen", u"PushButton", None))
         self.screen3Right.setText(QCoreApplication.translate("ColorParamCalibScreen", u"PushButton", None))
+        self.inpResult.setMarkdown(QCoreApplication.translate("ColorParamCalibScreen", u"**RESULT**\n"
+"\n"
+"", None))
+        self.inpResult.setHtml(QCoreApplication.translate("ColorParamCalibScreen", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:5px; margin-bottom:5px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">RESULT</span></p></body></html>", None))
         self.lblTitle.setText(QCoreApplication.translate("ColorParamCalibScreen", u"COLOR COMPARISON - PARAMETERS CALIBRATION", None))
         self.chkColorCompare.setText(QCoreApplication.translate("ColorParamCalibScreen", u"Enable Color Comparison", None))
+        self.grpSldAllowDiff.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Allowed Difference (%): 0", None))
         self.grpSldSupThresh.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Suppress Threshold", None))
+        self.grpSldAmpRate.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Amplification Rate: 0", None))
         self.groupInputTemplate_2.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Amplification Threshold", None))
         self.ampThreshRed.setSpecialValueText("")
         self.ampThreshGreen.setSpecialValueText("")
         self.ampThreshBlue.setSpecialValueText("")
-        self.grpSldAllowDiff.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Allowed Difference (%): 0", None))
-        self.grpSldAmpRate.setTitle(QCoreApplication.translate("ColorParamCalibScreen", u"Amplification Rate: 0", None))
+        self.btnEditAmpThresh.setText(QCoreApplication.translate("ColorParamCalibScreen", u"Edit", None))
         self.btnCapture.setText(QCoreApplication.translate("ColorParamCalibScreen", u"CAPTURE", None))
         self.btnBack.setText(QCoreApplication.translate("ColorParamCalibScreen", u"BACK", None))
         self.btnNext.setText(QCoreApplication.translate("ColorParamCalibScreen", u"NEXT", None))
