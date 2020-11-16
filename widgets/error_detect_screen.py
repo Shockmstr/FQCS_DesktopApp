@@ -5,9 +5,6 @@ from app_models.app_config import AppConfig
 from app import helpers
 from views.error_detect_screen import Ui_ErrorDetectScreen
 from FQCS import detector, helper, manager
-from FQCS.tf2_yolov4.anchors import YOLOV4_ANCHORS
-from FQCS.tf2_yolov4.model import YOLOv4
-import csv
 import os
 import imutils
 import cv2
@@ -17,6 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from qasync import asyncSlot
 from services.worker_runnable import WorkerRunnable
+import trio
 
 
 class ErrorDetectScreen(QWidget):
@@ -44,15 +42,11 @@ class ErrorDetectScreen(QWidget):
         self.ui.screen2.deleteLater()
         self.ui.screen4.deleteLater()
 
-    def showEvent(self, event):
-        _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
-        self.height_value = 0
-        self.width_value = 0
         self.ui.cbbWidth.setPlaceholderText("Width")
         self.ui.cbbHeight.setPlaceholderText("Height")
         self.ui.cbbWidth.setCurrentIndex(-1)
         self.ui.cbbHeight.setCurrentIndex(-1)
-        frame_resize_values = [str(32 * i) for i in range(1, 20, 2)]
+        frame_resize_values = [str(32 * i) for i in range(1, 20)]
 
         self.ui.cbbHeight.clear()
         for value in frame_resize_values:
@@ -61,34 +55,38 @@ class ErrorDetectScreen(QWidget):
         self.ui.cbbWidth.clear()
         for value in frame_resize_values:
             self.ui.cbbWidth.addItem(value, userData=int(value))
+
+    def showEvent(self, event):
+        _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
         self.__set_btn_capture_text()
         self.__load_config()
 
     def __load_config(self):
-        img_size = self.__current_cfg["err_cfg"]["img_size"]
-        inp_shape = self.__current_cfg["err_cfg"]["inp_shape"]
-        yolo_iou_threshold = self.__current_cfg["err_cfg"][
-            "yolo_iou_threshold"] / 10
-        yolo_max_boxes = self.__current_cfg["err_cfg"]["yolo_max_boxes"]
-        yolo_score_threshold = self.__current_cfg["err_cfg"][
-            "yolo_score_threshold"]
-        weights = self.__current_cfg["err_cfg"]["weights"].split(
-            "/")[-1].split("\\")[-1]
-        classes = self.__current_cfg["err_cfg"]["classes"]
-        num_classes = self.__current_cfg["err_cfg"]["num_classes"]
+        err_cfg = self.__current_cfg["err_cfg"]
+        img_size = err_cfg["img_size"]
+        inp_shape = err_cfg["inp_shape"]
+        yolo_iou_threshold = err_cfg["yolo_iou_threshold"]
+        yolo_max_boxes = err_cfg["yolo_max_boxes"]
+        yolo_score_threshold = err_cfg["yolo_score_threshold"]
+        weights = err_cfg["weights"]
+        classes = err_cfg["classes"]
+        num_classes = err_cfg["num_classes"]
+        is_defect_enable = self.__current_cfg["is_defect_enable"]
 
-        width = self.__current_cfg["err_cfg"]["img_size"][1]
-        height = self.__current_cfg["err_cfg"]["img_size"][0]
+        width = img_size[0]
+        height = img_size[1]
 
-        width_index = self.ui.cbbWidth.findData(width)
-        self.ui.cbbWidth.setCurrentIndex(width_index)
-        height_index = self.ui.cbbHeight.findData(height)
-        self.ui.cbbHeight.setCurrentIndex(height_index)
+        self.ui.cbbWidth.setCurrentText(str(width))
+        self.ui.cbbHeight.setCurrentText(str(height))
+        self.ui.chkDefectDetection.setChecked(is_defect_enable)
 
         self.ui.inpModelChoice.setText(weights)
-        self.ui.inpIouThreshold.setValue(yolo_iou_threshold * 10)
+        self.ui.sldIoUThresh.setValue(int(yolo_iou_threshold * 100))
+        self.ui.groupIoUThresh.setTitle(f"IoU threshold: {yolo_iou_threshold}")
+        self.ui.sldScoreThresh.setValue(int(yolo_score_threshold * 100))
+        self.ui.groupScoreThresh.setTitle(
+            f"Score threshold: {yolo_score_threshold}")
         self.ui.inpMaxInstances.setValue(yolo_max_boxes)
-        self.ui.inpMinimumScore.setValue(yolo_score_threshold * 10)
         self.ui.inpClasses.setText(", ".join(classes))
 
     # binding
@@ -97,10 +95,11 @@ class ErrorDetectScreen(QWidget):
         self.nextscreen = self.ui.btnFinish.clicked
         self.ui.btnCapture.clicked.connect(self.btn_capture_clicked)
         self.ui.inpMaxInstances.textChanged.connect(
-            self.inp_max_instances_change)
-        self.ui.inpMinimumScore.textChanged.connect(self.inp_min_score_change)
-        self.ui.inpIouThreshold.textChanged.connect(
-            self.inp_iou_threshold_change)
+            self.inp_max_instances_changed)
+        self.ui.sldScoreThresh.valueChanged.connect(
+            self.sld_score_thresh_changed)
+        self.ui.sldIoUThresh.valueChanged.connect(
+            self.sld_iou_threshold_changed)
         self.ui.cbbHeight.currentIndexChanged.connect(
             self.width_height_changed)
         self.ui.cbbWidth.currentIndexChanged.connect(self.width_height_changed)
@@ -109,12 +108,18 @@ class ErrorDetectScreen(QWidget):
             self.btn_choose_classes_clicked)
         self.ui.chkDefectDetection.stateChanged.connect(
             self.chk_defect_detection_state_changed)
+        self.ui.btnReloadModel.clicked.connect(self.btn_reload_model_clicked)
 
     def chk_defect_detection_state_changed(self):
         checked = self.ui.chkDefectDetection.isChecked()
         self.__current_cfg["is_defect_enable"] = checked
 
     # hander
+    @asyncSlot()
+    async def btn_reload_model_clicked(self):
+        await DetectorConfig.instance().get_manager().load_model(
+            self.__current_cfg)
+
     def btn_capture_clicked(self):
         self.captured.emit()
         self.__set_btn_capture_text()
@@ -123,53 +128,49 @@ class ErrorDetectScreen(QWidget):
         timer_active = DetectorConfig.instance().get_timer().isActive()
         self.ui.btnCapture.setText("CAPTURE" if not timer_active else "STOP")
 
-    def inp_min_score_change(self):
-        value = self.ui.inpMinimumScore.value()
-        self.__current_cfg["err_cfg"]["yolo_score_threshold"] = value / 10
-
-    def inp_max_instances_change(self):
+    def inp_max_instances_changed(self):
         value = self.ui.inpMaxInstances.value()
-        self.__current_cfg["err_cfg"]["yolo_max_boxes"] = value
+        if value != self.__current_cfg["err_cfg"]["yolo_max_boxes"]:
+            self.__current_cfg["err_cfg"]["yolo_max_boxes"] = value
 
-    def inp_iou_threshold_change(self):
-        value = self.ui.inpIouThreshold.value()
-        self.__current_cfg["err_cfg"]["yolo_iou_threshold"] = value / 10
+    def sld_score_thresh_changed(self):
+        value = self.ui.sldScoreThresh.value()
+        self.ui.groupScoreThresh.setTitle(f"Score threshold: {value/100}")
+        self.__current_cfg["err_cfg"]["yolo_score_threshold"] = value / 100
+
+    def sld_iou_threshold_changed(self):
+        value = self.ui.sldIoUThresh.value()
+        self.ui.groupIoUThresh.setTitle(f"IoU threshold: {value/100}")
+        self.__current_cfg["err_cfg"]["yolo_iou_threshold"] = value / 100
 
     def width_height_changed(self):
-        if self.sender() == self.ui.cbbHeight:
-            self.height_value = self.ui.cbbHeight.currentData()
-        if self.sender() == self.ui.cbbWidth:
-            self.width_value = self.ui.cbbWidth.currentData()
+        height = self.ui.cbbHeight.currentData()
+        width = self.ui.cbbWidth.currentData()
+        self.__current_cfg["err_cfg"]["img_size"] = (width, height)
+        self.__current_cfg["err_cfg"]["inp_shape"] = (height, width, 3)
 
-        print(self.height_value, self.width_value)
-        self.__current_cfg["err_cfg"]["img_size"] = (self.width_value,
-                                                     self.height_value)
-        self.__current_cfg["err_cfg"]["inp_shape"] = (self.height_value,
-                                                      self.width_value, 3)
+    def chk_defect_detection_state_changed(self):
+        checked = self.ui.chkDefectDetection.isChecked()
+        self.__current_cfg["is_defect_enable"] = checked
 
     @asyncSlot()
     async def btn_choose_model_clicked(self):
-        url = helpers.file_chooser_open_file(self)
+        url, _ = helpers.file_chooser_open_file(self)
         if url.isEmpty(): return
         file_name = url.toLocalFile()
-        self.ui.inpModelChoice.setText(
-            file_name.split("/")[-1].split("\\")[-1])
+        self.ui.inpModelChoice.setText(file_name)
         self.__current_cfg["err_cfg"]["weights"] = file_name
-        await DetectorConfig.instance().get_manager().load_model(
-            self.__current_cfg)
 
     def btn_choose_classes_clicked(self):
-        url = helpers.file_chooser_open_file(self)
+        url, _ = helpers.file_chooser_open_file(self)
         if url.isEmpty(): return
         file_name = url.toLocalFile()
-        class_list = []
-        with open(file_name, newline='') as csvfile:
-            spamreader = csv.reader(csvfile, delimiter='\n')
-            for row in spamreader:
-                class_list.extend(row)
-        self.__current_cfg["err_cfg"]["classes"] = class_list
-        self.__current_cfg["err_cfg"]["num_classes"] = len(class_list)
-        self.ui.inpClasses.setText(", ".join(class_list))
+        classes = []
+        with open(file_name) as txt_file:
+            classes = txt_file.readlines()
+        self.__current_cfg["err_cfg"]["classes"] = classes
+        self.__current_cfg["err_cfg"]["num_classes"] = len(classes)
+        self.ui.inpClasses.setText(", ".join(classes))
 
     def view_cam(self, image):
         # read image in BGR format
@@ -189,6 +190,12 @@ class ErrorDetectScreen(QWidget):
 
     async def __detect_error(self, images):
         manager = DetectorConfig.instance().get_manager()
+        # test only
+        file_name = np.random.randint(151, 200)
+        images[0] = cv2.imread(
+            f"N:/Workspace/Capstone/FQCS-Research/FQCS.ColorDetection/FQCS_detector/data/1/dirty_sorted/{file_name}.jpg"
+        )
+
         err_task = manager.detect_errors(self.__current_cfg, images, None)
         boxes, scores, classes, valid_detections = await err_task
         err_cfg = self.__current_cfg["err_cfg"]
@@ -201,14 +208,16 @@ class ErrorDetectScreen(QWidget):
                                  min_score=err_cfg["yolo_score_threshold"])
         images[0] *= 255.
         images[1] *= 255.
-
+        label_w = self.image1.width()
+        label_h = self.image1.height()
+        dim = (label_w, label_h)
         left = np.asarray(images[0], np.uint8)
         right = np.asarray(images[1], np.uint8)
         max_width = max((left.shape[0], right.shape[0]))
         temp_left = imutils.resize(left, height=max_width)
         temp_right = imutils.resize(right, height=max_width)
         detected = np.concatenate((temp_left, temp_right), axis=1)
-        detected = cv2.resize(detected, self.dim)
+        detected = cv2.resize(detected, dim)
         self.image3.imshow(detected)
 
     def __process_pair(self, image):

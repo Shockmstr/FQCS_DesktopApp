@@ -30,9 +30,9 @@
       "sat_adj": 2,
       "supp_thresh": 10,
       "amplify_thresh": [
-        59.118526458740234,
-        36.83748245239258,
-        51.633323669433594
+        59.0,
+        36.0,
+        51.0
       ],
       "amplify_rate": 20,
       "max_diff": 0.2
@@ -66,7 +66,7 @@
       "num_classes": 1,
       "yolo_max_boxes": 10,
       "yolo_iou_threshold": 0.5,
-      "weights": "yolov4.h5",
+      "weights": "N:/Workspace/Capstone/yolov4.h5",
       "yolo_score_threshold": 0.3,
       "classes": [
         "dirt"
@@ -75,7 +75,7 @@
     "d_cfg": {
       "max_boxes": 10,
       "bg_thresh": 110,
-      "adj_bg_thresh": 158.8052687633547,
+      "adj_bg_thresh": 119.54486879006411,
       "thresh_inv": false,
       "light_adj_thresh": 65,
       "alpha": 1.0,

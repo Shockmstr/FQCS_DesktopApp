@@ -72,47 +72,6 @@
             <property name="bottomMargin">
              <number>0</number>
             </property>
-            <item alignment="Qt::AlignTop">
-             <widget class="QGroupBox" name="groupCbbDisplayType">
-              <property name="title">
-               <string>Display Type</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_4">
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QComboBox" name="cbbDisplayType">
-                 <property name="autoFillBackground">
-                  <bool>false</bool>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">height:22px</string>
-                 </property>
-                 <property name="editable">
-                  <bool>true</bool>
-                 </property>
-                 <property name="currentText">
-                  <string>Item 1</string>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>Item 1</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Item 2</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
            </layout>
           </widget>
          </item>
@@ -245,11 +204,11 @@ font-weight:bold;</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,1,1">
             <item row="2" column="1">
-             <widget class="QGroupBox" name="groupMinimumScore">
+             <widget class="QGroupBox" name="groupScoreThresh">
               <property name="title">
-               <string>Minimum score</string>
+               <string>Score threshold</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_5">
+              <layout class="QVBoxLayout" name="verticalLayout_4">
                <property name="topMargin">
                 <number>0</number>
                </property>
@@ -257,40 +216,37 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSpinBox" name="inpMinimumScore">
+                <widget class="QSlider" name="sldScoreThresh">
                  <property name="minimum">
                   <number>0</number>
                  </property>
                  <property name="maximum">
                   <number>100</number>
                  </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
                 </widget>
                </item>
               </layout>
              </widget>
             </item>
-            <item row="1" column="1">
-             <widget class="QGroupBox" name="groupIouThreshold">
+            <item row="0" column="1">
+             <widget class="QGroupBox" name="groupMaxInstances">
               <property name="title">
-               <string>IoU threshold</string>
+               <string>Max Instances</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_14">
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_7">
                <item>
-                <widget class="QSpinBox" name="inpIouThreshold">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
+                <widget class="QSpinBox" name="inpMaxInstances">
                  <property name="minimum">
-                  <number>0</number>
+                  <number>1</number>
                  </property>
                  <property name="maximum">
-                  <number>1</number>
+                  <number>100</number>
                  </property>
                 </widget>
                </item>
@@ -318,7 +274,7 @@ font-weight:bold;</string>
                   <string notr="true">height:22px</string>
                  </property>
                  <property name="editable">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <property name="currentText">
                   <string>Width</string>
@@ -347,7 +303,7 @@ font-weight:bold;</string>
                   <string notr="true">height:22px</string>
                  </property>
                  <property name="editable">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <property name="currentText">
                   <string>Height</string>
@@ -370,12 +326,12 @@ font-weight:bold;</string>
               </layout>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QGroupBox" name="groupMaxInstances">
+            <item row="1" column="1">
+             <widget class="QGroupBox" name="groupIoUThresh">
               <property name="title">
-               <string>Max Instances</string>
+               <string>IoU threshold</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_15">
+              <layout class="QVBoxLayout" name="verticalLayout_3">
                <property name="topMargin">
                 <number>0</number>
                </property>
@@ -383,12 +339,15 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QSpinBox" name="inpMaxInstances">
-                 <property name="minimum">
-                  <number>1</number>
-                 </property>
+                <widget class="QSlider" name="sldIoUThresh">
                  <property name="maximum">
                   <number>100</number>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -512,6 +471,13 @@ font-weight:bold;</string>
                 </widget>
                </item>
               </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnReloadModel">
+              <property name="text">
+               <string>RELOAD MODEL</string>
+              </property>
              </widget>
             </item>
             <item alignment="Qt::AlignBottom">

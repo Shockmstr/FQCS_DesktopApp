@@ -130,9 +130,6 @@ class ColorParamCalibrationScreen(QWidget):
         max_diff = color_cfg["max_diff"]
         is_color_enable = self.__current_cfg["is_color_enable"]
         amp_thresh = color_cfg["amplify_thresh"]
-        color_cfg["amplify_thresh"] = (amp_thresh[0] or 1000, amp_thresh[1]
-                                       or 1000, amp_thresh[2] or 1000)
-        amp_thresh = color_cfg["amplify_thresh"]
 
         self.ui.sldAllowDiff.setValue(max_diff * 100)
         self.ui.sldAmpRate.setValue(amplify_rate)
@@ -221,7 +218,7 @@ class ColorParamCalibrationScreen(QWidget):
         # result display
         cur = datetime.datetime.now()
         cur_date_str = cur.strftime(ISO_DATE_FORMAT)
-        result_text = f"<>RESULT</><br/>" + f"<b>Time</b>: {cur_date_str}<br/>"
+        result_text = f"<b>RESULT</b><br/>" + f"<b>Time</b>: {cur_date_str}<br/>"
         avg_diff_l *= 100
         avg_diff_r *= 100
         r, g, b = amp_thresh[0], amp_thresh[1], amp_thresh[2]
