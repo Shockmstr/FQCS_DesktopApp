@@ -34,10 +34,36 @@ class ColorParamCalibrationScreen(QWidget):
         self.imageLayout = self.ui.screen1.parentWidget().layout()
         self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
         self.ui.screen1.deleteLater()
+
+        self.image_detect_left = ImageWidget()
+        self.image_detect_right = ImageWidget()
+        self.image_sample_left = ImageWidget()
+        self.image_sample_right = ImageWidget()
+        self.screen2_layout = self.ui.screen2.layout()
+        self.screen2_layout.replaceWidget(self.ui.screen2Left,
+                                          self.image_detect_left)
+        self.screen2_layout.replaceWidget(self.ui.screen2Right,
+                                          self.image_detect_right)
+        self.ui.screen2Left.deleteLater()
+        self.ui.screen2Right.deleteLater()
+
+        self.screen3_layout = self.ui.screen3.layout()
+        self.screen3_layout.replaceWidget(self.ui.screen3Left,
+                                          self.image_sample_left)
+        self.screen3_layout.replaceWidget(self.ui.screen3Right,
+                                          self.image_sample_right)
+        self.ui.screen3Left.deleteLater()
+        self.ui.screen3Right.deleteLater()
+
+        self.image_detect_left.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.image_detect_right.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.image_sample_left.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.image_sample_right.ui.lblImage.setAlignment(Qt.AlignCenter)
         return
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__view_image_sample()
         self.__set_btn_capture_text()
         self.__load_config()
 
@@ -58,11 +84,11 @@ class ColorParamCalibrationScreen(QWidget):
         self.ui.ampThreshRed.textChanged.connect(self.amp_threshold_change)
 
     def btn_capture_clicked(self):
-        self.captured.emit()        
+        self.captured.emit()
         self.__set_btn_capture_text()
 
     def __set_btn_capture_text(self):
-        timer_active= DetectorConfig.instance().get_timer().isActive()
+        timer_active = DetectorConfig.instance().get_timer().isActive()
         self.ui.btnCapture.setText("CAPTURE" if not timer_active else "STOP")
 
     def amp_threshold_change(self):
@@ -83,10 +109,10 @@ class ColorParamCalibrationScreen(QWidget):
         self.__current_cfg["color_cfg"]["supp_thresh"] = value
 
     def sld_allow_diff_change(self):
-        value = self.ui.sldAllowDiff.value() / 100
+        value = self.ui.sldAllowDiff.value()
         self.ui.grpSldAllowDiff.setTitle("Allowed Difference (%): " +
                                          str(value))
-        self.__current_cfg["color_cfg"]["max_diff"] = value
+        self.__current_cfg["color_cfg"]["max_diff"] = value / 100
 
     def cbbCamera_chose(self):
         return
@@ -106,14 +132,15 @@ class ColorParamCalibrationScreen(QWidget):
         self.ui.grpSldAmpRate.setTitle("Amplification Rate: " +
                                        str(amplify_rate))
         self.ui.grpSldAllowDiff.setTitle("Allowed Difference (%): " +
-                                         str(max_diff))
+                                         str(max_diff * 100))
 
     def __view_image_sample(self):
-        manager = DetectorConfig.instance().manager
+        manager = DetectorConfig.instance().get_manager()
         left = manager.get_sample_left()
         right = manager.get_sample_right()
         m_left, m_right = self.__preprocess_color(left, right)
-        img_size = (156, self.label_h - 30)
+        label_h = self.ui.screen2.height()
+        img_size = (156, label_h - 30)
         m_left = cv2.resize(m_left, img_size, interpolation=cv2.INTER_AREA)
         m_right = cv2.resize(m_right, img_size, interpolation=cv2.INTER_AREA)
         self.image_sample_left.imshow(m_left)
@@ -128,8 +155,6 @@ class ColorParamCalibrationScreen(QWidget):
             self.image1.imshow(image)
             self.image_detect_left.imshow(image)
             self.image_detect_right.imshow(image)
-            self.image_sample_left.imshow(image)
-            self.image_sample_right.imshow(image)
             return
         img_size = (156, label_h - 30)
         contour, detected, detected_pair = self.__process_pair(image.copy())
@@ -147,17 +172,17 @@ class ColorParamCalibrationScreen(QWidget):
             self.__detected_pair = detected_pair
 
     async def __find_amp_threshold(self, img_left, img_right):
-        manager = DetectorConfig.instance().manager
-        sample_left_path = manager.get_sample_left()
-        sample_right_path = manager.get_sample_right()
+        manager = DetectorConfig.instance().get_manager()
+        sample_left = manager.get_sample_left()
+        sample_right = manager.get_sample_right()
         sample_left, sample_right = self.__preprocess_color(
-            sample_left_path, sample_right_path)
+            sample_left, sample_right)
 
         left_task, right_task = await manager.compare_colors(
             self.__current_cfg, img_left, img_right, sample_left, sample_right,
-            None)
-        _, _, left_hist, _ = left_task
-        _, _, right_hist, _ = right_task
+            False, None)
+        _, avg_diff_l, left_hist, is_diff_l = left_task
+        _, avg_diff_r, right_hist, is_diff_r = right_task
         blue = max(left_hist[0], right_hist[0])
         green = max(left_hist[1], right_hist[1])
         red = max(left_hist[2], right_hist[2])
@@ -171,35 +196,9 @@ class ColorParamCalibrationScreen(QWidget):
         self.ui.ampThreshBlue.setValue(amp_thresh[2])
         self.__current_cfg["color_cfg"]["amplify_thresh"] = amp_thresh
 
-    def showEvent(self, event):
-        self.image_detect_left = ImageWidget()
-        self.image_detect_right = ImageWidget()
-        self.image_sample_left = ImageWidget()
-        self.image_sample_right = ImageWidget()
-        self.label_w = self.ui.screen2.width()
-        self.label_h = self.ui.screen2.height()
-
-        self.screen2_layout = self.ui.screen2.layout()
-        self.screen2_layout.replaceWidget(self.ui.screen2Left,
-                                          self.image_detect_left)
-        self.screen2_layout.replaceWidget(self.ui.screen2Right,
-                                          self.image_detect_right)
-
-        self.screen3_layout = self.ui.screen3.layout()
-        self.screen3_layout.replaceWidget(self.ui.screen3Left,
-                                          self.image_sample_left)
-        self.screen3_layout.replaceWidget(self.ui.screen3Right,
-                                          self.image_sample_right)
-
-        self.image_detect_left.ui.lblImage.setAlignment(Qt.AlignCenter)
-        self.image_detect_right.ui.lblImage.setAlignment(Qt.AlignCenter)
-        self.image_sample_left.ui.lblImage.setAlignment(Qt.AlignCenter)
-        self.image_sample_right.ui.lblImage.setAlignment(Qt.AlignCenter)
-        self.__view_image_sample()
-
     #image process function
     def __preprocess_color(self, sample_left, sample_right):
-        manager = DetectorConfig.instance().manager
+        manager = DetectorConfig.instance().get_manager()
         pre_sample_left = manager.preprocess(self.__current_cfg, sample_left,
                                              True)
         pre_sample_right = manager.preprocess(self.__current_cfg, sample_right,
@@ -207,7 +206,7 @@ class ColorParamCalibrationScreen(QWidget):
         return pre_sample_left, pre_sample_right
 
     def __process_pair(self, image):
-        manager = DetectorConfig.instance().manager
+        manager = DetectorConfig.instance().get_manager()
         boxes, proc = manager.extract_boxes(self.__current_cfg, image)
         final_grouped, sizes, check_group_idx, pair, split_left, split_right, image_detect = manager.detect_groups_and_checked_pair(
             self.__current_cfg, boxes, image)

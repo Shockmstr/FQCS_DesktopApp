@@ -10,6 +10,9 @@ import cv2
 import os
 import numpy as np
 import trio
+import datetime
+from app_constants import ISO_DATE_FORMAT
+import json
 
 
 class AsymConfigScreen(QWidget):
@@ -76,6 +79,8 @@ class AsymConfigScreen(QWidget):
         self.ui.inpC1.textChanged.connect(self.inp_C1_changed)
         self.ui.inpC2.textChanged.connect(self.inp_C2_changed)
         self.ui.inpPSNR.textChanged.connect(self.inp_PSNR_changed)
+        self.ui.cbbSegments.currentIndexChanged.connect(
+            self.cbb_segments_current_index_changed)
 
     # handlers
     def btn_capture_clicked(self):
@@ -100,9 +105,15 @@ class AsymConfigScreen(QWidget):
 
     def showEvent(self, event):
         _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.ui.inpResult.setHtml("<b>RESULT</b>")
         self.__set_btn_capture_text()
         self.__view_image_sample()
         self.__load_config()
+
+    def cbb_segments_current_index_changed(self):
+        selected = "[" + self.ui.cbbSegments.currentText() + "]"
+        segments = json.loads(selected)
+        self.__current_cfg["sim_cfg"]["segments_list"] = segments
 
     def __load_config(self):
         sim_cfg = self.__current_cfg["sim_cfg"]
@@ -115,6 +126,7 @@ class AsymConfigScreen(QWidget):
         re_calc_factor_left = sim_cfg["re_calc_factor_left"]
         re_calc_factor_right = sim_cfg["re_calc_factor_right"]
         segments_list = sim_cfg["segments_list"]
+        segments_str = str(segments_list).replace('[', '').replace(']', '')
         #---------------------------------------#
         min_similarity_slider_val = round(
             min_similarity / self.MIN_SIMILARITY_STEP, 0)
@@ -127,7 +139,7 @@ class AsymConfigScreen(QWidget):
         self.ui.inpAmpThresh.setValue(float(amp_thresh))
         self.ui.inpReCalcFactorLeft.setValue(float(re_calc_factor_left))
         self.ui.inpReCalcFactorRight.setValue(float(re_calc_factor_right))
-        self.ui.inpSegments.setText(segments_list.__str__())
+        self.ui.cbbSegments.setCurrentText(segments_str)
         self.ui.sldMinSimilarity.setValue(int(min_similarity_slider_val))
         self.ui.grpBoxMinSimilarity.setTitle("Minimum similarity (%): " +
                                              str(min_similarity))
@@ -226,6 +238,17 @@ class AsymConfigScreen(QWidget):
         # update result to screen
         self.ui.inpReCalcFactorLeft.setValue(sim_cfg["re_calc_factor_left"])
         self.ui.inpReCalcFactorRight.setValue(sim_cfg["re_calc_factor_right"])
+
+        # result display
+        cur = datetime.datetime.now()
+        cur_date_str = cur.strftime(ISO_DATE_FORMAT)
+        left_result_text = "PASSED" if not is_asym_diff_left else "FAILED"
+        right_result_text = "PASSED" if not is_asym_diff_right else "FAILED"
+        result_text = f"<b>RESULT</b><br/>" + f"<b>Time</b>: {cur_date_str}<br/>"
+        result_text += f"<b>Original similarity</b>: Left {avg_asym_left:.2f} - Right {avg_asym_right:.2f}<br/>"
+        result_text += f"<b>Final similarity</b>: Left {recalc_left:.2f} - Right {recalc_right:.2f}<br/>"
+        result_text += f"<b>Final result</b>: Left {left_result_text} - Right {right_result_text}"
+        self.ui.inpResult.setHtml(result_text)
 
     def __preprocess_color(self, sample_left, sample_right):
         manager = DetectorConfig.instance().get_manager()
