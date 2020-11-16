@@ -109,6 +109,8 @@ class ErrorDetectScreen(QWidget):
         self.ui.chkDefectDetection.stateChanged.connect(
             self.chk_defect_detection_state_changed)
         self.ui.btnReloadModel.clicked.connect(self.btn_reload_model_clicked)
+        self.ui.btnChoosePicture.clicked.connect(
+            self.btn_choose_picture_clicked)
 
     def chk_defect_detection_state_changed(self):
         checked = self.ui.chkDefectDetection.isChecked()
@@ -127,6 +129,7 @@ class ErrorDetectScreen(QWidget):
     def __set_btn_capture_text(self):
         timer_active = DetectorConfig.instance().get_timer().isActive()
         self.ui.btnCapture.setText("CAPTURE" if not timer_active else "STOP")
+        self.ui.btnChoosePicture.setEnabled(not timer_active)
 
     def inp_max_instances_changed(self):
         value = self.ui.inpMaxInstances.value()
@@ -153,16 +156,25 @@ class ErrorDetectScreen(QWidget):
         checked = self.ui.chkDefectDetection.isChecked()
         self.__current_cfg["is_defect_enable"] = checked
 
-    @asyncSlot()
-    async def btn_choose_model_clicked(self):
-        url, _ = helpers.file_chooser_open_file(self)
+    def btn_choose_model_clicked(self):
+        url, _ = helpers.file_chooser_open_file(self,
+                                                f_filter="Keras model (*.h5)")
         if url.isEmpty(): return
         file_name = url.toLocalFile()
         self.ui.inpModelChoice.setText(file_name)
         self.__current_cfg["err_cfg"]["weights"] = file_name
 
+    @asyncSlot()
+    async def btn_choose_picture_clicked(self):
+        url, _ = helpers.file_chooser_open_file(
+            self, f_filter="Images (*.jpg *.png *.bmp)")
+        if url.isEmpty(): return
+        file_name = url.toLocalFile()
+        images = [cv2.imread(file_name)]
+        await self.__detect_error_on_picture(images)
+
     def btn_choose_classes_clicked(self):
-        url, _ = helpers.file_chooser_open_file(self)
+        url, _ = helpers.file_chooser_open_file(self, "Text file (*.txt)")
         if url.isEmpty(): return
         file_name = url.toLocalFile()
         classes = []
@@ -192,9 +204,10 @@ class ErrorDetectScreen(QWidget):
         manager = DetectorConfig.instance().get_manager()
         # test only
         file_name = np.random.randint(151, 200)
-        images[0] = cv2.imread(
-            f"N:/Workspace/Capstone/FQCS-Research/FQCS.ColorDetection/FQCS_detector/data/1/dirty_sorted/{file_name}.jpg"
-        )
+        if len(images) == 2:
+            images[0] = cv2.imread(
+                f"N:/Workspace/Capstone/FQCS-Research/FQCS.ColorDetection/FQCS_detector/data/1/dirty_sorted/{file_name}.jpg"
+            )
 
         err_task = manager.detect_errors(self.__current_cfg, images, None)
         boxes, scores, classes, valid_detections = await err_task
@@ -206,19 +219,60 @@ class ErrorDetectScreen(QWidget):
                                  err_cfg["classes"],
                                  err_cfg["img_size"],
                                  min_score=err_cfg["yolo_score_threshold"])
-        images[0] *= 255.
-        images[1] *= 255.
-        label_w = self.image1.width()
-        label_h = self.image1.height()
+
+        label_w = self.image3.width()
+        label_h = self.image3.height()
         dim = (label_w, label_h)
-        left = np.asarray(images[0], np.uint8)
-        right = np.asarray(images[1], np.uint8)
-        max_width = max((left.shape[0], right.shape[0]))
-        temp_left = imutils.resize(left, height=max_width)
-        temp_right = imutils.resize(right, height=max_width)
-        detected = np.concatenate((temp_left, temp_right), axis=1)
-        detected = cv2.resize(detected, dim)
-        self.image3.imshow(detected)
+        final_img = None
+        for idx, img in enumerate(images):
+            images[idx] *= 255.
+            images[idx] = np.asarray(images[idx], np.uint8)
+            height, width, _ = images[idx].shape
+            scale = label_h / height
+            width *= scale
+            if final_img is None:
+                final_img = cv2.resize(images[idx], (int(width), label_h))
+            else:
+                final_img = np.concatenate(
+                    (final_img, cv2.resize(images[idx],
+                                           (int(width), label_h))),
+                    axis=1)
+        if final_img.shape[1] > label_w:
+            final_img = cv2.resize(final_img, dim)
+        self.image3.imshow(final_img)
+
+    async def __detect_error_on_picture(self, images):
+        manager = DetectorConfig.instance().get_manager()
+        err_task = manager.detect_errors(self.__current_cfg, images, None)
+        boxes, scores, classes, valid_detections = await err_task
+        err_cfg = self.__current_cfg["err_cfg"]
+        helper.draw_yolo_results(images,
+                                 boxes,
+                                 scores,
+                                 classes,
+                                 err_cfg["classes"],
+                                 err_cfg["img_size"],
+                                 min_score=err_cfg["yolo_score_threshold"])
+        label_w = self.image3.width()
+        label_h = self.image3.height()
+        dim = (label_w, label_h)
+        final_img = None
+        for idx, img in enumerate(images):
+            images[idx] *= 255.
+            images[idx] = np.asarray(images[idx], np.uint8)
+            height, width, _ = images[idx].shape
+            scale = label_h / height
+            width *= scale
+            if final_img is None:
+                final_img = cv2.resize(images[idx], (int(width), label_h))
+            else:
+                final_img = np.concatenate(
+                    (final_img, cv2.resize(images[idx],
+                                           (int(width), label_h))),
+                    axis=1)
+        if final_img.shape[1] > label_w:
+            final_img = cv2.resize(final_img, dim)
+        self.image3.imshow(final_img)
 
     def __process_pair(self, image):
         manager = DetectorConfig.instance().get_manager()

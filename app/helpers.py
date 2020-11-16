@@ -29,9 +29,9 @@ def file_chooser_open_directory(parent) -> QUrl:
     return url
 
 
-def file_chooser_open_file(parent):
+def file_chooser_open_file(parent, f_filter=None):
     dialog = QFileDialog(parent)
-    url = dialog.getOpenFileUrl()
+    url = dialog.getOpenFileUrl(filter=f_filter)
     return url
 
 
