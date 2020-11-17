@@ -9,8 +9,8 @@
     "min_height_per": 0.7,
     "stop_condition": 0,
     "detect_range": [
-      0.1,
-      0.9
+      0.04,
+      0.96
     ],
     "length_per_10px": 0.6373937677053825,
     "length_unit": "cm",
@@ -30,9 +30,9 @@
       "sat_adj": 2,
       "supp_thresh": 10,
       "amplify_thresh": [
-        59.0,
-        36.0,
-        51.0
+        47.58150863647461,
+        58.93216323852539,
+        65.87867736816406
       ],
       "amplify_rate": 20,
       "max_diff": 0.2
@@ -41,11 +41,11 @@
       "C1": 195.08,
       "C2": 1755.67,
       "psnr_trigger": 40,
-      "asym_amp_thresh": 1.0,
+      "asym_amp_thresh": 0.98,
       "asym_amp_rate": 30,
       "min_similarity": 0.95,
-      "re_calc_factor_left": 1.36,
-      "re_calc_factor_right": 1.2,
+      "re_calc_factor_left": 1.34,
+      "re_calc_factor_right": 1.13,
       "segments_list": [
         4,
         2,
@@ -74,10 +74,10 @@
     },
     "d_cfg": {
       "max_boxes": 10,
-      "bg_thresh": 110,
-      "adj_bg_thresh": 122.77516760149572,
+      "bg_thresh": 29,
+      "adj_bg_thresh": 29,
       "thresh_inv": false,
-      "light_adj_thresh": 65,
+      "light_adj_thresh": 0,
       "alpha": 1.0,
       "beta": 0,
       "threshold1": 40,
@@ -119,8 +119,8 @@
     "min_height_per": 0.7,
     "stop_condition": 0,
     "detect_range": [
-      0.17,
-      0.83
+      0.04,
+      0.96
     ],
     "length_per_10px": null,
     "length_unit": "cm",
@@ -184,10 +184,10 @@
     },
     "d_cfg": {
       "max_boxes": 10,
-      "bg_thresh": 110,
-      "adj_bg_thresh": 104.17357705662394,
+      "bg_thresh": 29,
+      "adj_bg_thresh": 77.98456830929487,
       "thresh_inv": false,
-      "light_adj_thresh": 65,
+      "light_adj_thresh": 0,
       "alpha": 1.0,
       "beta": 0,
       "threshold1": 40,

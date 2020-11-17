@@ -152,13 +152,6 @@ class SideErrorDetectScreen(QWidget):
 
     async def __detect_error(self, images):
         manager = DetectorConfig.instance().get_manager()
-        # test only
-        file_name = np.random.randint(151, 200)
-        if len(images) == 2:
-            images[0] = cv2.imread(
-                f"./resources/test_data/{file_name}.jpg"
-            )
-
         err_task = manager.detect_errors(self.__main_cfg, images, None)
         boxes, scores, classes, valid_detections = await err_task
         err_cfg = self.__main_cfg["err_cfg"]

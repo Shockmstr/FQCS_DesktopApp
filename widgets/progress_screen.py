@@ -13,7 +13,7 @@ from widgets.image_widget import ImageWidget
 from cv2 import cv2
 import numpy as np
 from services.worker_runnable import WorkerRunnable
-from app_constants import ISO_DATE_FORMAT, FOLDER_DATE_FORMAT
+from app_constants import ISO_DATE_FORMAT, FOLDER_DATE_FORMAT, Videos
 import datetime
 import uuid
 
@@ -76,7 +76,7 @@ class ProgressScreen(QWidget):
         for i, cfg in enumerate(configs):
             # video_cameras[i].open(cfg["camera_uri"])
             # test only
-            video_cameras[i].open(r"./resources/test_data\test1.mp4")
+            video_cameras[i].open(Videos.instance().next())
 
         self.image1.imshow(None)
         self.left_detected_image.imshow(None)
@@ -147,7 +147,7 @@ class ProgressScreen(QWidget):
         _, image = self.__main_cam.read()
         if image is None:
             # test only
-            self.__main_cam.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            self.__main_cam.open(Videos.instance().next())
             _, image = self.__main_cam.read()
             # self.image1.imshow(image)
             # return
@@ -255,11 +255,6 @@ class ProgressScreen(QWidget):
 
                 if self.__main_cfg["is_defect_enable"]:
                     has_error_checked = True
-                    # test only
-                    file_name = np.random.randint(151, 200)
-                    if len(images) == 2:
-                        images[0] = cv2.imread(
-                            f"./resources/test_data/{file_name}.jpg")
                     nursery.start_soon(manager.detect_errors, self.__main_cfg,
                                        images, (result_dict, "err_results"))
 
@@ -408,12 +403,6 @@ class ProgressScreen(QWidget):
         result = None
         if (pair is not None and len(pair) > 0):
             images = [item[0] for item in pair]
-            # test only
-            if len(images) > 0:
-                file_name = np.random.randint(151, 200)
-                images[0] = cv2.imread(
-                    f"./resources/test_data/{file_name}.jpg")
-
             boxes, scores, classes, valid_detections = await manager.detect_errors(
                 cfg, images, None)
             err_cfg = cfg["err_cfg"]

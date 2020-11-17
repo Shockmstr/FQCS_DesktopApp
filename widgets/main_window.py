@@ -19,6 +19,7 @@ from widgets.asym_config_screen import AsymConfigScreen
 from services.identity_service import IdentityService
 from qasync import QEventLoop, asyncSlot
 import asyncio
+from app_constants import Videos
 
 
 class MainWindow(QMainWindow):
@@ -148,7 +149,7 @@ class MainWindow(QMainWindow):
             _, image = self.__video_camera.read()
             # test only
             if image is None:
-                self.__video_camera.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                self.__video_camera.open(Videos.instance().next())
                 _, image = self.__video_camera.read()
             _, current_cfg = self.__detector_cfg.get_current_cfg()
             frame_width, frame_height = current_cfg[
@@ -165,9 +166,7 @@ class MainWindow(QMainWindow):
                     index) or (not self.__video_camera.isOpened()):
                 # self.__video_camera.open(index)
                 # test only
-                self.__video_camera.open(
-                    r"./resources/test_data\test1.mp4"
-                )
+                self.__video_camera.open(Videos.instance().next())
                 self.__detector_cfg.set_last_camera_uri(index)
         else:
             if self.__view_cam is not None: self.__view_cam(None)
