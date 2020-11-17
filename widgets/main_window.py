@@ -166,7 +166,7 @@ class MainWindow(QMainWindow):
                 # self.__video_camera.open(index)
                 # test only
                 self.__video_camera.open(
-                    r"N:\Workspace\Capstone\FQCS-Research\FQCS.ColorDetection\test1.mp4"
+                    r"./resources/test_data\test1.mp4"
                 )
                 self.__detector_cfg.set_last_camera_uri(index)
         else:

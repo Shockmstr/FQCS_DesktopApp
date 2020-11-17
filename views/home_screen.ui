@@ -124,24 +124,6 @@
                    <widget class="QWidget" name="containerDetails" native="true">
                     <layout class="QVBoxLayout" name="verticalLayout_7">
                      <item>
-                      <widget class="QLabel" name="lblAppId">
-                       <property name="font">
-                        <font>
-                         <pointsize>11</pointsize>
-                         <weight>50</weight>
-                         <italic>false</italic>
-                         <bold>false</bold>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>**App ID:** {{AppId}}</string>
-                       </property>
-                       <property name="textFormat">
-                        <enum>Qt::MarkdownText</enum>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
                       <widget class="QLabel" name="lblConfigLocation">
                        <property name="font">
                         <font>
@@ -160,7 +142,7 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLabel" name="lblLastStarted">
+                      <widget class="QLabel" name="lblLocalServer">
                        <property name="font">
                         <font>
                          <pointsize>11</pointsize>
@@ -170,43 +152,7 @@
                         </font>
                        </property>
                        <property name="text">
-                        <string>**Last started:** {{LastStarted}}</string>
-                       </property>
-                       <property name="textFormat">
-                        <enum>Qt::MarkdownText</enum>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="lblRedisServer">
-                       <property name="font">
-                        <font>
-                         <pointsize>11</pointsize>
-                         <weight>50</weight>
-                         <italic>false</italic>
-                         <bold>false</bold>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>**Redis server:** {{RedisServer}}</string>
-                       </property>
-                       <property name="textFormat">
-                        <enum>Qt::MarkdownText</enum>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="lblPushServer">
-                       <property name="font">
-                        <font>
-                         <pointsize>11</pointsize>
-                         <weight>50</weight>
-                         <italic>false</italic>
-                         <bold>false</bold>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>**Push server:** {{PushServer}}</string>
+                        <string>**Local server:** {{LocalServer}}</string>
                        </property>
                        <property name="textFormat">
                         <enum>Qt::MarkdownText</enum>
@@ -224,7 +170,7 @@
                         </font>
                        </property>
                        <property name="text">
-                        <string>**Local Storage:** {{LocalStorage}}</string>
+                        <string>**Local storage:** {{LocalStorage}}</string>
                        </property>
                        <property name="textFormat">
                         <enum>Qt::MarkdownText</enum>

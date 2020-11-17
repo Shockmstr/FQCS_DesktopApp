@@ -206,7 +206,7 @@ class ErrorDetectScreen(QWidget):
         file_name = np.random.randint(151, 200)
         if len(images) == 2:
             images[0] = cv2.imread(
-                f"N:/Workspace/Capstone/FQCS-Research/FQCS.ColorDetection/FQCS_detector/data/1/dirty_sorted/{file_name}.jpg"
+                f"./resources/test_data/{file_name}.jpg"
             )
 
         err_task = manager.detect_errors(self.__current_cfg, images, None)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'progress_screenvnPdsK.ui'
+## Form generated from reading UI file 'progress_screenrHMLwX.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -34,37 +34,12 @@ class Ui_ProgressScreen(object):
         self.verticalLayout_3 = QVBoxLayout(self.sectionSideResult)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.groubCbbCamera = QGroupBox(self.sectionSideResult)
-        self.groubCbbCamera.setObjectName(u"groubCbbCamera")
-        self.horizontalLayout_5 = QHBoxLayout(self.groubCbbCamera)
-        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
-        self.horizontalLayout_5.setContentsMargins(-1, 0, -1, 0)
-        self.cbbCamera = QComboBox(self.groubCbbCamera)
-        self.cbbCamera.addItem("")
-        self.cbbCamera.addItem("")
-        self.cbbCamera.setObjectName(u"cbbCamera")
-        self.cbbCamera.setAutoFillBackground(False)
-        self.cbbCamera.setStyleSheet(u"height:22px")
-        self.cbbCamera.setEditable(False)
-
-        self.horizontalLayout_5.addWidget(self.cbbCamera)
-
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_5.addItem(self.horizontalSpacer)
-
-        self.horizontalLayout_5.setStretch(0, 1)
-        self.horizontalLayout_5.setStretch(1, 1)
-
-        self.verticalLayout_3.addWidget(self.groubCbbCamera)
-
         self.lblSideResult = QLabel(self.sectionSideResult)
         self.lblSideResult.setObjectName(u"lblSideResult")
 
         self.verticalLayout_3.addWidget(self.lblSideResult)
 
-        self.verticalLayout_3.setStretch(0, 1)
-        self.verticalLayout_3.setStretch(1, 9)
+        self.verticalLayout_3.setStretch(0, 9)
 
         self.gridLayout.addWidget(self.sectionSideResult, 1, 1, 1, 1)
 
@@ -273,11 +248,6 @@ class Ui_ProgressScreen(object):
 
     def retranslateUi(self, ProgressScreen):
         ProgressScreen.setWindowTitle(QCoreApplication.translate("ProgressScreen", u"Form", None))
-        self.groubCbbCamera.setTitle(QCoreApplication.translate("ProgressScreen", u"Show result from side camera", None))
-        self.cbbCamera.setItemText(0, QCoreApplication.translate("ProgressScreen", u"Item 1", None))
-        self.cbbCamera.setItemText(1, QCoreApplication.translate("ProgressScreen", u"Item 2", None))
-
-        self.cbbCamera.setCurrentText(QCoreApplication.translate("ProgressScreen", u"Item 1", None))
         self.lblSideResult.setText(QCoreApplication.translate("ProgressScreen", u"Result placeholder", None))
         self.screen1.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
         self.groupCbbDisplayType.setTitle(QCoreApplication.translate("ProgressScreen", u"Display Type", None))

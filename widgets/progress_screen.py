@@ -20,7 +20,6 @@ class ProgressScreen(QWidget):
     __result_html_changed = Signal(str)
     __sample_left = None
     __sample_right = None
-    __last_side_idx = 0
     __capturing = True
 
     def __init__(self, parent=None):
@@ -73,7 +72,7 @@ class ProgressScreen(QWidget):
             # video_cameras[i].open(cfg["camera_uri"])
             # test only
             video_cameras[i].open(
-                r"N:\Workspace\Capstone\FQCS-Research\FQCS.ColorDetection\test1.mp4"
+                r"./resources/test_data\test1.mp4"
             )
 
         self.image1.imshow(None)
@@ -119,8 +118,6 @@ class ProgressScreen(QWidget):
     def binding(self):
         self.return_home = self.ui.btnReturnHome.clicked
         self.ui.btnCapture.clicked.connect(self.btn_capture_clicked)
-        self.ui.cbbCamera.currentIndexChanged.connect(
-            self.cbb_camera_current_index_changed)
         self.ui.cbbDisplayType.currentIndexChanged.connect(
             self.cbb_display_type_index_changed)
         self.__camera_timer.timeout.connect(self.camera_timer_timeout)
@@ -134,12 +131,6 @@ class ProgressScreen(QWidget):
             self.__capturing = True
             self.__camera_timer.start(20)
         self.__set_btn_capture_text()
-
-    def cbb_camera_current_index_changed(self):
-        cur_idx = self.ui.cbbCamera.currentIndex()
-        if cur_idx != self.__last_side_idx:
-            self.__last_side_idx = cur_idx
-            self.side_result_image.imshow(None)
 
     def cbb_display_type_index_changed(self):
         self.__last_display_type = self.ui.cbbDisplayType.currentText()
@@ -265,7 +256,7 @@ class ProgressScreen(QWidget):
                     file_name = np.random.randint(151, 200)
                     if len(images) == 2:
                         images[0] = cv2.imread(
-                            f"N:/Workspace/Capstone/FQCS-Research/FQCS.ColorDetection/FQCS_detector/data/1/dirty_sorted/{file_name}.jpg"
+                            f"./resources/test_data/{file_name}.jpg"
                         )
                     nursery.start_soon(manager.detect_errors, self.__main_cfg,
                                        images, (result_dict, "err_results"))
@@ -320,12 +311,25 @@ class ProgressScreen(QWidget):
                 self.__parse_defects_detection_result(images, scores, classes,
                                                       classes_labels,
                                                       min_score, defects)
+                label_w = self.left_detected_image.width()
+                label_h = self.left_detected_image.height()
+                dim = (label_w, label_h)
+                left_img = cv2.resize(images[0], dim)
+                right_img = cv2.resize(images[1], dim)
+                self.left_detected_image.imshow(left_img)
+                self.right_detected_image.imshow(right_img)
+
+            label_w = self.side_result_image.width()
+            label_h = self.side_result_image.height()
             for res in side_results:
                 side_images, side_boxes, side_scores, side_classes, side_valid_detections = res
                 self.__parse_defects_detection_result(side_images, side_scores,
                                                       side_classes,
                                                       classes_labels,
                                                       min_score, defects)
+                final_img = helpers.concat_images(side_images, label_w,
+                                                  label_h)
+                self.side_result_image.imshow(final_img)
 
             defect_result_text = []
             for key in defects.keys():
@@ -366,10 +370,10 @@ class ProgressScreen(QWidget):
         return
 
     async def __activate_side_cam(self, cfg, cam, manager, result_info):
-        _, image = cam.read()
+        # _, image = cam.read()
         # test only
-        image = cv2.imread(
-            "N:/Workspace/Capstone/FQCS-Research/FQCS.ColorDetection/dirt.jpg")
+        _, image = self.__main_cam.read()
+
         frame_width, frame_height = cfg["frame_width"], cfg["frame_height"]
         resized_image = cv2.resize(image, (frame_width, frame_height))
         boxes, proc = manager.extract_boxes(cfg, resized_image)
@@ -377,9 +381,15 @@ class ProgressScreen(QWidget):
         pair, image_detect, boxes = manager.detect_pair_side_cam(
             cfg, boxes, image_detect)
         result = None
-        if (pair is not None):
-            pair_len = len(pair)
+        if (pair is not None and len(pair) > 0):
             images = [item[0] for item in pair]
+            # test only
+            if len(images) > 0:
+                file_name = np.random.randint(151, 200)
+                images[0] = cv2.imread(
+                    f"./resources/test_data/{file_name}.jpg"
+                )
+
             boxes, scores, classes, valid_detections = await manager.detect_errors(
                 cfg, images, None)
             err_cfg = cfg["err_cfg"]
@@ -413,12 +423,6 @@ class ProgressScreen(QWidget):
     def __load_config(self):
         manager = DetectorConfig.instance().get_manager()
         configs = manager.get_configs()
-        self.ui.cbbCamera.clear()
-        for cfg in configs:
-            if not cfg["is_main"]:
-                self.ui.cbbCamera.addItem(cfg["name"])
-        self.__last_side_idx = 0
-        self.ui.cbbCamera.setCurrentIndex(0)
         self.__last_display_type = "Original"
         self.ui.cbbDisplayType.setCurrentIndex(0)
         return
