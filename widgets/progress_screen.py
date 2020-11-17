@@ -2,6 +2,7 @@ from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Signal, QThreadPool, QTimer
 import trio
 from app_models.detector_config import DetectorConfig
+from app import helpers
 from FQCS import helper
 import os
 from FQCS import detector, fqcs_constants
@@ -249,8 +250,8 @@ class ProgressScreen(QWidget):
         has_asym = is_asym_diff_left or is_asym_diff_right
         has_color_checked, has_error_checked = False, False
         result_dict = {}
-        if has_asym:
-            async with trio.open_nursery() as nursery:
+        async with trio.open_nursery() as nursery:
+            if has_asym:
                 if self.__main_cfg["is_color_enable"]:
                     has_color_checked = True
                     nursery.start_soon(manager.compare_colors, self.__main_cfg,
@@ -269,8 +270,21 @@ class ProgressScreen(QWidget):
                     nursery.start_soon(manager.detect_errors, self.__main_cfg,
                                        images, (result_dict, "err_results"))
 
-        # side cameras
-        side_results = await self.__activate_side_cams()
+            video_cameras = DetectorConfig.instance().get_video_cameras()
+            configs = manager.get_configs()
+            for idx, cfg in enumerate(configs):
+                if cfg["is_main"] == True: continue
+                cfg_name = cfg["name"]
+                nursery.start_soon(self.__activate_side_cam, cfg,
+                                   video_cameras[idx], manager,
+                                   (result_dict, f"side_result_{cfg_name}"))
+
+        side_results = []
+        for key in result_dict.keys():
+            if key.startswith("side_result_"):
+                result = result_dict[key]
+                if result is not None:
+                    side_results.append(result)
 
         # result display
         if cur == self.__last_detect_time:
@@ -351,41 +365,33 @@ class ProgressScreen(QWidget):
             self.__result_html_changed.emit(result_text)
         return
 
-    async def __activate_side_cams(self):
-        manager = DetectorConfig.instance().get_manager()
-        video_cameras = DetectorConfig.instance().get_video_cameras()
-        configs = manager.get_configs()
-        results = []
-        for idx, cfg in enumerate(configs):
-            if cfg["is_main"] == True: continue
-            _, image = video_cameras[idx].read()
-            # test only
-            image = cv2.imread(
-                "N:/Workspace/Capstone/FQCS-Research/FQCS.ColorDetection/dirt.jpg"
-            )
-            frame_width, frame_height = cfg["frame_width"], cfg["frame_height"]
-            resized_image = cv2.resize(image, (frame_width, frame_height))
-            boxes, proc = manager.extract_boxes(cfg, resized_image)
-            image_detect = resized_image.copy()
-            pair, image_detect, boxes = manager.detect_pair_side_cam(
-                cfg, boxes, image_detect)
-            if (pair is not None):
-                pair_len = len(pair)
-                images = [item[0] for item in pair]
-                boxes, scores, classes, valid_detections = await manager.detect_errors(
-                    cfg, images, None)
-                err_cfg = cfg["err_cfg"]
-                helper.draw_yolo_results(
-                    images,
-                    boxes,
-                    scores,
-                    classes,
-                    err_cfg["classes"],
-                    err_cfg["img_size"],
-                    min_score=err_cfg["yolo_score_threshold"])
-                results.append(
-                    (images, boxes, scores, classes, valid_detections))
-        return results
+    async def __activate_side_cam(self, cfg, cam, manager, result_info):
+        _, image = cam.read()
+        # test only
+        image = cv2.imread(
+            "N:/Workspace/Capstone/FQCS-Research/FQCS.ColorDetection/dirt.jpg")
+        frame_width, frame_height = cfg["frame_width"], cfg["frame_height"]
+        resized_image = cv2.resize(image, (frame_width, frame_height))
+        boxes, proc = manager.extract_boxes(cfg, resized_image)
+        image_detect = resized_image.copy()
+        pair, image_detect, boxes = manager.detect_pair_side_cam(
+            cfg, boxes, image_detect)
+        result = None
+        if (pair is not None):
+            pair_len = len(pair)
+            images = [item[0] for item in pair]
+            boxes, scores, classes, valid_detections = await manager.detect_errors(
+                cfg, images, None)
+            err_cfg = cfg["err_cfg"]
+            helper.draw_yolo_results(images,
+                                     boxes,
+                                     scores,
+                                     classes,
+                                     err_cfg["classes"],
+                                     err_cfg["img_size"],
+                                     min_score=err_cfg["yolo_score_threshold"])
+            result = (images, boxes, scores, classes, valid_detections)
+        return helper.return_result(result, result_info)
 
     def __parse_defects_detection_result(self, images, scores, classes,
                                          classes_labels, min_score, defects):
