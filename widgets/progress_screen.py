@@ -4,7 +4,7 @@ import trio
 from app_models.detector_config import DetectorConfig
 from FQCS import helper
 import os
-from FQCS import detector
+from FQCS import detector, fqcs_constants
 from views.progress_screen import Ui_ProgressScreen
 from widgets.image_widget import ImageWidget
 from cv2 import cv2
@@ -213,17 +213,193 @@ class ProgressScreen(QWidget):
                 right, dim)
             self.left_detected_image.imshow(left_resized)
             self.right_detected_image.imshow(right_resized)
-            runnable = WorkerRunnable(self.__process_pair, parent=self)
+            self.__last_detect_time = datetime.datetime.now()
+            runnable = WorkerRunnable(self.__process_pair,
+                                      self.__last_detect_time,
+                                      check_group_idx,
+                                      final_grouped,
+                                      sizes,
+                                      pair,
+                                      parent=self)
             runnable.work_error.connect(lambda ex: print(ex))
             QThreadPool.globalInstance().start(runnable)
 
-    async def __process_pair(self):
+    async def __process_pair(self, cur: datetime.datetime, check_group_idx,
+                             final_grouped, sizes, pair):
+        manager = DetectorConfig.instance().get_manager()
+        manager.check_group(check_group_idx, final_grouped)
+        check_size = sizes[check_group_idx]
+        h_diff, w_diff = manager.compare_size(self.__main_cfg, check_size)
+
+        # output
+        left, right = pair
+        left, right = left[0], right[0]
+        left = cv2.flip(left, 1)
+        pre_left, pre_right, pre_sample_left, pre_sample_right = manager.preprocess_images(
+            self.__main_cfg, left, right)
+        images = [left, right]
+
+        # Similarity compare
+        sim_cfg = self.__main_cfg["sim_cfg"]
+        left_result, right_result = await manager.detect_asym(
+            self.__main_cfg, pre_left, pre_right, pre_sample_left,
+            pre_sample_right, None)
+        is_asym_diff_left, avg_asym_left, avg_amp_left, recalc_left, res_list_l, amp_res_list_l = left_result
+        is_asym_diff_right, avg_asym_right, avg_amp_right, recalc_right, res_list_r, amp_res_list_r = right_result
+        has_asym = is_asym_diff_left or is_asym_diff_right
+        has_color_checked, has_error_checked = False, False
+        result_dict = {}
+        if has_asym:
+            async with trio.open_nursery() as nursery:
+                if self.__main_cfg["is_color_enable"]:
+                    has_color_checked = True
+                    nursery.start_soon(manager.compare_colors, self.__main_cfg,
+                                       pre_left, pre_right, pre_sample_left,
+                                       pre_sample_right, True,
+                                       (result_dict, "color_results"))
+
+                if self.__main_cfg["is_defect_enable"]:
+                    has_error_checked = True
+                    # test only
+                    file_name = np.random.randint(151, 200)
+                    if len(images) == 2:
+                        images[0] = cv2.imread(
+                            f"N:/Workspace/Capstone/FQCS-Research/FQCS.ColorDetection/FQCS_detector/data/1/dirty_sorted/{file_name}.jpg"
+                        )
+                    nursery.start_soon(manager.detect_errors, self.__main_cfg,
+                                       images, (result_dict, "err_results"))
+
+        # side cameras
+        side_results = await self.__activate_side_cams()
+
         # result display
-        cur = datetime.datetime.now()
-        cur_date_str = cur.strftime(ISO_DATE_FORMAT)
-        result_text = f"<b>RESULT</b><br/>" + f"<b>Time</b>: {cur_date_str}<br/>"
-        self.__result_html_changed.emit(result_text)
+        if cur == self.__last_detect_time:
+            defect_types = set()
+            size_result = "<span style='color:green'>PASSED</span>"
+            left_asym_result = "<span style='color:green'>PASSED</span>"
+            right_asym_result = "<span style='color:green'>PASSED</span>"
+            if h_diff or w_diff:
+                size_result = "<span style='color:red'>FAILED: Different size</span>"
+                defect_types.add(fqcs_constants.SIZE_MISMATCH)
+            if is_asym_diff_left:
+                left_asym_result = "<span style='color:red'>FAILED: Different from sample</span>"
+                defect_types.add(fqcs_constants.SAMPLE_MISMATCH)
+            if is_asym_diff_right:
+                right_asym_result = "<span style='color:red'>FAILED: Different from sample</span>"
+                defect_types.add(fqcs_constants.SAMPLE_MISMATCH)
+            # output
+            defect_result = "<span style='color:green'>NOT ANY</span>"
+            defects = {}
+            err_cfg = self.__main_cfg["err_cfg"]
+            min_score = err_cfg["yolo_score_threshold"]
+            classes_labels = err_cfg["classes"]
+            if has_error_checked:
+                boxes, scores, classes, valid_detections = result_dict[
+                    "err_results"]
+                helper.draw_yolo_results(images,
+                                         boxes,
+                                         scores,
+                                         classes,
+                                         classes_labels,
+                                         err_cfg["img_size"],
+                                         min_score=min_score)
+                self.__parse_defects_detection_result(images, scores, classes,
+                                                      classes_labels,
+                                                      min_score, defects)
+            for res in side_results:
+                side_images, side_boxes, side_scores, side_classes, side_valid_detections = res
+                self.__parse_defects_detection_result(side_images, side_scores,
+                                                      side_classes,
+                                                      classes_labels,
+                                                      min_score, defects)
+
+            defect_result_text = []
+            for key in defects.keys():
+                defect_types.add(key)
+                d_count = defects[key]
+                defect_result_text.append(f"{key}: {d_count}")
+            if len(defects) > 0:
+                defect_result_text = ", ".join(defect_result_text)
+                defect_result_text = f"<span style='color:red'>{defect_result_text}</span>"
+                defect_result = defect_result_text
+
+            # output
+            if has_color_checked:
+                left_color_result = "<span style='color:green'>PASSED</span>"
+                right_color_result = "<span style='color:green'>PASSED</span>"
+                left_c_results = result_dict["color_results"][0]
+                right_c_results = result_dict["color_results"][1]
+                if left_c_results[3]:
+                    left_color_result = "<span style='color:red'>FAILED: Different color</span>"
+                    defect_types.add(fqcs_constants.COLOR_MISMATCH)
+                if right_c_results[3]:
+                    right_color_result = "<span style='color:red'>FAILED: Different color</span>"
+                    defect_types.add(fqcs_constants.COLOR_MISMATCH)
+
+            cur_date_str = cur.strftime(ISO_DATE_FORMAT)
+            result_text = f"<b>RESULT</b><br/>" + f"<b>Time</b>: {cur_date_str}<br/><hr/>"
+            result_text += f"<b>Size</b>: {size_result}<br/><hr/>"
+            result_text += f"<b>Similarity of left</b>: {left_asym_result}<br/>"
+            result_text += f"<b>Similarity of right</b>: {right_asym_result}<br/><hr/>"
+            if has_color_checked:
+                result_text += f"<b>Color of left</b>: {left_color_result}<br/>"
+                result_text += f"<b>Color of right</b>: {right_color_result}<br/><hr/>"
+            result_text += f"<b>Defects</b>: {defect_result}<br/>"
+            # test only
+            result_text += f"{defect_types}"
+
+            self.__result_html_changed.emit(result_text)
         return
+
+    async def __activate_side_cams(self):
+        manager = DetectorConfig.instance().get_manager()
+        video_cameras = DetectorConfig.instance().get_video_cameras()
+        configs = manager.get_configs()
+        results = []
+        for idx, cfg in enumerate(configs):
+            if cfg["is_main"] == True: continue
+            _, image = video_cameras[idx].read()
+            # test only
+            image = cv2.imread(
+                "N:/Workspace/Capstone/FQCS-Research/FQCS.ColorDetection/dirt.jpg"
+            )
+            frame_width, frame_height = cfg["frame_width"], cfg["frame_height"]
+            resized_image = cv2.resize(image, (frame_width, frame_height))
+            boxes, proc = manager.extract_boxes(cfg, resized_image)
+            image_detect = resized_image.copy()
+            pair, image_detect, boxes = manager.detect_pair_side_cam(
+                cfg, boxes, image_detect)
+            if (pair is not None):
+                pair_len = len(pair)
+                images = [item[0] for item in pair]
+                boxes, scores, classes, valid_detections = await manager.detect_errors(
+                    cfg, images, None)
+                err_cfg = cfg["err_cfg"]
+                helper.draw_yolo_results(
+                    images,
+                    boxes,
+                    scores,
+                    classes,
+                    err_cfg["classes"],
+                    err_cfg["img_size"],
+                    min_score=err_cfg["yolo_score_threshold"])
+                results.append(
+                    (images, boxes, scores, classes, valid_detections))
+        return results
+
+    def __parse_defects_detection_result(self, images, scores, classes,
+                                         classes_labels, min_score, defects):
+        for i in range(len(images)):
+            images[i] *= 255.
+            images[i] = np.asarray(images[i], dtype=np.uint8)
+            iscores = scores[i]
+            iclasses = classes[i].astype(int)
+            for score, cl in zip(iscores.tolist(), iclasses.tolist()):
+                if score > min_score:
+                    defect = classes_labels[cl]
+                    if defect not in defects:
+                        defects[defect] = 0
+                    defects[defect] += 1
 
     def __handle_result_html_changed(self, html):
         self.ui.inpResult.setHtml(html)

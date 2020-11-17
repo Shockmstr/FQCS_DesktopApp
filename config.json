@@ -69,7 +69,7 @@
       "weights": "N:/Workspace/Capstone/yolov4.h5",
       "yolo_score_threshold": 0.3,
       "classes": [
-        "dirt"
+        "STAIN"
       ]
     },
     "d_cfg": {
@@ -179,7 +179,7 @@
       "weights": "yolov4.h5",
       "yolo_score_threshold": 0.3,
       "classes": [
-        "dirt"
+        "STAIN"
       ]
     },
     "d_cfg": {

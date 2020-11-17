@@ -1,2 +1,2 @@
-dirt
-excess_glue
+STAIN
+EXCESS_GLUE
