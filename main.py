@@ -25,7 +25,7 @@ class MainApplication():
 
     def run(self, loop):
         AppConfig.instance().load_config()
-        self.auth_info = AuthInfo()
+        self.auth_info = AuthInfo.instance()
         self.__identity_service = IdentityService(self.auth_info)
         self.__identity_service.init_auth_info()
         self.auth_info.token_info_changed.connect(self.token_info_changed)

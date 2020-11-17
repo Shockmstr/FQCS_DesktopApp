@@ -2,17 +2,20 @@ from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Signal, QThreadPool, QTimer
 import trio
 from app_models.detector_config import DetectorConfig
+from app_models.app_config import AppConfig
+from app_models.auth_info import AuthInfo
 from app import helpers
 from FQCS import helper
 import os
-from FQCS import detector, fqcs_constants
+from FQCS import detector, fqcs_constants, fqcs_api
 from views.progress_screen import Ui_ProgressScreen
 from widgets.image_widget import ImageWidget
 from cv2 import cv2
 import numpy as np
 from services.worker_runnable import WorkerRunnable
-from app_constants import ISO_DATE_FORMAT
+from app_constants import ISO_DATE_FORMAT, FOLDER_DATE_FORMAT
 import datetime
+import uuid
 
 
 class ProgressScreen(QWidget):
@@ -25,6 +28,8 @@ class ProgressScreen(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.__camera_timer = QTimer()
+        self.__storage_path = AppConfig.instance().config["storage_path"]
+        self.__api_url = AppConfig.instance().config["api_url"]
         self.ui = Ui_ProgressScreen()
         self.ui.setupUi(self)
         self.build()
@@ -71,9 +76,7 @@ class ProgressScreen(QWidget):
         for i, cfg in enumerate(configs):
             # video_cameras[i].open(cfg["camera_uri"])
             # test only
-            video_cameras[i].open(
-                r"./resources/test_data\test1.mp4"
-            )
+            video_cameras[i].open(r"./resources/test_data\test1.mp4")
 
         self.image1.imshow(None)
         self.left_detected_image.imshow(None)
@@ -230,7 +233,7 @@ class ProgressScreen(QWidget):
         pre_left, pre_right, pre_sample_left, pre_sample_right = manager.preprocess_images(
             self.__main_cfg, left, right)
         images = [left, right]
-
+        side_images = []
         # Similarity compare
         sim_cfg = self.__main_cfg["sim_cfg"]
         left_result, right_result = await manager.detect_asym(
@@ -256,8 +259,7 @@ class ProgressScreen(QWidget):
                     file_name = np.random.randint(151, 200)
                     if len(images) == 2:
                         images[0] = cv2.imread(
-                            f"./resources/test_data/{file_name}.jpg"
-                        )
+                            f"./resources/test_data/{file_name}.jpg")
                     nursery.start_soon(manager.detect_errors, self.__main_cfg,
                                        images, (result_dict, "err_results"))
 
@@ -278,39 +280,39 @@ class ProgressScreen(QWidget):
                     side_results.append(result)
 
         # result display
-        if cur == self.__last_detect_time:
-            defect_types = set()
-            size_result = "<span style='color:green'>PASSED</span>"
-            left_asym_result = "<span style='color:green'>PASSED</span>"
-            right_asym_result = "<span style='color:green'>PASSED</span>"
-            if h_diff or w_diff:
-                size_result = "<span style='color:red'>FAILED: Different size</span>"
-                defect_types.add(fqcs_constants.SIZE_MISMATCH)
-            if is_asym_diff_left:
-                left_asym_result = "<span style='color:red'>FAILED: Different from sample</span>"
-                defect_types.add(fqcs_constants.SAMPLE_MISMATCH)
-            if is_asym_diff_right:
-                right_asym_result = "<span style='color:red'>FAILED: Different from sample</span>"
-                defect_types.add(fqcs_constants.SAMPLE_MISMATCH)
-            # output
-            defect_result = "<span style='color:green'>NOT ANY</span>"
-            defects = {}
-            err_cfg = self.__main_cfg["err_cfg"]
-            min_score = err_cfg["yolo_score_threshold"]
-            classes_labels = err_cfg["classes"]
-            if has_error_checked:
-                boxes, scores, classes, valid_detections = result_dict[
-                    "err_results"]
-                helper.draw_yolo_results(images,
-                                         boxes,
-                                         scores,
-                                         classes,
-                                         classes_labels,
-                                         err_cfg["img_size"],
-                                         min_score=min_score)
-                self.__parse_defects_detection_result(images, scores, classes,
-                                                      classes_labels,
-                                                      min_score, defects)
+        defect_types = set()
+        size_result = "<span style='color:green'>PASSED</span>"
+        left_asym_result = "<span style='color:green'>PASSED</span>"
+        right_asym_result = "<span style='color:green'>PASSED</span>"
+        if h_diff or w_diff:
+            size_result = "<span style='color:red'>FAILED: Different size</span>"
+            defect_types.add(fqcs_constants.SIZE_MISMATCH)
+        if is_asym_diff_left:
+            left_asym_result = "<span style='color:red'>FAILED: Different from sample</span>"
+            defect_types.add(fqcs_constants.SAMPLE_MISMATCH)
+        if is_asym_diff_right:
+            right_asym_result = "<span style='color:red'>FAILED: Different from sample</span>"
+            defect_types.add(fqcs_constants.SAMPLE_MISMATCH)
+        # output
+        defect_result = "<span style='color:green'>NOT ANY</span>"
+        defects = {}
+        err_cfg = self.__main_cfg["err_cfg"]
+        min_score = err_cfg["yolo_score_threshold"]
+        classes_labels = err_cfg["classes"]
+        if has_error_checked:
+            boxes, scores, classes, valid_detections = result_dict[
+                "err_results"]
+            helper.draw_yolo_results(images,
+                                     boxes,
+                                     scores,
+                                     classes,
+                                     classes_labels,
+                                     err_cfg["img_size"],
+                                     min_score=min_score)
+            self.__parse_defects_detection_result(images, scores, classes,
+                                                  classes_labels, min_score,
+                                                  defects)
+            if cur == self.__last_detect_time:
                 label_w = self.left_detected_image.width()
                 label_h = self.left_detected_image.height()
                 dim = (label_w, label_h)
@@ -319,54 +321,77 @@ class ProgressScreen(QWidget):
                 self.left_detected_image.imshow(left_img)
                 self.right_detected_image.imshow(right_img)
 
-            label_w = self.side_result_image.width()
-            label_h = self.side_result_image.height()
-            for res in side_results:
-                side_images, side_boxes, side_scores, side_classes, side_valid_detections = res
-                self.__parse_defects_detection_result(side_images, side_scores,
-                                                      side_classes,
-                                                      classes_labels,
-                                                      min_score, defects)
+        label_w = self.side_result_image.width()
+        label_h = self.side_result_image.height()
+        for res in side_results:
+            side_images, side_boxes, side_scores, side_classes, side_valid_detections = res
+            self.__parse_defects_detection_result(side_images, side_scores,
+                                                  side_classes, classes_labels,
+                                                  min_score, defects)
+            if cur == self.__last_detect_time:
                 final_img = helpers.concat_images(side_images, label_w,
                                                   label_h)
                 self.side_result_image.imshow(final_img)
 
-            defect_result_text = []
-            for key in defects.keys():
-                defect_types.add(key)
-                d_count = defects[key]
-                defect_result_text.append(f"{key}: {d_count}")
-            if len(defects) > 0:
-                defect_result_text = ", ".join(defect_result_text)
-                defect_result_text = f"<span style='color:red'>{defect_result_text}</span>"
-                defect_result = defect_result_text
+        defect_result_text = []
+        for key in defects.keys():
+            defect_types.add(key)
+            d_count = defects[key]
+            defect_result_text.append(f"{key}: {d_count}")
+        if len(defects) > 0:
+            defect_result_text = ", ".join(defect_result_text)
+            defect_result_text = f"<span style='color:red'>{defect_result_text}</span>"
+            defect_result = defect_result_text
 
-            # output
-            if has_color_checked:
-                left_color_result = "<span style='color:green'>PASSED</span>"
-                right_color_result = "<span style='color:green'>PASSED</span>"
-                left_c_results = result_dict["color_results"][0]
-                right_c_results = result_dict["color_results"][1]
-                if left_c_results[3]:
-                    left_color_result = "<span style='color:red'>FAILED: Different color</span>"
-                    defect_types.add(fqcs_constants.COLOR_MISMATCH)
-                if right_c_results[3]:
-                    right_color_result = "<span style='color:red'>FAILED: Different color</span>"
-                    defect_types.add(fqcs_constants.COLOR_MISMATCH)
+        # output
+        if has_color_checked:
+            left_color_result = "<span style='color:green'>PASSED</span>"
+            right_color_result = "<span style='color:green'>PASSED</span>"
+            left_c_results = result_dict["color_results"][0]
+            right_c_results = result_dict["color_results"][1]
+            if left_c_results[3]:
+                left_color_result = "<span style='color:red'>FAILED: Different color</span>"
+                defect_types.add(fqcs_constants.COLOR_MISMATCH)
+            if right_c_results[3]:
+                right_color_result = "<span style='color:red'>FAILED: Different color</span>"
+                defect_types.add(fqcs_constants.COLOR_MISMATCH)
 
-            cur_date_str = cur.strftime(ISO_DATE_FORMAT)
-            result_text = f"<b>RESULT</b><br/>" + f"<b>Time</b>: {cur_date_str}<br/><hr/>"
-            result_text += f"<b>Size</b>: {size_result}<br/><hr/>"
-            result_text += f"<b>Similarity of left</b>: {left_asym_result}<br/>"
-            result_text += f"<b>Similarity of right</b>: {right_asym_result}<br/><hr/>"
-            if has_color_checked:
-                result_text += f"<b>Color of left</b>: {left_color_result}<br/>"
-                result_text += f"<b>Color of right</b>: {right_color_result}<br/><hr/>"
-            result_text += f"<b>Defects</b>: {defect_result}<br/>"
-            # test only
-            result_text += f"{defect_types}"
+        cur_date_str = cur.strftime(ISO_DATE_FORMAT)
+        result_text = f"<b>RESULT</b><br/>" + f"<b>Time</b>: {cur_date_str}<br/><hr/>"
+        result_text += f"<b>Size</b>: {size_result}<br/><hr/>"
+        result_text += f"<b>Similarity of left</b>: {left_asym_result}<br/>"
+        result_text += f"<b>Similarity of right</b>: {right_asym_result}<br/><hr/>"
+        if has_color_checked:
+            result_text += f"<b>Color of left</b>: {left_color_result}<br/>"
+            result_text += f"<b>Color of right</b>: {right_color_result}<br/><hr/>"
+        result_text += f"<b>Defects</b>: {defect_result}<br/>"
+        # test only
+        result_text += f"{defect_types}"
 
+        if cur == self.__last_detect_time:
             self.__result_html_changed.emit(result_text)
+
+        # save images
+        folder = cur.strftime(FOLDER_DATE_FORMAT)
+        os.makedirs(os.path.join(self.__storage_path, folder), exist_ok=True)
+        all_imgs = []
+        all_imgs.extend(images)
+        all_imgs.extend(side_images)
+        images = []
+        for img in all_imgs:
+            img_name = str(uuid.uuid4()) + ".jpg"
+            rel_path = os.path.join(folder, img_name)
+            abs_path = os.path.join(self.__storage_path, rel_path)
+            cv2.imwrite(abs_path, img)
+            images.append(rel_path)
+
+        # send to api
+        access_token = AuthInfo.instance().get_token_info()["access_token"]
+        headers = fqcs_api.get_common_headers(auth_token=access_token)
+        is_success, resp = fqcs_api.submit_event(self.__api_url, defect_types,
+                                                 images[0], images[1],
+                                                 images[2:], headers)
+        print(is_success, resp)
         return
 
     async def __activate_side_cam(self, cfg, cam, manager, result_info):
@@ -387,8 +412,7 @@ class ProgressScreen(QWidget):
             if len(images) > 0:
                 file_name = np.random.randint(151, 200)
                 images[0] = cv2.imread(
-                    f"./resources/test_data/{file_name}.jpg"
-                )
+                    f"./resources/test_data/{file_name}.jpg")
 
             boxes, scores, classes, valid_detections = await manager.detect_errors(
                 cfg, images, None)
