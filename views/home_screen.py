@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'home_screenTUSPoH.ui'
+## Form generated from reading UI file 'home_screenPcsbpz.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -78,45 +78,24 @@ class Ui_HomeScreen(object):
         self.containerDetails.setObjectName(u"containerDetails")
         self.verticalLayout_7 = QVBoxLayout(self.containerDetails)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
-        self.lblAppId = QLabel(self.containerDetails)
-        self.lblAppId.setObjectName(u"lblAppId")
+        self.lblConfigLocation = QLabel(self.containerDetails)
+        self.lblConfigLocation.setObjectName(u"lblConfigLocation")
         font2 = QFont()
         font2.setPointSize(11)
         font2.setBold(False)
         font2.setItalic(False)
         font2.setWeight(50)
-        self.lblAppId.setFont(font2)
-        self.lblAppId.setTextFormat(Qt.MarkdownText)
-
-        self.verticalLayout_7.addWidget(self.lblAppId)
-
-        self.lblConfigLocation = QLabel(self.containerDetails)
-        self.lblConfigLocation.setObjectName(u"lblConfigLocation")
         self.lblConfigLocation.setFont(font2)
         self.lblConfigLocation.setTextFormat(Qt.MarkdownText)
 
         self.verticalLayout_7.addWidget(self.lblConfigLocation)
 
-        self.lblLastStarted = QLabel(self.containerDetails)
-        self.lblLastStarted.setObjectName(u"lblLastStarted")
-        self.lblLastStarted.setFont(font2)
-        self.lblLastStarted.setTextFormat(Qt.MarkdownText)
+        self.lblLocalServer = QLabel(self.containerDetails)
+        self.lblLocalServer.setObjectName(u"lblLocalServer")
+        self.lblLocalServer.setFont(font2)
+        self.lblLocalServer.setTextFormat(Qt.MarkdownText)
 
-        self.verticalLayout_7.addWidget(self.lblLastStarted)
-
-        self.lblRedisServer = QLabel(self.containerDetails)
-        self.lblRedisServer.setObjectName(u"lblRedisServer")
-        self.lblRedisServer.setFont(font2)
-        self.lblRedisServer.setTextFormat(Qt.MarkdownText)
-
-        self.verticalLayout_7.addWidget(self.lblRedisServer)
-
-        self.lblPushServer = QLabel(self.containerDetails)
-        self.lblPushServer.setObjectName(u"lblPushServer")
-        self.lblPushServer.setFont(font2)
-        self.lblPushServer.setTextFormat(Qt.MarkdownText)
-
-        self.verticalLayout_7.addWidget(self.lblPushServer)
+        self.verticalLayout_7.addWidget(self.lblLocalServer)
 
         self.lblLocalStorage = QLabel(self.containerDetails)
         self.lblLocalStorage.setObjectName(u"lblLocalStorage")
@@ -202,12 +181,9 @@ class Ui_HomeScreen(object):
         HomeScreen.setWindowTitle(QCoreApplication.translate("HomeScreen", u"Form", None))
         self.lblFqcs.setText(QCoreApplication.translate("HomeScreen", u"FQCS", None))
         self.lblTitle.setText(QCoreApplication.translate("HomeScreen", u"INFORMATION", None))
-        self.lblAppId.setText(QCoreApplication.translate("HomeScreen", u"**App ID:** {{AppId}}", None))
         self.lblConfigLocation.setText(QCoreApplication.translate("HomeScreen", u"**Current config location:** {{ConfigLocation}}", None))
-        self.lblLastStarted.setText(QCoreApplication.translate("HomeScreen", u"**Last started:** {{LastStarted}}", None))
-        self.lblRedisServer.setText(QCoreApplication.translate("HomeScreen", u"**Redis server:** {{RedisServer}}", None))
-        self.lblPushServer.setText(QCoreApplication.translate("HomeScreen", u"**Push server:** {{PushServer}}", None))
-        self.lblLocalStorage.setText(QCoreApplication.translate("HomeScreen", u"**Local Storage:** {{LocalStorage}}", None))
+        self.lblLocalServer.setText(QCoreApplication.translate("HomeScreen", u"**Local server:** {{LocalServer}}", None))
+        self.lblLocalStorage.setText(QCoreApplication.translate("HomeScreen", u"**Local storage:** {{LocalStorage}}", None))
         self.btnStart.setText(QCoreApplication.translate("HomeScreen", u"START", None))
         self.btnEditConfig.setText(QCoreApplication.translate("HomeScreen", u"EDIT CONFIGURATION", None))
         self.btnLogout.setText(QCoreApplication.translate("HomeScreen", u"LOG OUT", None))

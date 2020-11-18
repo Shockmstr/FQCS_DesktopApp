@@ -13,29 +13,31 @@ from widgets.color_preprocess_config_screen import ColorPreprocessConfigScreen
 from widgets.detection_config_screen import DetectionConfigScreen
 from widgets.color_param_calibration_screen import ColorParamCalibrationScreen
 from widgets.error_detect_screen import ErrorDetectScreen
+from widgets.side_error_detect_screen import SideErrorDetectScreen
 from widgets.progress_screen import ProgressScreen
 from widgets.asym_config_screen import AsymConfigScreen
 from services.identity_service import IdentityService
 from qasync import QEventLoop, asyncSlot
 import asyncio
+from app_constants import Videos
 
 
 class MainWindow(QMainWindow):
-    logged_out = Signal(bool)
-    loaded_config = Signal()
-
     def __init__(self, identity_service: IdentityService):
         QMainWindow.__init__(self)
         self.__identity_service = identity_service
+        self.__view_cam = None
+        self.__video_camera = None
+        self.__detector_cfg = DetectorConfig.instance()
+        self.__camera_timer = self.__detector_cfg.get_timer()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.detector_cfg = DetectorConfig.instance()
-        self.video_camera = cv2.VideoCapture()
-        self.timer = QTimer()
-        self.process_cam = None
+        self.build()
+        self.binding()
 
+    def build(self):
         # screen 0
-        self.home_screen = HomeScreen(identity_service, self)
+        self.home_screen = HomeScreen(self.__identity_service, self)
         # screen 1
         self.detection_screen = DetectionConfigScreen(self)
         # screen 2
@@ -52,8 +54,8 @@ class MainWindow(QMainWindow):
         self.progress_screen = ProgressScreen(self)
         # screen 8
         self.asym_config_screen = AsymConfigScreen(self)
-
-        self.binding()
+        # screen 9
+        self.side_error_detect_screen = SideErrorDetectScreen(self)
 
         # add to Stacked Widget
         self.ui.centralStackWidget.addWidget(self.home_screen)
@@ -65,123 +67,128 @@ class MainWindow(QMainWindow):
             self.color_preprocess_config_screen)
         self.ui.centralStackWidget.addWidget(self.color_param_calib_screen)
         self.ui.centralStackWidget.addWidget(self.error_detect_screen)
+        self.ui.centralStackWidget.addWidget(self.side_error_detect_screen)
         self.ui.centralStackWidget.addWidget(self.progress_screen)
-        
+
+    def showEvent(self, event):
+        return
 
     # binding
     def binding(self):
-        self.ui.actionExit.triggered.connect(self.exit_program)
-        self.ui.actionLoadCfg.triggered.connect(self.on_load_config)
-        self.ui.actionSaveCfg.triggered.connect(self.on_save_config)
-        self.timer.timeout.connect(self.show_cam)
-        self.ui.centralStackWidget.currentChanged.connect(self.widget_change)
+        self.ui.actionExit.triggered.connect(self.action_exit_triggered)
+        self.ui.actionLoadCfg.triggered.connect(
+            self.action_load_config_triggered)
+        self.ui.actionSaveCfg.triggered.connect(self.action_save_triggered)
+        self.__camera_timer.timeout.connect(self.camera_timer_timeout)
+        self.ui.centralStackWidget.currentChanged.connect(
+            self.current_stack_widget_changed)
 
-        self.home_screen.action_logout.connect(self.on_logged_out)
         self.home_screen.action_edit.connect(self.change_detection_screen)
         self.home_screen.action_start.connect(self.change_progress_screen)
-        self.home_screen.action_exit.connect(self.exit_program)
+        self.home_screen.action_exit.connect(self.action_exit_triggered)
 
         self.detection_screen.backscreen.connect(self.change_home_screen)
         self.detection_screen.nextscreen.connect(
             self.change_measurement_screen)
-        self.detection_screen.captured.connect(self.capture)
-        self.detection_screen.camera_choosen.connect(
-            lambda index: self.video_camera.open(index))
-        self.detection_screen.change_config.connect(
-            lambda cfg: self.call_loaded_config(cfg))
+        self.detection_screen.captured.connect(self.toggle_capture_state)
+        self.detection_screen.camera_changed.connect(self.camera_changed)
 
         self.measurement_screen.backscreen.connect(
             self.change_detection_screen)
         self.measurement_screen.nextscreen.connect(
-            self.skippable_change_detect_pair_screen) 
+            self.skipable_change_detect_pair_screen)
+        self.measurement_screen.captured.connect(self.toggle_capture_state)
 
         self.test_detect_pair_screen.backscreen.connect(
             self.change_measurement_screen)
         self.test_detect_pair_screen.nextscreen.connect(
+            self.change_color_preprocess_config_screen)
+        self.test_detect_pair_screen.captured.connect(
+            self.toggle_capture_state)
+
+        self.color_preprocess_config_screen.backscreen.connect(
+            self.change_detect_pair_screen)
+        self.color_preprocess_config_screen.nextscreen.connect(
             self.change_asym_config_screen)
 
         self.asym_config_screen.backscreen.connect(
-            self.change_detect_pair_screen)
-        self.asym_config_screen.nextscreen.connect(
             self.change_color_preprocess_config_screen)
-
-        self.color_preprocess_config_screen.backscreen.connect(
-            self.change_asym_config_screen)
-        self.color_preprocess_config_screen.nextscreen.connect(
+        self.asym_config_screen.nextscreen.connect(
             self.change_color_param_calib_screen)
+        self.asym_config_screen.captured.connect(self.toggle_capture_state)
 
         self.color_param_calib_screen.backscreen.connect(
-            self.change_color_preprocess_config_screen)
+            self.change_asym_config_screen)
         self.color_param_calib_screen.nextscreen.connect(
             self.change_error_detect_screen)
+        self.color_param_calib_screen.captured.connect(
+            self.toggle_capture_state)
 
         self.error_detect_screen.backscreen.connect(
-            self.skippable_color_param_calib_screen) 
+            self.change_color_param_calib_screen)
         self.error_detect_screen.nextscreen.connect(
             self.change_progress_screen)
+        self.error_detect_screen.captured.connect(self.toggle_capture_state)
 
-        self.progress_screen.returned_home.connect(self.change_home_screen)
-        self.progress_screen.captured.connect(self.capture)
-        self.progress_screen.stopped.connect(self.stop)
+        self.side_error_detect_screen.backscreen.connect(
+            self.change_measurement_screen)
+        self.side_error_detect_screen.nextscreen.connect(
+            self.change_progress_screen)
+        self.side_error_detect_screen.captured.connect(
+            self.toggle_capture_state)
 
-        self.loaded_config.connect(self.test_detect_pair_screen.load_cfg)
-        self.loaded_config.connect(self.detection_screen.load_cfg)
-        self.loaded_config.connect(self.measurement_screen.load_cfg)
-        # TODO: fix detector_cfg bugs in following screens before
-        self.loaded_config.connect(
-            self.color_preprocess_config_screen.load_cfg)
-        self.loaded_config.connect(self.color_param_calib_screen.load_cfg)
-        self.loaded_config.connect(self.error_detect_screen.load_cfg)
-        self.loaded_config.connect(self.asym_config_screen.load_cfg)
-        self.loaded_config.connect(self.progress_screen.load_cfg)
-
+        self.progress_screen.return_home.connect(self.change_home_screen)
         return
 
     def closeEvent(self, event):
-        if self.video_camera is not None and self.video_camera.isOpened():
-            self.video_camera.release()
+        self.__detector_cfg.reset()
 
-    def on_logged_out(self, event: bool):
-        # logic
-        self.logged_out.emit(event)
-
-    def show_cam(self):
-        if (self.video_camera.isOpened() and self.process_cam is not None):
-            _, image = self.video_camera.read()
-            self.process_cam(image)
-
-    # start/stop timer
-    def control_timer(self, active):
-        # if timer is stopped
-        if active:
-            if (not self.timer.isActive()):
-                # start timer
-                self.timer.start(50)
-        # if timer is started
-        else:
-            self.timer.stop()
+    def camera_timer_timeout(self):
+        if (self.__view_cam is not None and self.__video_camera is not None
+                and self.__video_camera.isOpened()):
+            _, image = self.__video_camera.read()
+            # test only
+            if image is None:
+                self.__video_camera.open(Videos.instance().next())
+                _, image = self.__video_camera.read()
+            _, current_cfg = self.__detector_cfg.get_current_cfg()
+            frame_width, frame_height = current_cfg[
+                "frame_width"], current_cfg["frame_height"]
+            image = cv2.resize(image, (frame_width, frame_height))
+            self.__view_cam(image)
 
     # event handler
-    def exit_program(self):
+    def camera_changed(self, index):
+        self.__video_camera = self.__detector_cfg.get_current_camera()
+        if self.__video_camera is None: return
+        if index is not None and index > -1:
+            if (self.__detector_cfg.get_last_camera_uri() !=
+                    index) or (not self.__video_camera.isOpened()):
+                # self.__video_camera.open(index)
+                # test only
+                self.__video_camera.open(Videos.instance().next())
+                self.__detector_cfg.set_last_camera_uri(index)
+        else:
+            if self.__view_cam is not None: self.__view_cam(None)
+            self.__video_camera.release()
+
+    def action_exit_triggered(self):
         self.close()
 
-    def skippable_change_detect_pair_screen(self):
-        cfg = self.detector_cfg.get_current_cfg()
+    def skipable_change_detect_pair_screen(self):
+        idx, cfg = self.__detector_cfg.get_current_cfg()
         continue_screen = cfg["is_main"]
         if continue_screen:
-            self.ui.centralStackWidget.setCurrentWidget(self.test_detect_pair_screen)
+            self.ui.centralStackWidget.setCurrentWidget(
+                self.test_detect_pair_screen)
         else:
+            err_text = self.side_error_detect_screen.validate_show()
+            if err_text is not None:
+                helpers.show_message(err_text)
+                return
             # skip to screen 6 if only side camera is selected
-            self.ui.centralStackWidget.setCurrentWidget(self.error_detect_screen)
-
-    def skippable_color_param_calib_screen(self):
-        cfg = self.detector_cfg.get_current_cfg()
-        continue_screen = cfg["is_main"]
-        if continue_screen:
-            self.ui.centralStackWidget.setCurrentWidget(self.color_param_calib_screen)
-        else:
-            # skip to screen 6 if only side camera is selected
-            self.ui.centralStackWidget.setCurrentWidget(self.measurement_screen)
+            self.ui.centralStackWidget.setCurrentWidget(
+                self.side_error_detect_screen)
 
     def change_home_screen(self):
         self.ui.centralStackWidget.setCurrentWidget(self.home_screen)
@@ -208,74 +215,73 @@ class MainWindow(QMainWindow):
         self.ui.centralStackWidget.setCurrentWidget(self.error_detect_screen)
 
     def change_progress_screen(self):
+        err_mess = self.progress_screen.validate_show()
+        if err_mess is not None:
+            helpers.show_message(err_mess)
+            return
+        self.__video_camera = None
+        self.stop_capture()
         self.ui.centralStackWidget.setCurrentWidget(self.progress_screen)
 
     def change_asym_config_screen(self):
         self.ui.centralStackWidget.setCurrentWidget(self.asym_config_screen)
 
-    @asyncSlot()
-    async def call_loaded_config(self, cfg):
-        self.detector_cfg.current_cfg_name = cfg["name"]
-        self.loaded_config.emit()
-
-    def widget_change(self):
+    def current_stack_widget_changed(self):
         currentWidget = self.ui.centralStackWidget.currentWidget()
-        if (currentWidget == self.detection_screen):
-            self.process_cam = self.detection_screen.view_cam
-            self.control_timer(True)
-        elif (currentWidget == self.measurement_screen):
-            self.process_cam = self.measurement_screen.view_cam
-            self.control_timer(True)
-        elif (currentWidget == self.color_preprocess_config_screen):
-            self.color_preprocess_config_screen.view_image()
-        elif (currentWidget == self.color_param_calib_screen):
-            self.process_cam = self.color_param_calib_screen.view_cam
-            self.control_timer(True)
-        elif (currentWidget == self.test_detect_pair_screen):
-            self.process_cam = self.test_detect_pair_screen.view_cam
-            self.control_timer(True)
-        elif (currentWidget == self.error_detect_screen):
-            self.process_cam = self.error_detect_screen.view_cam
-            self.control_timer(True)
-        elif (currentWidget == self.progress_screen):
-            self.process_cam = self.progress_screen.view_cam
-            self.control_timer(True)
-        elif (currentWidget == self.asym_config_screen):
-            self.process_cam = self.asym_config_screen.view_cam
-            self.control_timer(True)
+
+        def __change_view_cam(func):
+            self.__view_cam = func
+            self.__view_cam(None)
+
+        def __remove_view_cam():
+            self.__view_cam = None
+
+        if hasattr(currentWidget, 'view_cam'):
+            __change_view_cam(currentWidget.view_cam)
         else:
-            self.control_timer(False)
+            __remove_view_cam()
 
-    def stop(self):
-        self.control_timer(False)
+    def stop_capture(self):
+        self.__camera_timer.stop()
 
-    def capture(self):
-        self.control_timer(True)
+    def start_capture(self):
+        if (not self.__camera_timer.isActive()):
+            # start timer
+            self.__camera_timer.start(20)
+
+    def toggle_capture_state(self):
+        if self.__camera_timer.isActive():
+            self.__camera_timer.stop()
+        else:
+            self.__camera_timer.start(20)
 
     @asyncSlot()
-    async def on_load_config(self):
-        file_path = helpers.file_chooser_open_directory(self)
-        if file_path is not None:
-            manager = FQCSManager(config_folder=file_path)
-            manager.load_sample_images()
-            configs = manager.get_configs()
-            for cfg in configs:
-                if cfg["is_main"] == True:
-                    self.detector_cfg.current_cfg_name = cfg["name"]
-                    await manager.load_model(cfg)
-                    break
-            self.detector_cfg.manager = manager
-            self.detector_cfg.current_path = file_path
-            self.loaded_config.emit()
-        else:
-            print("Error loading config")
+    async def action_load_config_triggered(self):
+        url = helpers.file_chooser_open_directory(self)
+        if url.isEmpty(): return
+        file_path = url.toLocalFile()
+        self.stop_capture()
+        self.__detector_cfg.reset()
+        manager = FQCSManager(config_folder=file_path)
+        configs = manager.get_configs()
+        for cfg in configs:
+            if cfg["is_main"] == True:
+                self.__detector_cfg.set_current_cfg_name(cfg["name"])
+                await manager.load_model(cfg)
+                break
+        self.__detector_cfg.set_manager(manager)
+        self.__detector_cfg.set_current_path(file_path)
+        self.__detector_cfg.manager_changed.emit()
+        self.change_home_screen()
 
-    def on_save_config(self):
-        configs = self.detector_cfg.manager.get_configs()
+    def action_save_triggered(self):
+        manager = self.__detector_cfg.get_manager()
+        configs = manager.get_configs()
         if configs is not None:
-            file_path = helpers.file_chooser_open_directory(self)
-            if (file_path):
-                self.detector_cfg.manager.save_config(file_path)
-                self.detector_cfg.current_path = file_path
+            url = helpers.file_chooser_open_directory(self)
+            if url.isEmpty(): return
+            file_path = url.toLocalFile()
+            manager.save_config(file_path)
+            self.__detector_cfg.set_current_path(file_path)
         else:
             print("No config provided")

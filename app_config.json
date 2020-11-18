@@ -1,4 +1,5 @@
 {
   "api_url": "http://localhost:60873",
-  "dev": true
+  "dev": true,
+  "storage_path": "./data"
 }

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1440</width>
-    <height>789</height>
+    <height>848</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,48 +85,7 @@
       </item>
       <item row="1" column="0">
        <widget class="QWidget" name="widget" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,2">
-         <item alignment="Qt::AlignTop">
-          <widget class="QGroupBox" name="groupCbDisplayType">
-           <property name="title">
-            <string>Display type:</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item alignment="Qt::AlignTop">
-             <widget class="QComboBox" name="cbDisplayType">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="autoFillBackground">
-               <bool>false</bool>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">height:22px</string>
-              </property>
-              <item>
-               <property name="text">
-                <string>Item 1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Item 2</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2">
          <item>
           <widget class="QWidget" name="widget_2" native="true"/>
          </item>
@@ -214,8 +173,15 @@ font-weight:bold;</string>
 	border: 1px solid #A5A5A5
 }</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_16">
-            <item alignment="Qt::AlignTop">
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QPushButton" name="btnCapture">
+              <property name="text">
+               <string>CAPTURE</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QWidget" name="containerVerticalBtn" native="true">
               <layout class="QVBoxLayout" name="verticalLayout_17">
                <property name="leftMargin">
@@ -247,7 +213,7 @@ font-weight:bold;</string>
               </layout>
              </widget>
             </item>
-            <item alignment="Qt::AlignBottom">
+            <item>
              <widget class="QWidget" name="containerNavBtn" native="true">
               <layout class="QHBoxLayout" name="horizontalLayout_3">
                <property name="leftMargin">

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'asym_config_screenXArKPD.ui'
+## Form generated from reading UI file 'asym_config_screenJUvztr.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -36,34 +36,6 @@ class Ui_AsymConfigScreen(object):
 
         self.gridLayout.addWidget(self.screen1, 0, 0, 1, 1)
 
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.groupCbbTemplate = QGroupBox(self.containerScreen)
-        self.groupCbbTemplate.setObjectName(u"groupCbbTemplate")
-        self.verticalLayout_20 = QVBoxLayout(self.groupCbbTemplate)
-        self.verticalLayout_20.setObjectName(u"verticalLayout_20")
-        self.verticalLayout_20.setContentsMargins(-1, 0, -1, 0)
-        self.cbbDisplayType = QComboBox(self.groupCbbTemplate)
-        self.cbbDisplayType.addItem("")
-        self.cbbDisplayType.addItem("")
-        self.cbbDisplayType.setObjectName(u"cbbDisplayType")
-        self.cbbDisplayType.setAutoFillBackground(False)
-        self.cbbDisplayType.setStyleSheet(u"height:22px")
-
-        self.verticalLayout_20.addWidget(self.cbbDisplayType)
-
-
-        self.horizontalLayout_2.addWidget(self.groupCbbTemplate, 0, Qt.AlignTop)
-
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_2.addItem(self.horizontalSpacer)
-
-        self.horizontalLayout_2.setStretch(0, 1)
-        self.horizontalLayout_2.setStretch(1, 1)
-
-        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
-
         self.screen2 = QWidget(self.containerScreen)
         self.screen2.setObjectName(u"screen2")
         self.horizontalLayout_4 = QHBoxLayout(self.screen2)
@@ -97,6 +69,22 @@ class Ui_AsymConfigScreen(object):
 
 
         self.gridLayout.addWidget(self.screen3, 1, 1, 1, 1)
+
+        self.sectionInfo = QWidget(self.containerScreen)
+        self.sectionInfo.setObjectName(u"sectionInfo")
+        self.horizontalLayout_2 = QHBoxLayout(self.sectionInfo)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.inpResult = QTextEdit(self.sectionInfo)
+        self.inpResult.setObjectName(u"inpResult")
+        self.inpResult.setEnabled(True)
+        self.inpResult.setReadOnly(True)
+        self.inpResult.setOverwriteMode(False)
+        self.inpResult.setAcceptRichText(True)
+
+        self.horizontalLayout_2.addWidget(self.inpResult)
+
+
+        self.gridLayout.addWidget(self.sectionInfo, 1, 0, 1, 1)
 
         self.gridLayout.setRowStretch(0, 1)
         self.gridLayout.setRowStretch(1, 1)
@@ -193,10 +181,13 @@ class Ui_AsymConfigScreen(object):
         self.verticalLayout_19 = QVBoxLayout(self.groupInputTemplate)
         self.verticalLayout_19.setObjectName(u"verticalLayout_19")
         self.verticalLayout_19.setContentsMargins(-1, 0, -1, 0)
-        self.inpSegments = QLineEdit(self.groupInputTemplate)
-        self.inpSegments.setObjectName(u"inpSegments")
+        self.cbbSegments = QComboBox(self.groupInputTemplate)
+        self.cbbSegments.addItem("")
+        self.cbbSegments.addItem("")
+        self.cbbSegments.addItem("")
+        self.cbbSegments.setObjectName(u"cbbSegments")
 
-        self.verticalLayout_19.addWidget(self.inpSegments)
+        self.verticalLayout_19.addWidget(self.cbbSegments)
 
 
         self.gridLayout_2.addWidget(self.groupInputTemplate, 2, 2, 1, 1)
@@ -208,7 +199,7 @@ class Ui_AsymConfigScreen(object):
         self.verticalLayout_7.setContentsMargins(-1, 0, -1, 0)
         self.sldAmpRate = QSlider(self.grpBoxAmpRate)
         self.sldAmpRate.setObjectName(u"sldAmpRate")
-        self.sldAmpRate.setMaximum(20)
+        self.sldAmpRate.setMaximum(30)
         self.sldAmpRate.setPageStep(5)
         self.sldAmpRate.setOrientation(Qt.Horizontal)
 
@@ -286,15 +277,20 @@ class Ui_AsymConfigScreen(object):
         self.containerRight.setStyleSheet(u"#containerRight {\n"
 "	border: 1px solid #A5A5A5\n"
 "}")
-        self.verticalLayout_16 = QVBoxLayout(self.containerRight)
-        self.verticalLayout_16.setObjectName(u"verticalLayout_16")
+        self.verticalLayout_3 = QVBoxLayout(self.containerRight)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.containerVerticalBtn = QWidget(self.containerRight)
         self.containerVerticalBtn.setObjectName(u"containerVerticalBtn")
         self.verticalLayout_17 = QVBoxLayout(self.containerVerticalBtn)
         self.verticalLayout_17.setObjectName(u"verticalLayout_17")
         self.verticalLayout_17.setContentsMargins(0, 0, 0, 0)
+        self.btnCapture = QPushButton(self.containerVerticalBtn)
+        self.btnCapture.setObjectName(u"btnCapture")
 
-        self.verticalLayout_16.addWidget(self.containerVerticalBtn, 0, Qt.AlignTop)
+        self.verticalLayout_17.addWidget(self.btnCapture)
+
+
+        self.verticalLayout_3.addWidget(self.containerVerticalBtn, 0, Qt.AlignTop)
 
         self.containerNavBtn = QWidget(self.containerRight)
         self.containerNavBtn.setObjectName(u"containerNavBtn")
@@ -312,7 +308,7 @@ class Ui_AsymConfigScreen(object):
         self.horizontalLayout_3.addWidget(self.btnNext)
 
 
-        self.verticalLayout_16.addWidget(self.containerNavBtn, 0, Qt.AlignBottom)
+        self.verticalLayout_3.addWidget(self.containerNavBtn, 0, Qt.AlignBottom)
 
 
         self.horizontalLayout.addWidget(self.containerRight)
@@ -333,33 +329,42 @@ class Ui_AsymConfigScreen(object):
 
         self.retranslateUi(AsymConfigScreen)
 
+        self.cbbSegments.setCurrentIndex(0)
+
+
         QMetaObject.connectSlotsByName(AsymConfigScreen)
     # setupUi
 
     def retranslateUi(self, AsymConfigScreen):
         AsymConfigScreen.setWindowTitle(QCoreApplication.translate("AsymConfigScreen", u"Form", None))
         self.screen1.setText(QCoreApplication.translate("AsymConfigScreen", u"SCREEN", None))
-        self.groupCbbTemplate.setTitle(QCoreApplication.translate("AsymConfigScreen", u"Display Type:", None))
-        self.cbbDisplayType.setItemText(0, QCoreApplication.translate("AsymConfigScreen", u"Item 1", None))
-        self.cbbDisplayType.setItemText(1, QCoreApplication.translate("AsymConfigScreen", u"Item 2", None))
-
         self.screen2Left.setText(QCoreApplication.translate("AsymConfigScreen", u"PushButton", None))
         self.screen2Right.setText(QCoreApplication.translate("AsymConfigScreen", u"PushButton", None))
         self.screen3Left.setText(QCoreApplication.translate("AsymConfigScreen", u"PushButton", None))
         self.screen3Right.setText(QCoreApplication.translate("AsymConfigScreen", u"PushButton", None))
+        self.inpResult.setMarkdown(QCoreApplication.translate("AsymConfigScreen", u"**RESULT**\n"
+"\n"
+"", None))
+        self.inpResult.setHtml(QCoreApplication.translate("AsymConfigScreen", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:5px; margin-bottom:5px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">RESULT</span></p></body></html>", None))
         self.lblTitle.setText(QCoreApplication.translate("AsymConfigScreen", u"SAMPLE COMPARISON CONFIG", None))
         self.groupSpinTemplate_4.setTitle(QCoreApplication.translate("AsymConfigScreen", u"Re-calc factor (left)", None))
         self.groupSpinTemplate_5.setTitle(QCoreApplication.translate("AsymConfigScreen", u"PSNR Trigger", None))
         self.groupSpinTemplate_3.setTitle(QCoreApplication.translate("AsymConfigScreen", u"C2", None))
         self.groupInputTemplate.setTitle(QCoreApplication.translate("AsymConfigScreen", u"Segments", None))
-        self.inpSegments.setInputMask("")
-        self.inpSegments.setText("")
-        self.inpSegments.setPlaceholderText(QCoreApplication.translate("AsymConfigScreen", u"Input something", None))
+        self.cbbSegments.setItemText(0, QCoreApplication.translate("AsymConfigScreen", u"4, 2, 1", None))
+        self.cbbSegments.setItemText(1, QCoreApplication.translate("AsymConfigScreen", u"2, 1", None))
+        self.cbbSegments.setItemText(2, QCoreApplication.translate("AsymConfigScreen", u"1", None))
+
         self.grpBoxAmpRate.setTitle(QCoreApplication.translate("AsymConfigScreen", u"Amplification rate: 0", None))
         self.groupSpinTemplate_2.setTitle(QCoreApplication.translate("AsymConfigScreen", u"Amplification thresh", None))
         self.groupSpinTemplate.setTitle(QCoreApplication.translate("AsymConfigScreen", u"C1", None))
         self.grpBoxMinSimilarity.setTitle(QCoreApplication.translate("AsymConfigScreen", u"Minimum similarity (%): 0", None))
         self.groupSpinTemplate_6.setTitle(QCoreApplication.translate("AsymConfigScreen", u"Re-calc factor (right)", None))
+        self.btnCapture.setText(QCoreApplication.translate("AsymConfigScreen", u"CAPTURE", None))
         self.btnBack.setText(QCoreApplication.translate("AsymConfigScreen", u"BACK", None))
         self.btnNext.setText(QCoreApplication.translate("AsymConfigScreen", u"NEXT", None))
     # retranslateUi

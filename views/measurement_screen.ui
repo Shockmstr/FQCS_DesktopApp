@@ -221,20 +221,24 @@ font-weight:bold;</string>
               <property name="title">
                <string>Left side actual length</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_14">
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="4,2">
                <item>
                 <widget class="QDoubleSpinBox" name="inpLeftActualLength">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="decimals">
                   <number>2</number>
                  </property>
                  <property name="maximum">
                   <double>50.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnEditActualLength">
+                 <property name="text">
+                  <string>Edit</string>
                  </property>
                 </widget>
                </item>

@@ -16,39 +16,50 @@ class ColorPreprocessConfigScreen(QWidget):
     SATURATION_STEP = 0.5
     BRIGHTNESS_STEP = 0.1
     CONTRAST_STEP = 5
-    CAMERA_LOADED = False
     backscreen: Signal
     nextscreen: Signal
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.detector_cfg = DetectorConfig.instance().get_current_cfg()
-        self.ui = Ui_color_preprocess_config_screen()
-        self.ui.setupUi(self)
-        self.backscreen = self.ui.btnBack.clicked
-        self.nextscreen = self.ui.btnNext.clicked
+        self.__current_cfg = None
         self.image1 = None
         self.image2 = None
+        self.ui = Ui_color_preprocess_config_screen()
+        self.ui.setupUi(self)
+        self.build()
         self.binding()
-        self.load_cfg()
-        if not self.CAMERA_LOADED:
-            self.ui.containerConfig.setEnabled(False)
+
+    def build(self):
+        self.image1 = ImageWidget()
+        self.image2 = ImageWidget()
+        self.imageLayout = self.ui.screen1.parentWidget().layout()
+        self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
+        self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
+        self.image1.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.image2.ui.lblImage.setAlignment(Qt.AlignCenter)
+        self.ui.screen1.deleteLater()
+        self.ui.screen2.deleteLater()
+
+    def showEvent(self, event):
+        _, self.__current_cfg = DetectorConfig.instance().get_current_cfg()
+        self.__view_image()
+        self.__load_config()
 
     # binding
     def binding(self):
-        self.ui.sldBlur.valueChanged.connect(self.blur_value_change)
+        self.backscreen = self.ui.btnBack.clicked
+        self.nextscreen = self.ui.btnNext.clicked
+        self.ui.sldBlur.valueChanged.connect(self.sld_blur_value_change)
         self.ui.sldBrightLeft.valueChanged.connect(
-            self.brightness_left_value_change)
+            self.sld_brightness_left_value_change)
         self.ui.sldBrightRight.valueChanged.connect(
-            self.brightness_right_value_change)
+            self.sld_brightness_right_value_change)
         self.ui.sldConstrastLeft.valueChanged.connect(
-            self.contrast_left_value_change)
+            self.sld_contrast_left_value_change)
         self.ui.sldConstrastRight.valueChanged.connect(
-            self.contrast_right_value_change)
+            self.sld_contrast_right_value_change)
         self.ui.sldSaturation.valueChanged.connect(
-            self.saturation_value_change)
-        self.ui.chkColorCompare.stateChanged.connect(
-            self.color_compare_state_change)
+            self.sld_saturation_value_change)
 
         resize_number = ["32", "64", "128", "256", "512", "1024"]
         self.ui.cbbResizeWidth.clear()
@@ -64,49 +75,43 @@ class ColorPreprocessConfigScreen(QWidget):
         self.ui.cbbResizeWidth.activated.connect(self.cbbResize_chosen)
         self.ui.cbbResizeHeight.activated.connect(self.cbbResize_chosen)
 
-    def color_compare_state_change(self):
-        if self.ui.chkColorCompare.isChecked():
-            self.detector_cfg["is_color_enable"] = True
-        else:
-            self.detector_cfg["is_color_enable"] = False
-
     # handler
-    def blur_value_change(self):
+    def sld_blur_value_change(self):
         value = round(self.ui.sldBlur.value() * self.BLUR_STEP, 2)
-        self.detector_cfg["color_cfg"]["blur_val"] = value
+        self.__current_cfg["color_cfg"]["blur_val"] = value
         self.ui.groupSldBlur.setTitle("Blur: " + str(value))
-        self.view_image()
+        self.__view_image()
 
-    def brightness_left_value_change(self):
+    def sld_brightness_left_value_change(self):
         value = round(self.ui.sldBrightLeft.value() * self.BRIGHTNESS_STEP, 1)
-        self.detector_cfg["color_cfg"]["alpha_l"] = value
+        self.__current_cfg["color_cfg"]["alpha_l"] = value
         self.ui.groupSldBrightLeft.setTitle("Brightness left: " + str(value))
-        self.view_image()
+        self.__view_image()
 
-    def brightness_right_value_change(self):
+    def sld_brightness_right_value_change(self):
         value = round(self.ui.sldBrightRight.value() * self.BRIGHTNESS_STEP, 1)
-        self.detector_cfg["color_cfg"]["alpha_r"] = value
+        self.__current_cfg["color_cfg"]["alpha_r"] = value
         self.ui.groupSldBrightRight.setTitle("Brightness right: " + str(value))
-        self.view_image()
+        self.__view_image()
 
-    def contrast_left_value_change(self):
+    def sld_contrast_left_value_change(self):
         value = self.ui.sldConstrastLeft.value() * self.CONTRAST_STEP
-        self.detector_cfg["color_cfg"]["beta_l"] = value
+        self.__current_cfg["color_cfg"]["beta_l"] = value
         self.ui.groupSldConstrastLeft.setTitle("Contrast left: " + str(value))
-        self.view_image()
+        self.__view_image()
 
-    def contrast_right_value_change(self):
+    def sld_contrast_right_value_change(self):
         value = self.ui.sldConstrastRight.value() * self.CONTRAST_STEP
-        self.detector_cfg["color_cfg"]["beta_r"] = value
+        self.__current_cfg["color_cfg"]["beta_r"] = value
         self.ui.groupSldConstrastRight.setTitle("Contrast right: " +
                                                 str(value))
-        self.view_image()
+        self.__view_image()
 
-    def saturation_value_change(self):
+    def sld_saturation_value_change(self):
         value = round(self.ui.sldSaturation.value() * self.SATURATION_STEP, 1)
-        self.detector_cfg["color_cfg"]["sat_adj"] = int(value)
+        self.__current_cfg["color_cfg"]["sat_adj"] = int(value)
         self.ui.groupSldSaturation.setTitle("Saturation: " + str(value))
-        self.view_image()
+        self.__view_image()
 
     def cbbResize_chosen(self):
         if (self.ui.cbbResizeHeight.currentIndex() != -1
@@ -114,16 +119,18 @@ class ColorPreprocessConfigScreen(QWidget):
             width_value = int(self.ui.cbbResizeWidth.currentText())
             height_value = int(self.ui.cbbResizeHeight.currentText())
             img_size = (width_value, height_value)
-            self.detector_cfg["color_cfg"]["img_size"] = img_size
-            self.view_image()
+            self.__current_cfg["color_cfg"]["img_size"] = img_size
+            self.__view_image()
 
-    def view_image(self):
-        manager = DetectorConfig.instance().manager
-        if (self.image1 is not None and self.image2 is not None):
-            left = manager.get_sample_left()
-            right = manager.get_sample_right()
-            modified_left, modified_right = self.preprocess_color(left, right)
-            img_size = (256, self.label_h - 50)
+    def __view_image(self):
+        manager = DetectorConfig.instance().get_manager()
+        left = manager.get_sample_left()
+        right = manager.get_sample_right()
+        if (left is not None and right is not None):
+            modified_left, modified_right = self.__preprocess_color(
+                left, right)
+            label_h = self.image1.height()
+            img_size = (256, label_h - 50)
             modified_left = cv2.resize(modified_left,
                                        img_size,
                                        interpolation=cv2.INTER_AREA)
@@ -132,37 +139,21 @@ class ColorPreprocessConfigScreen(QWidget):
                                         interpolation=cv2.INTER_AREA)
             self.image1.imshow(modified_left)
             self.image2.imshow(modified_right)
+        else:
+            self.image1.imshow(None)
+            self.image2.imshow(None)
 
-    def replace_camera_widget(self):
-        if not self.CAMERA_LOADED:
-            self.image1 = ImageWidget()
-            self.image2 = ImageWidget()
-            self.label_w = self.ui.screen1.width()
-            self.label_h = self.ui.screen1.height()
-            self.imageLayout = self.ui.screen1.parentWidget().layout()
-            self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
-            self.imageLayout.replaceWidget(self.ui.screen2, self.image2)
-            self.image1.ui.lblImage.setAlignment(Qt.AlignCenter)
-            self.image2.ui.lblImage.setAlignment(Qt.AlignCenter)
-            self.CAMERA_LOADED = True
-            self.ui.containerConfig.setEnabled(True)
-
-    def showEvent(self, event):
-        self.replace_camera_widget()
-
-    def preprocess_color(self, sample_left, sample_right):
-        manager = DetectorConfig.instance().manager
-        pre_sample_left = manager.preprocess(self.detector_cfg, sample_left,
+    def __preprocess_color(self, sample_left, sample_right):
+        manager = DetectorConfig.instance().get_manager()
+        pre_sample_left = manager.preprocess(self.__current_cfg, sample_left,
                                              True)
-        pre_sample_right = manager.preprocess(self.detector_cfg, sample_right,
+        pre_sample_right = manager.preprocess(self.__current_cfg, sample_right,
                                               False)
         return pre_sample_left, pre_sample_right
 
-    def load_cfg(self):
-        self.detector_cfg = DetectorConfig.instance().get_current_cfg()
-        if self.detector_cfg is None: return
+    def __load_config(self):
         #load from default
-        color_cfg = self.detector_cfg["color_cfg"]
+        color_cfg = self.__current_cfg["color_cfg"]
         img_size = color_cfg["img_size"]
         blur = color_cfg["blur_val"]
         brightness_left = color_cfg["alpha_l"]

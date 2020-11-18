@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'error_detect_screenHKZMBj.ui'
+## Form generated from reading UI file 'error_detect_screenzvtzxp.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -45,24 +45,6 @@ class Ui_ErrorDetectScreen(object):
         self.verticalLayout_6 = QVBoxLayout(self.widget_2)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
-        self.groupCbbDisplayType = QGroupBox(self.widget_2)
-        self.groupCbbDisplayType.setObjectName(u"groupCbbDisplayType")
-        self.verticalLayout_4 = QVBoxLayout(self.groupCbbDisplayType)
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_4.setContentsMargins(-1, 0, -1, 0)
-        self.cbbDisplayType = QComboBox(self.groupCbbDisplayType)
-        self.cbbDisplayType.addItem("")
-        self.cbbDisplayType.addItem("")
-        self.cbbDisplayType.setObjectName(u"cbbDisplayType")
-        self.cbbDisplayType.setAutoFillBackground(False)
-        self.cbbDisplayType.setStyleSheet(u"height:22px")
-        self.cbbDisplayType.setEditable(True)
-
-        self.verticalLayout_4.addWidget(self.cbbDisplayType)
-
-
-        self.verticalLayout_6.addWidget(self.groupCbbDisplayType, 0, Qt.AlignTop)
-
 
         self.horizontalLayout_2.addWidget(self.widget_2)
 
@@ -144,36 +126,36 @@ class Ui_ErrorDetectScreen(object):
 "}")
         self.gridLayout_2 = QGridLayout(self.containerMid)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.groupMinimumScore = QGroupBox(self.containerMid)
-        self.groupMinimumScore.setObjectName(u"groupMinimumScore")
-        self.verticalLayout_5 = QVBoxLayout(self.groupMinimumScore)
-        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.verticalLayout_5.setContentsMargins(-1, 0, -1, 0)
-        self.inpMinimumScore = QSpinBox(self.groupMinimumScore)
-        self.inpMinimumScore.setObjectName(u"inpMinimumScore")
-        self.inpMinimumScore.setMinimum(0)
-        self.inpMinimumScore.setMaximum(100)
+        self.groupScoreThresh = QGroupBox(self.containerMid)
+        self.groupScoreThresh.setObjectName(u"groupScoreThresh")
+        self.verticalLayout_4 = QVBoxLayout(self.groupScoreThresh)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_4.setContentsMargins(-1, 0, -1, 0)
+        self.sldScoreThresh = QSlider(self.groupScoreThresh)
+        self.sldScoreThresh.setObjectName(u"sldScoreThresh")
+        self.sldScoreThresh.setMinimum(0)
+        self.sldScoreThresh.setMaximum(100)
+        self.sldScoreThresh.setValue(0)
+        self.sldScoreThresh.setOrientation(Qt.Horizontal)
 
-        self.verticalLayout_5.addWidget(self.inpMinimumScore)
-
-
-        self.gridLayout_2.addWidget(self.groupMinimumScore, 2, 1, 1, 1)
-
-        self.groupIouThreshold = QGroupBox(self.containerMid)
-        self.groupIouThreshold.setObjectName(u"groupIouThreshold")
-        self.verticalLayout_14 = QVBoxLayout(self.groupIouThreshold)
-        self.verticalLayout_14.setObjectName(u"verticalLayout_14")
-        self.verticalLayout_14.setContentsMargins(-1, 0, -1, 0)
-        self.inpIouThreshold = QSpinBox(self.groupIouThreshold)
-        self.inpIouThreshold.setObjectName(u"inpIouThreshold")
-        self.inpIouThreshold.setEnabled(True)
-        self.inpIouThreshold.setMinimum(0)
-        self.inpIouThreshold.setMaximum(1)
-
-        self.verticalLayout_14.addWidget(self.inpIouThreshold)
+        self.verticalLayout_4.addWidget(self.sldScoreThresh)
 
 
-        self.gridLayout_2.addWidget(self.groupIouThreshold, 1, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.groupScoreThresh, 2, 1, 1, 1)
+
+        self.groupMaxInstances = QGroupBox(self.containerMid)
+        self.groupMaxInstances.setObjectName(u"groupMaxInstances")
+        self.horizontalLayout_7 = QHBoxLayout(self.groupMaxInstances)
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.inpMaxInstances = QSpinBox(self.groupMaxInstances)
+        self.inpMaxInstances.setObjectName(u"inpMaxInstances")
+        self.inpMaxInstances.setMinimum(1)
+        self.inpMaxInstances.setMaximum(100)
+
+        self.horizontalLayout_7.addWidget(self.inpMaxInstances)
+
+
+        self.gridLayout_2.addWidget(self.groupMaxInstances, 0, 1, 1, 1)
 
         self.groupCbbResize = QGroupBox(self.containerMid)
         self.groupCbbResize.setObjectName(u"groupCbbResize")
@@ -186,7 +168,7 @@ class Ui_ErrorDetectScreen(object):
         self.cbbWidth.setObjectName(u"cbbWidth")
         self.cbbWidth.setAutoFillBackground(False)
         self.cbbWidth.setStyleSheet(u"height:22px")
-        self.cbbWidth.setEditable(True)
+        self.cbbWidth.setEditable(False)
 
         self.horizontalLayout_4.addWidget(self.cbbWidth)
 
@@ -196,27 +178,28 @@ class Ui_ErrorDetectScreen(object):
         self.cbbHeight.setObjectName(u"cbbHeight")
         self.cbbHeight.setAutoFillBackground(False)
         self.cbbHeight.setStyleSheet(u"height:22px")
-        self.cbbHeight.setEditable(True)
+        self.cbbHeight.setEditable(False)
 
         self.horizontalLayout_4.addWidget(self.cbbHeight)
 
 
         self.gridLayout_2.addWidget(self.groupCbbResize, 0, 0, 1, 1)
 
-        self.groupMaxInstances = QGroupBox(self.containerMid)
-        self.groupMaxInstances.setObjectName(u"groupMaxInstances")
-        self.verticalLayout_15 = QVBoxLayout(self.groupMaxInstances)
-        self.verticalLayout_15.setObjectName(u"verticalLayout_15")
-        self.verticalLayout_15.setContentsMargins(-1, 0, -1, 0)
-        self.inpMaxInstances = QSpinBox(self.groupMaxInstances)
-        self.inpMaxInstances.setObjectName(u"inpMaxInstances")
-        self.inpMaxInstances.setMinimum(1)
-        self.inpMaxInstances.setMaximum(100)
+        self.groupIoUThresh = QGroupBox(self.containerMid)
+        self.groupIoUThresh.setObjectName(u"groupIoUThresh")
+        self.verticalLayout_3 = QVBoxLayout(self.groupIoUThresh)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(-1, 0, -1, 0)
+        self.sldIoUThresh = QSlider(self.groupIoUThresh)
+        self.sldIoUThresh.setObjectName(u"sldIoUThresh")
+        self.sldIoUThresh.setMaximum(100)
+        self.sldIoUThresh.setValue(0)
+        self.sldIoUThresh.setOrientation(Qt.Horizontal)
 
-        self.verticalLayout_15.addWidget(self.inpMaxInstances)
+        self.verticalLayout_3.addWidget(self.sldIoUThresh)
 
 
-        self.gridLayout_2.addWidget(self.groupMaxInstances, 0, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.groupIoUThresh, 1, 1, 1, 1)
 
         self.groupModel = QGroupBox(self.containerMid)
         self.groupModel.setObjectName(u"groupModel")
@@ -287,6 +270,11 @@ class Ui_ErrorDetectScreen(object):
 
         self.verticalLayout_16.addWidget(self.containerVerticalBtn, 0, Qt.AlignTop)
 
+        self.btnReloadModel = QPushButton(self.containerRight)
+        self.btnReloadModel.setObjectName(u"btnReloadModel")
+
+        self.verticalLayout_16.addWidget(self.btnReloadModel)
+
         self.containerNavBtn = QWidget(self.containerRight)
         self.containerNavBtn.setObjectName(u"containerNavBtn")
         self.horizontalLayout_3 = QHBoxLayout(self.containerNavBtn)
@@ -330,17 +318,12 @@ class Ui_ErrorDetectScreen(object):
     def retranslateUi(self, ErrorDetectScreen):
         ErrorDetectScreen.setWindowTitle(QCoreApplication.translate("ErrorDetectScreen", u"Form", None))
         self.screen4.setText(QCoreApplication.translate("ErrorDetectScreen", u"SCREEN", None))
-        self.groupCbbDisplayType.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Display Type", None))
-        self.cbbDisplayType.setItemText(0, QCoreApplication.translate("ErrorDetectScreen", u"Item 1", None))
-        self.cbbDisplayType.setItemText(1, QCoreApplication.translate("ErrorDetectScreen", u"Item 2", None))
-
-        self.cbbDisplayType.setCurrentText(QCoreApplication.translate("ErrorDetectScreen", u"Item 1", None))
         self.screen2.setText(QCoreApplication.translate("ErrorDetectScreen", u"SCREEN", None))
         self.screen1.setText(QCoreApplication.translate("ErrorDetectScreen", u"SCREEN", None))
         self.lblTitle.setText(QCoreApplication.translate("ErrorDetectScreen", u"DEFECTS DETECTION - PARAMETERS CONFIGURATION", None))
         self.chkDefectDetection.setText(QCoreApplication.translate("ErrorDetectScreen", u"Enable defects detection", None))
-        self.groupMinimumScore.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Minimum score", None))
-        self.groupIouThreshold.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"IoU threshold", None))
+        self.groupScoreThresh.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Score threshold", None))
+        self.groupMaxInstances.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Max Instances", None))
         self.groupCbbResize.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Resize", None))
         self.cbbWidth.setItemText(0, QCoreApplication.translate("ErrorDetectScreen", u"Item 1", None))
         self.cbbWidth.setItemText(1, QCoreApplication.translate("ErrorDetectScreen", u"Item 2", None))
@@ -352,7 +335,7 @@ class Ui_ErrorDetectScreen(object):
 
         self.cbbHeight.setCurrentText(QCoreApplication.translate("ErrorDetectScreen", u"Height", None))
         self.cbbHeight.setPlaceholderText(QCoreApplication.translate("ErrorDetectScreen", u"Height", None))
-        self.groupMaxInstances.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Max Instances", None))
+        self.groupIoUThresh.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"IoU threshold", None))
         self.groupModel.setTitle(QCoreApplication.translate("ErrorDetectScreen", u"Model", None))
         self.inpModelChoice.setInputMask("")
         self.inpModelChoice.setText(QCoreApplication.translate("ErrorDetectScreen", u"yolov4.h5", None))
@@ -365,6 +348,7 @@ class Ui_ErrorDetectScreen(object):
         self.btnChooseClasses.setText(QCoreApplication.translate("ErrorDetectScreen", u"...", None))
         self.btnCapture.setText(QCoreApplication.translate("ErrorDetectScreen", u"CAPTURE", None))
         self.btnChoosePicture.setText(QCoreApplication.translate("ErrorDetectScreen", u"CHOOSE PICTURE", None))
+        self.btnReloadModel.setText(QCoreApplication.translate("ErrorDetectScreen", u"RELOAD MODEL", None))
         self.btnBack.setText(QCoreApplication.translate("ErrorDetectScreen", u"BACK", None))
         self.btnFinish.setText(QCoreApplication.translate("ErrorDetectScreen", u"FINISH", None))
     # retranslateUi

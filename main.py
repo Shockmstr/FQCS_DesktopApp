@@ -25,32 +25,15 @@ class MainApplication():
 
     def run(self, loop):
         AppConfig.instance().load_config()
-        self.auth_info = AuthInfo()
+        self.auth_info = AuthInfo.instance()
         self.__identity_service = IdentityService(self.auth_info)
         self.__identity_service.init_auth_info()
-        self.auth_info.new_token.connect(self.on_logged_in_success)
-        self.auth_info.refresh_token.connect(self.on_refresh_token)
-        self.auth_info.remove_token.connect(self.on_logged_out)
-        self.auth_info.same_token.connect(lambda val: print("Same token"))
-        self.choose_screen()
+        self.auth_info.token_info_changed.connect(self.token_info_changed)
+        self.build()
         self.__identity_service.check_token()
         return loop.run_forever()
 
-    def on_logged_in_success(self, token):
-        print("Logged in")
-        self.choose_screen()
-        return
-
-    def on_refresh_token(self, token):
-        print("Refresh token")
-        return
-
-    def on_logged_out(self, old_token):
-        print("Logged out")
-        self.choose_screen()
-        return
-
-    def choose_screen(self):
+    def build(self):
         if not self.auth_info.is_logged_in() and (
                 self.login_screen is None
                 or not self.login_screen.isActiveWindow()):
@@ -64,6 +47,11 @@ class MainApplication():
             self.main_window.showFullScreen()
             if self.login_screen is not None:
                 self.login_screen.close()
+        return
+
+    def token_info_changed(self, token):
+        self.build()
+        return
 
 
 if __name__ == "__main__":

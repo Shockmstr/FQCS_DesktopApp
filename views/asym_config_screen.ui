@@ -54,58 +54,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1">
-        <item alignment="Qt::AlignTop">
-         <widget class="QGroupBox" name="groupCbbTemplate">
-          <property name="title">
-           <string>Display Type:</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_20">
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QComboBox" name="cbbDisplayType">
-             <property name="autoFillBackground">
-              <bool>false</bool>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">height:22px</string>
-             </property>
-             <item>
-              <property name="text">
-               <string>Item 1</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Item 2</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
       <item row="0" column="1">
        <widget class="QWidget" name="screen2" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -140,6 +88,40 @@
           <widget class="QPushButton" name="screen3Right">
            <property name="text">
             <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QWidget" name="sectionInfo" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0">
+         <item>
+          <widget class="QTextEdit" name="inpResult">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="markdown">
+            <string>**RESULT**
+
+</string>
+           </property>
+           <property name="html">
+            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:5px; margin-bottom:5px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RESULT&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="overwriteMode">
+            <bool>false</bool>
+           </property>
+           <property name="acceptRichText">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -289,16 +271,25 @@ font-weight:bold;</string>
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="inpSegments">
-                 <property name="inputMask">
-                  <string/>
+                <widget class="QComboBox" name="cbbSegments">
+                 <property name="currentIndex">
+                  <number>0</number>
                  </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="placeholderText">
-                  <string>Input something</string>
-                 </property>
+                 <item>
+                  <property name="text">
+                   <string>4, 2, 1</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>2, 1</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>1</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
               </layout>
@@ -319,7 +310,7 @@ font-weight:bold;</string>
                <item>
                 <widget class="QSlider" name="sldAmpRate">
                  <property name="maximum">
-                  <number>100</number>
+                  <number>30</number>
                  </property>
                  <property name="pageStep">
                   <number>5</number>
@@ -425,7 +416,7 @@ font-weight:bold;</string>
 	border: 1px solid #A5A5A5
 }</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_16">
+           <layout class="QVBoxLayout" name="verticalLayout_3">
             <item alignment="Qt::AlignTop">
              <widget class="QWidget" name="containerVerticalBtn" native="true">
               <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -441,6 +432,13 @@ font-weight:bold;</string>
                <property name="bottomMargin">
                 <number>0</number>
                </property>
+               <item>
+                <widget class="QPushButton" name="btnCapture">
+                 <property name="text">
+                  <string>CAPTURE</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>
