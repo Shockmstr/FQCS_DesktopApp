@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'progress_screenrHMLwX.ui'
+## Form generated from reading UI file 'progress_screenElyZPa.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -34,12 +34,17 @@ class Ui_ProgressScreen(object):
         self.verticalLayout_3 = QVBoxLayout(self.sectionSideResult)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.label = QLabel(self.sectionSideResult)
+        self.label.setObjectName(u"label")
+
+        self.verticalLayout_3.addWidget(self.label)
+
         self.lblSideResult = QLabel(self.sectionSideResult)
         self.lblSideResult.setObjectName(u"lblSideResult")
 
         self.verticalLayout_3.addWidget(self.lblSideResult)
 
-        self.verticalLayout_3.setStretch(0, 9)
+        self.verticalLayout_3.setStretch(1, 9)
 
         self.gridLayout.addWidget(self.sectionSideResult, 1, 1, 1, 1)
 
@@ -93,48 +98,64 @@ class Ui_ProgressScreen(object):
 
         self.sectionMainResult = QWidget(self.containerScreen)
         self.sectionMainResult.setObjectName(u"sectionMainResult")
-        self.horizontalLayout_7 = QHBoxLayout(self.sectionMainResult)
-        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
-        self.horizontalLayout_7.setContentsMargins(0, 0, 0, 0)
-        self.detected_L = QLabel(self.sectionMainResult)
+        self.verticalLayout_4 = QVBoxLayout(self.sectionMainResult)
+        self.verticalLayout_4.setSpacing(0)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.label_2 = QLabel(self.sectionMainResult)
+        self.label_2.setObjectName(u"label_2")
+
+        self.verticalLayout_4.addWidget(self.label_2)
+
+        self.mainResult = QWidget(self.sectionMainResult)
+        self.mainResult.setObjectName(u"mainResult")
+        self.horizontalLayout_4 = QHBoxLayout(self.mainResult)
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.detected_L = QLabel(self.mainResult)
         self.detected_L.setObjectName(u"detected_L")
         self.detected_L.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
         self.detected_L.setAlignment(Qt.AlignCenter)
 
-        self.horizontalLayout_7.addWidget(self.detected_L)
+        self.horizontalLayout_4.addWidget(self.detected_L)
 
-        self.sample_L = QLabel(self.sectionMainResult)
+        self.sample_L = QLabel(self.mainResult)
         self.sample_L.setObjectName(u"sample_L")
         self.sample_L.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
         self.sample_L.setAlignment(Qt.AlignCenter)
 
-        self.horizontalLayout_7.addWidget(self.sample_L)
+        self.horizontalLayout_4.addWidget(self.sample_L)
 
-        self.line = QFrame(self.sectionMainResult)
+        self.line = QFrame(self.mainResult)
         self.line.setObjectName(u"line")
         self.line.setFrameShape(QFrame.VLine)
         self.line.setFrameShadow(QFrame.Sunken)
 
-        self.horizontalLayout_7.addWidget(self.line)
+        self.horizontalLayout_4.addWidget(self.line)
 
-        self.detected_R = QLabel(self.sectionMainResult)
+        self.detected_R = QLabel(self.mainResult)
         self.detected_R.setObjectName(u"detected_R")
         self.detected_R.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
         self.detected_R.setAlignment(Qt.AlignCenter)
 
-        self.horizontalLayout_7.addWidget(self.detected_R)
+        self.horizontalLayout_4.addWidget(self.detected_R)
 
-        self.sample_R = QLabel(self.sectionMainResult)
+        self.sample_R = QLabel(self.mainResult)
         self.sample_R.setObjectName(u"sample_R")
         self.sample_R.setStyleSheet(u"background-color: #AFF;font-weight:bold;")
         self.sample_R.setAlignment(Qt.AlignCenter)
 
-        self.horizontalLayout_7.addWidget(self.sample_R)
+        self.horizontalLayout_4.addWidget(self.sample_R)
 
-        self.horizontalLayout_7.setStretch(0, 1)
-        self.horizontalLayout_7.setStretch(1, 1)
-        self.horizontalLayout_7.setStretch(3, 1)
-        self.horizontalLayout_7.setStretch(4, 1)
+        self.horizontalLayout_4.setStretch(0, 1)
+        self.horizontalLayout_4.setStretch(1, 1)
+        self.horizontalLayout_4.setStretch(3, 1)
+        self.horizontalLayout_4.setStretch(4, 1)
+
+        self.verticalLayout_4.addWidget(self.mainResult)
+
+        self.verticalLayout_4.setStretch(0, 1)
+        self.verticalLayout_4.setStretch(1, 10)
 
         self.gridLayout.addWidget(self.sectionMainResult, 0, 1, 1, 1)
 
@@ -248,6 +269,7 @@ class Ui_ProgressScreen(object):
 
     def retranslateUi(self, ProgressScreen):
         ProgressScreen.setWindowTitle(QCoreApplication.translate("ProgressScreen", u"Form", None))
+        self.label.setText(QCoreApplication.translate("ProgressScreen", u"Side camera results", None))
         self.lblSideResult.setText(QCoreApplication.translate("ProgressScreen", u"Result placeholder", None))
         self.screen1.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
         self.groupCbbDisplayType.setTitle(QCoreApplication.translate("ProgressScreen", u"Display Type", None))
@@ -264,6 +286,7 @@ class Ui_ProgressScreen(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:5px; margin-bottom:5px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">RESULT</span></p></body></html>", None))
+        self.label_2.setText(QCoreApplication.translate("ProgressScreen", u"Main camera results", None))
         self.detected_L.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
         self.sample_L.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))
         self.detected_R.setText(QCoreApplication.translate("ProgressScreen", u"SCREEN", None))

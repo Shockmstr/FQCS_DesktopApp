@@ -142,4 +142,7 @@ class TestDetectPairScreen(QWidget):
 
     def btn_retake_sample_clicked(self):
         self.__detected_pair = None
+        manager = DetectorConfig.instance().get_manager()
+        manager.reset_samples()
+        self.__set_btn_next_enabled()
         self.image3.imshow(None)

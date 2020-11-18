@@ -47,7 +47,7 @@ class ProgressScreen(QWidget):
         self.imageLayout.replaceWidget(self.ui.screen1, self.image1)
         self.ui.screen1.deleteLater()
 
-        self.mainCamLayout = self.ui.sectionMainResult.layout()
+        self.mainCamLayout = self.ui.mainResult.layout()
         self.mainCamLayout.replaceWidget(self.ui.detected_L,
                                          self.left_detected_image)
         self.mainCamLayout.replaceWidget(self.ui.detected_R,
@@ -233,6 +233,7 @@ class ProgressScreen(QWidget):
         pre_left, pre_right, pre_sample_left, pre_sample_right = manager.preprocess_images(
             self.__main_cfg, left, right)
         images = [left, right]
+        final_save_images = [left.copy(), right.copy()]
         side_images = []
         # Similarity compare
         sim_cfg = self.__main_cfg["sim_cfg"]
@@ -319,7 +320,8 @@ class ProgressScreen(QWidget):
         label_w = self.side_result_image.width()
         label_h = self.side_result_image.height()
         for res in side_results:
-            side_images, side_boxes, side_scores, side_classes, side_valid_detections = res
+            side_save_images, side_images, side_boxes, side_scores, side_classes, side_valid_detections = res
+            final_save_images.extend(side_save_images)
             self.__parse_defects_detection_result(side_images, side_scores,
                                                   side_classes, classes_labels,
                                                   min_score, defects)
@@ -369,11 +371,9 @@ class ProgressScreen(QWidget):
         # save images
         folder = cur.strftime(FOLDER_DATE_FORMAT)
         os.makedirs(os.path.join(self.__storage_path, folder), exist_ok=True)
-        all_imgs = []
-        all_imgs.extend(images)
-        all_imgs.extend(side_images)
+
         images = []
-        for img in all_imgs:
+        for img in final_save_images:
             img_name = str(uuid.uuid4()) + ".jpg"
             rel_path = os.path.join(folder, img_name)
             abs_path = os.path.join(self.__storage_path, rel_path)
@@ -403,6 +403,7 @@ class ProgressScreen(QWidget):
         result = None
         if (pair is not None and len(pair) > 0):
             images = [item[0] for item in pair]
+            save_images = [img.copy() for img in images]
             boxes, scores, classes, valid_detections = await manager.detect_errors(
                 cfg, images, None)
             err_cfg = cfg["err_cfg"]
@@ -413,7 +414,8 @@ class ProgressScreen(QWidget):
                                      err_cfg["classes"],
                                      err_cfg["img_size"],
                                      min_score=err_cfg["yolo_score_threshold"])
-            result = (images, boxes, scores, classes, valid_detections)
+            result = (save_images, images, boxes, scores, classes,
+                      valid_detections)
         return helper.return_result(result, result_info)
 
     def __parse_defects_detection_result(self, images, scores, classes,
