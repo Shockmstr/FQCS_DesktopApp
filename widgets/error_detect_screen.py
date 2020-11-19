@@ -180,6 +180,8 @@ class ErrorDetectScreen(QWidget):
         classes = []
         with open(file_name) as txt_file:
             classes = txt_file.readlines()
+        for idx, cl in enumerate(classes):
+            classes[idx] = cl.replace("\n", "")
         self.__current_cfg["err_cfg"]["classes"] = classes
         self.__current_cfg["err_cfg"]["num_classes"] = len(classes)
         self.ui.inpClasses.setText(", ".join(classes))

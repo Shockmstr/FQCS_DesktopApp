@@ -30,9 +30,9 @@
       "sat_adj": 2,
       "supp_thresh": 10,
       "amplify_thresh": [
-        47.58150863647461,
-        58.93216323852539,
-        65.87867736816406
+        47.0,
+        58.0,
+        65.0
       ],
       "amplify_rate": 20,
       "max_diff": 0.2
@@ -55,21 +55,22 @@
     "detect_method": "thresh",
     "err_cfg": {
       "inp_shape": [
-        320,
-        160,
+        224,
+        224,
         3
       ],
       "img_size": [
-        160,
-        320
+        224,
+        224
       ],
-      "num_classes": 1,
+      "num_classes": 2,
       "yolo_max_boxes": 10,
       "yolo_iou_threshold": 0.5,
-      "weights": "N:/Workspace/Capstone/yolov4.h5",
-      "yolo_score_threshold": 0.3,
+      "weights": "N:/Workspace/Capstone/FQCS-Research/FQCS.ColorDetection/yolov4.h5",
+      "yolo_score_threshold": 0.4,
       "classes": [
-        "STAIN"
+        "STAIN",
+        "EXCESS_GLUE"
       ]
     },
     "d_cfg": {
@@ -185,7 +186,7 @@
     "d_cfg": {
       "max_boxes": 10,
       "bg_thresh": 29,
-      "adj_bg_thresh": 77.98456830929487,
+      "adj_bg_thresh": 29,
       "thresh_inv": false,
       "light_adj_thresh": 0,
       "alpha": 1.0,

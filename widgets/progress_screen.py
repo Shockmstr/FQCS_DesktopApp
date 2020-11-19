@@ -276,6 +276,9 @@ class ProgressScreen(QWidget):
                     side_results.append(result)
 
         # result display
+        if cur == self.__last_detect_time:
+            self.side_result_image.imshow(None)
+            self.__result_html_changed.emit("<b>RESULT</b>")
         defect_types = set()
         size_result = "<span style='color:green'>PASSED</span>"
         left_asym_result = "<span style='color:green'>PASSED</span>"
@@ -392,21 +395,32 @@ class ProgressScreen(QWidget):
     async def __activate_side_cam(self, cfg, cam, manager, result_info):
         # _, image = cam.read()
         # test only
-        _, image = self.__main_cam.read()
+        rd = np.random.randint(0, 100)
+        print("Rand", rd)
+        if rd > 75:
+            _, image = self.__main_cam.read()
+            frame_width, frame_height = cfg["frame_width"], cfg["frame_height"]
+            resized_image = cv2.resize(image, (frame_width, frame_height))
+            boxes, proc = manager.extract_boxes(cfg, resized_image)
+            image_detect = resized_image.copy()
+            pair, image_detect, boxes = manager.detect_pair_side_cam(
+                cfg, boxes, image_detect)
+        else:
+            pair = [(cv2.imread("./resources/test_data/side_demo.jpg"), None)]
 
-        frame_width, frame_height = cfg["frame_width"], cfg["frame_height"]
-        resized_image = cv2.resize(image, (frame_width, frame_height))
-        boxes, proc = manager.extract_boxes(cfg, resized_image)
-        image_detect = resized_image.copy()
-        pair, image_detect, boxes = manager.detect_pair_side_cam(
-            cfg, boxes, image_detect)
+        # frame_width, frame_height = cfg["frame_width"], cfg["frame_height"]
+        # resized_image = cv2.resize(image, (frame_width, frame_height))
+        # boxes, proc = manager.extract_boxes(cfg, resized_image)
+        # image_detect = resized_image.copy()
+        # pair, image_detect, boxes = manager.detect_pair_side_cam(
+        #     cfg, boxes, image_detect)
         result = None
         if (pair is not None and len(pair) > 0):
             images = [item[0] for item in pair]
             save_images = [img.copy() for img in images]
             boxes, scores, classes, valid_detections = await manager.detect_errors(
-                cfg, images, None)
-            err_cfg = cfg["err_cfg"]
+                self.__main_cfg, images, None)
+            err_cfg = self.__main_cfg["err_cfg"]
             helper.draw_yolo_results(images,
                                      boxes,
                                      scores,
