@@ -102,15 +102,30 @@ class DetectionConfigScreen(QWidget):
             camera_name = cfg["name"]
             is_main = cfg["is_main"]
             if (is_main):
-                self.__add_new_row(table, camera_name, "Main Camera")
+                self.__add_new_row(table, camera_name, "Main camera")
             else:
-                self.__add_new_row(table, camera_name, "")
+                self.__add_new_row(table, camera_name, "Side camera")
         table.clearSelection()
         table.itemSelectionChanged.emit()
         self.__last_selected_row = -1
         self.image1.imshow(None)
         self.image2.imshow(None)
         self.image3.imshow(None)
+
+    def __reload_roles(self):
+        table = self.ui.tblCameraConfig
+        manager = DetectorConfig.instance().get_manager()
+        cfgs = manager.get_configs()
+        count = 0
+        for cfg in cfgs:
+            camera_name = cfg["name"]
+            is_main = cfg["is_main"]
+            item = table.item(count, 1)
+            if (is_main):
+                item.setData(Qt.ItemDataRole.DisplayRole, "Main camera")
+            else:
+                item.setData(Qt.ItemDataRole.DisplayRole, "Side camera")
+            count += 1
 
     #BINDING
     def binding(self):
@@ -307,7 +322,7 @@ class DetectionConfigScreen(QWidget):
         new_cfg = detector.default_detector_config()
         new_cfg["name"] = camera_name
         detector_cfg.add_config(new_cfg)
-        self.__add_new_row(table, camera_name, "")
+        self.__add_new_row(table, camera_name, "Side camera")
 
     def tbl_camera_item_selection_changed(self):
         table = self.ui.tblCameraConfig
@@ -446,6 +461,7 @@ class DetectionConfigScreen(QWidget):
             self.camera_changed.emit(camera_uri)
         else:
             self.ui.cbbCamera.setCurrentIndex(-1)
+        self.__reload_roles()
 
     def __add_new_row(self, table, camera_name, is_main):
         current_row = table.rowCount()
