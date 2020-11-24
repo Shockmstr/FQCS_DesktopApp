@@ -23,14 +23,17 @@ class LoginScreen(QWidget):
 
     # handler
     def btn_login_clicked(self):
-        username = self.ui.inpAcc.text()
-        password = self.ui.inpPass.text()
-        is_success, resp = self.__identity_service.log_in(username, password)
-        if is_success and self.__identity_service.is_device_account(resp):
-            self.__identity_service.save_token_json(resp)
-            self.__identity_service.check_token()
+        username = self.ui.inpAcc.text().strip()
+        password = self.ui.inpPass.text().strip()
+        if not username or not password:
+            helpers.show_message("Username and password must not be empty!")
         else:
-            if is_success is not None:
-                helpers.show_message("Invalid account or password")
+            is_success, resp = self.__identity_service.log_in(username, password)
+            if is_success and self.__identity_service.is_device_account(resp):
+                self.__identity_service.save_token_json(resp)
+                self.__identity_service.check_token()
             else:
-                helpers.show_message("Something's wrong")
+                if is_success is not None:
+                    helpers.show_message("Invalid account or password")
+                else:
+                    helpers.show_message("Something's wrong")
