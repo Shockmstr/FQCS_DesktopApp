@@ -1,0 +1,4 @@
++ Rename FQCS_spec.py --> FQCS.spec
++ Change FQCS.spec settings
++ Use the following cmd to build the app:
+pyinstaller FQCS.spec
