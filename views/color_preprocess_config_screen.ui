@@ -99,7 +99,7 @@
 font-weight:bold;</string>
         </property>
         <property name="text">
-         <string>COLOR COMPARISION - PREPROCESS</string>
+         <string>IMAGE PREPROCESSING</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
