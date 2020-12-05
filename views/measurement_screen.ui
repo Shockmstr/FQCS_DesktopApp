@@ -185,7 +185,7 @@ font-weight:bold;</string>
             <item row="0" column="0">
              <widget class="QGroupBox" name="groupSliderWidth">
               <property name="title">
-               <string>Maximum width(%):</string>
+               <string>Minimum width(%):</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <property name="topMargin">
@@ -316,7 +316,7 @@ font-weight:bold;</string>
             <item row="1" column="0">
              <widget class="QGroupBox" name="groupSliderHeight">
               <property name="title">
-               <string>Maximum height(%):</string>
+               <string>Minimum height(%):</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_12">
                <property name="topMargin">

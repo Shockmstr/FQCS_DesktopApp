@@ -195,7 +195,7 @@
 font-weight:bold;</string>
         </property>
         <property name="text">
-         <string>DEFINE SAMPLE MODEL</string>
+         <string>DETECTION CONFIGURATION</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -685,7 +685,7 @@ font-weight:bold;</string>
                  <widget class="QWidget" name="grpChkInvertThresh" native="true">
                   <layout class="QVBoxLayout" name="verticalLayout_3">
                    <item>
-                    <widget class="QCheckBox" name="chkInvertThresh">
+                    <widget class="QCheckBox" name="ckbInvertThresh">
                      <property name="text">
                       <string>Invert</string>
                      </property>
@@ -797,7 +797,7 @@ font-weight:bold;</string>
                  <widget class="QWidget" name="grpChkInvertRange" native="true">
                   <layout class="QVBoxLayout" name="verticalLayout_4">
                    <item>
-                    <widget class="QCheckBox" name="chkInvertRange">
+                    <widget class="QCheckBox" name="ckbInvertRange">
                      <property name="text">
                       <string>Invert</string>
                      </property>

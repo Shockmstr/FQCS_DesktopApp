@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'detection_config_screenDfhtdZ.ui'
+## Form generated from reading UI file 'detection_config_screenFyrjlN.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -387,17 +387,17 @@ class Ui_DetectionConfigScreen(object):
 
         self.gridLayout_4.addItem(self.horizontalSpacer_2, 0, 1, 2, 1)
 
-        self.grpCkbInvertThresh = QWidget(self.subContainer)
-        self.grpCkbInvertThresh.setObjectName(u"grpCkbInvertThresh")
-        self.verticalLayout_3 = QVBoxLayout(self.grpCkbInvertThresh)
-        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.ckbInvertThresh = QCheckBox(self.grpCkbInvertThresh)
+        self.grpChkInvertThresh = QWidget(self.subContainer)
+        self.grpChkInvertThresh.setObjectName(u"grpChkInvertThresh")
+        self.verticalLayout_31 = QVBoxLayout(self.grpChkInvertThresh)
+        self.verticalLayout_31.setObjectName(u"verticalLayout_31")
+        self.ckbInvertThresh = QCheckBox(self.grpChkInvertThresh)
         self.ckbInvertThresh.setObjectName(u"ckbInvertThresh")
 
-        self.verticalLayout_3.addWidget(self.ckbInvertThresh)
+        self.verticalLayout_31.addWidget(self.ckbInvertThresh)
 
 
-        self.gridLayout_4.addWidget(self.grpCkbInvertThresh, 2, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.grpChkInvertThresh, 2, 0, 1, 1)
 
         self.gridLayout_4.setColumnStretch(0, 1)
         self.gridLayout_4.setColumnStretch(1, 2)
@@ -463,17 +463,17 @@ class Ui_DetectionConfigScreen(object):
 
         self.gridLayout_5.addWidget(self.grpboxLightAdjRange, 1, 0, 1, 1)
 
-        self.grpCkbInvertRange = QWidget(self.subContainerRange)
-        self.grpCkbInvertRange.setObjectName(u"grpCkbInvertRange")
-        self.verticalLayout_4 = QVBoxLayout(self.grpCkbInvertRange)
+        self.grpChkInvertRange = QWidget(self.subContainerRange)
+        self.grpChkInvertRange.setObjectName(u"grpChkInvertRange")
+        self.verticalLayout_4 = QVBoxLayout(self.grpChkInvertRange)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.ckbInvertRange = QCheckBox(self.grpCkbInvertRange)
+        self.ckbInvertRange = QCheckBox(self.grpChkInvertRange)
         self.ckbInvertRange.setObjectName(u"ckbInvertRange")
 
         self.verticalLayout_4.addWidget(self.ckbInvertRange)
 
 
-        self.gridLayout_5.addWidget(self.grpCkbInvertRange, 2, 0, 1, 1)
+        self.gridLayout_5.addWidget(self.grpChkInvertRange, 2, 0, 1, 1)
 
         self.gridLayout_5.setColumnStretch(0, 3)
 
@@ -545,7 +545,7 @@ class Ui_DetectionConfigScreen(object):
         self.retranslateUi(DetectionConfigScreen)
 
         self.cbbHeight.setCurrentIndex(-1)
-        self.stackContainerMid.setCurrentIndex(2)
+        self.stackContainerMid.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(DetectionConfigScreen)
@@ -563,7 +563,7 @@ class Ui_DetectionConfigScreen(object):
         ___qtablewidgetitem.setText(QCoreApplication.translate("DetectionConfigScreen", u"Camera Name", None));
         ___qtablewidgetitem1 = self.tblCameraConfig.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("DetectionConfigScreen", u"Role", None));
-        self.lblTitle.setText(QCoreApplication.translate("DetectionConfigScreen", u"DEFINE SAMPLE MODEL", None))
+        self.lblTitle.setText(QCoreApplication.translate("DetectionConfigScreen", u"DETECTION CONFIGURATION", None))
         self.groubCbbCamera.setTitle(QCoreApplication.translate("DetectionConfigScreen", u"Camera", None))
         self.cbbCamera.setItemText(0, QCoreApplication.translate("DetectionConfigScreen", u"Item 1", None))
         self.cbbCamera.setItemText(1, QCoreApplication.translate("DetectionConfigScreen", u"Item 2", None))

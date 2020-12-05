@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'measurement_screenBUpeuw.ui'
+## Form generated from reading UI file 'measurement_screenqywyHy.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -319,7 +319,7 @@ class Ui_MeasurementScreen(object):
         self.screen4.setText(QCoreApplication.translate("MeasurementScreen", u"SCREEN", None))
         self.lblTitle.setText(QCoreApplication.translate("MeasurementScreen", u"DEFINE MEASUREMENT AND MIN AREA", None))
         self.chkMainCamera.setText(QCoreApplication.translate("MeasurementScreen", u"Is main camera", None))
-        self.groupSliderWidth.setTitle(QCoreApplication.translate("MeasurementScreen", u"Maximum width(%):", None))
+        self.groupSliderWidth.setTitle(QCoreApplication.translate("MeasurementScreen", u"Minimum width(%):", None))
         self.groupLeftActualLength.setTitle(QCoreApplication.translate("MeasurementScreen", u"Left side actual length", None))
         self.btnEditActualLength.setText(QCoreApplication.translate("MeasurementScreen", u"Edit", None))
         self.groupSliderPosition.setTitle(QCoreApplication.translate("MeasurementScreen", u"Detect position:", None))
@@ -327,7 +327,7 @@ class Ui_MeasurementScreen(object):
         self.inpLeftDetectedLength.setInputMask("")
         self.inpLeftDetectedLength.setText(QCoreApplication.translate("MeasurementScreen", u"420", None))
         self.inpLeftDetectedLength.setPlaceholderText(QCoreApplication.translate("MeasurementScreen", u"Input something", None))
-        self.groupSliderHeight.setTitle(QCoreApplication.translate("MeasurementScreen", u"Maximum height(%):", None))
+        self.groupSliderHeight.setTitle(QCoreApplication.translate("MeasurementScreen", u"Minimum height(%):", None))
         self.groupLeftLengthUnit.setTitle(QCoreApplication.translate("MeasurementScreen", u"Length unit", None))
         self.inpLengthUnit.setInputMask("")
         self.inpLengthUnit.setText(QCoreApplication.translate("MeasurementScreen", u"cm", None))
