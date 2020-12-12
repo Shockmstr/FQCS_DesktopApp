@@ -92,12 +92,12 @@ class MeasurementScreen(QWidget):
     def sld_min_width_change(self):
         value = self.ui.sldMaximumWidth.value()
         self.__current_cfg["min_width_per"] = value / 100
-        self.ui.groupSliderWidth.setTitle("Maximum width (%): " + str(value))
+        self.ui.groupSliderWidth.setTitle("Minimum width (%): " + str(value))
 
     def sld_min_height_change(self):
         value = self.ui.sldMaximumHeight.value()
         self.__current_cfg["min_height_per"] = value / 100
-        self.ui.groupSliderHeight.setTitle("Maximum height (%): " + str(value))
+        self.ui.groupSliderHeight.setTitle("Minimum height (%): " + str(value))
 
     def sld_position_change(self):
         value = self.ui.sldDectectPosition.value()

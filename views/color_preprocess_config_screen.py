@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'color_preprocess_config_screenawZvrA.ui'
+## Form generated from reading UI file 'color_preprocess_config_screenRVgTmC.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.1
 ##
@@ -283,7 +283,7 @@ class Ui_color_preprocess_config_screen(object):
         color_preprocess_config_screen.setWindowTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Form", None))
         self.screen1.setText(QCoreApplication.translate("color_preprocess_config_screen", u"SCREEN", None))
         self.screen2.setText(QCoreApplication.translate("color_preprocess_config_screen", u"SCREEN", None))
-        self.lblTitle.setText(QCoreApplication.translate("color_preprocess_config_screen", u"COLOR COMPARISION - PREPROCESS", None))
+        self.lblTitle.setText(QCoreApplication.translate("color_preprocess_config_screen", u"IMAGE PREPROCESSING", None))
         self.groupCbbResize.setTitle(QCoreApplication.translate("color_preprocess_config_screen", u"Resize (Width - Height)", None))
         self.cbbResizeWidth.setItemText(0, QCoreApplication.translate("color_preprocess_config_screen", u"Item 1", None))
         self.cbbResizeWidth.setItemText(1, QCoreApplication.translate("color_preprocess_config_screen", u"Item 2", None))
