@@ -23,6 +23,9 @@ class ProgressScreen(QWidget):
     __result_html_changed = Signal(str)
     __sample_left = None
     __sample_right = None
+    __pre_sample_left = None
+    __pre_sample_right = None
+    __last_display_type = None
     __capturing = True
 
     def __init__(self, parent=None):
@@ -77,6 +80,11 @@ class ProgressScreen(QWidget):
             # video_cameras[i].open(cfg["camera_uri"])
             # test only
             video_cameras[i].open(Videos.instance().next())
+
+        self.__sample_left, self.__sample_right = manager.get_sample_left(
+        ), manager.get_sample_right()
+        self.__pre_sample_left, self.__pre_sample_right = manager.preprocess_images(
+            self.__main_cfg, self.__sample_left, self.__sample_right)
 
         self.image1.imshow(None)
         self.left_detected_image.imshow(None)
@@ -158,8 +166,6 @@ class ProgressScreen(QWidget):
 
     def __view_image_sample(self):
         manager = DetectorConfig.instance().get_manager()
-        self.__sample_left = manager.get_sample_left()
-        self.__sample_right = manager.get_sample_right()
         label_w, label_h = self.left_detected_image.width(
         ), self.left_detected_image.height()
         dim = (label_w, label_h)
@@ -230,7 +236,7 @@ class ProgressScreen(QWidget):
         left, right = pair
         left, right = left[0], right[0]
         left = cv2.flip(left, 1)
-        pre_left, pre_right, pre_sample_left, pre_sample_right = manager.preprocess_images(
+        pre_left, pre_right = manager.preprocess_images(
             self.__main_cfg, left, right)
         images = [left, right]
         final_save_images = [left.copy(), right.copy()]
@@ -238,8 +244,8 @@ class ProgressScreen(QWidget):
         # Similarity compare
         sim_cfg = self.__main_cfg["sim_cfg"]
         left_result, right_result = await manager.detect_asym(
-            self.__main_cfg, pre_left, pre_right, pre_sample_left,
-            pre_sample_right, None)
+            self.__main_cfg, pre_left, pre_right, self.__pre_sample_left,
+            self.__pre_sample_right, None)
         is_asym_diff_left, avg_asym_left, avg_amp_left, recalc_left, res_list_l, amp_res_list_l = left_result
         is_asym_diff_right, avg_asym_right, avg_amp_right, recalc_right, res_list_r, amp_res_list_r = right_result
         has_asym = is_asym_diff_left or is_asym_diff_right
@@ -250,8 +256,8 @@ class ProgressScreen(QWidget):
                 if self.__main_cfg["is_color_enable"]:
                     has_color_checked = True
                     nursery.start_soon(manager.compare_colors, self.__main_cfg,
-                                       pre_left, pre_right, pre_sample_left,
-                                       pre_sample_right, True,
+                                       pre_left, pre_right, self.__pre_sample_left,
+                                       self.__pre_sample_right, True,
                                        (result_dict, "color_results"))
 
                 if self.__main_cfg["is_defect_enable"]:
