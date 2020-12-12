@@ -6,7 +6,7 @@ import shutil
 import cv2
 
 TEMP_PATH = "test\\tmp"
-IMGPATH = "test\\data\\1.png"
+IMGPATH = "test\\data_test\\1.png"
 
 class ConfigTest(unittest.TestCase):
     def setUp(self):
