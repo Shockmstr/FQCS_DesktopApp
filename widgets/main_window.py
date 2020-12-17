@@ -27,7 +27,7 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         self.__identity_service = identity_service
         self.__view_cam = None
-        self.__video_camera = None
+        self.__video_camera = cv2.VideoCapture()
         self.__detector_cfg = DetectorConfig.instance()
         self.__camera_timer = self.__detector_cfg.get_timer()
         self.ui = Ui_MainWindow()
@@ -148,9 +148,9 @@ class MainWindow(QMainWindow):
                 and self.__video_camera.isOpened()):
             _, image = self.__video_camera.read()
             # test only
-            if image is None:
-                self.__video_camera.open(Videos.instance().next())
-                _, image = self.__video_camera.read()
+            # if image is None:
+            #     self.__video_camera.open(Videos.instance().next())
+            #     _, image = self.__video_camera.read()
             _, current_cfg = self.__detector_cfg.get_current_cfg()
             frame_width, frame_height = current_cfg[
                 "frame_width"], current_cfg["frame_height"]
@@ -159,14 +159,12 @@ class MainWindow(QMainWindow):
 
     # event handler
     def camera_changed(self, index):
-        self.__video_camera = self.__detector_cfg.get_current_camera()
-        if self.__video_camera is None: return
         if index is not None and index > -1:
             if (self.__detector_cfg.get_last_camera_uri() !=
                     index) or (not self.__video_camera.isOpened()):
-                # self.__video_camera.open(index)
+                self.__video_camera.open(index)
                 # test only
-                self.__video_camera.open(Videos.instance().next())
+                # self.__video_camera.open(Videos.instance().next())
                 self.__detector_cfg.set_last_camera_uri(index)
         else:
             if self.__view_cam is not None: self.__view_cam(None)
@@ -219,7 +217,7 @@ class MainWindow(QMainWindow):
         if err_mess is not None:
             helpers.show_message(err_mess)
             return
-        self.__video_camera = None
+        self.__video_camera.release()
         self.stop_capture()
         self.ui.centralStackWidget.setCurrentWidget(self.progress_screen)
 
