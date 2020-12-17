@@ -77,9 +77,9 @@ class ProgressScreen(QWidget):
         configs = manager.get_configs()
         self.__main_cam = video_cameras[main_idx]
         for i, cfg in enumerate(configs):
-            # video_cameras[i].open(cfg["camera_uri"])
+            video_cameras[i].open(cfg["camera_uri"])
             # test only
-            video_cameras[i].open(Videos.instance().next())
+            # video_cameras[i].open(Videos.instance().next())
 
         self.__sample_left, self.__sample_right = manager.get_sample_left(
         ), manager.get_sample_right()
@@ -155,10 +155,10 @@ class ProgressScreen(QWidget):
         _, image = self.__main_cam.read()
         if image is None:
             # test only
-            self.__main_cam.open(Videos.instance().next())
-            _, image = self.__main_cam.read()
-            # self.image1.imshow(image)
-            # return
+            # self.__main_cam.open(Videos.instance().next())
+            # _, image = self.__main_cam.read()
+            self.image1.imshow(image)
+            return
         frame_width, frame_height = self.__main_cfg[
             "frame_width"], self.__main_cfg["frame_height"]
         image = cv2.resize(image, (frame_width, frame_height))
@@ -372,7 +372,7 @@ class ProgressScreen(QWidget):
             result_text += f"<b>Color of right</b>: {right_color_result}<br/><hr/>"
         result_text += f"<b>Defects</b>: {defect_result}<br/>"
         # test only
-        result_text += f"{defect_types}"
+        # result_text += f"{defect_types}"
 
         if cur == self.__last_detect_time:
             self.__result_html_changed.emit(result_text)
@@ -399,27 +399,27 @@ class ProgressScreen(QWidget):
         return
 
     async def __activate_side_cam(self, cfg, cam, manager, result_info):
-        # _, image = cam.read()
+        _, image = cam.read()
         # test only
-        rd = np.random.randint(0, 100)
-        print("Rand", rd)
-        if rd > 75:
-            _, image = self.__main_cam.read()
-            frame_width, frame_height = cfg["frame_width"], cfg["frame_height"]
-            resized_image = cv2.resize(image, (frame_width, frame_height))
-            boxes, proc = manager.extract_boxes(cfg, resized_image)
-            image_detect = resized_image.copy()
-            pair, image_detect, boxes = manager.detect_pair_side_cam(
-                cfg, boxes, image_detect)
-        else:
-            pair = [(cv2.imread("./resources/test_data/side_demo.jpg"), None)]
+        # rd = np.random.randint(0, 100)
+        # print("Rand", rd)
+        # if rd > 75:
+        #     _, image = self.__main_cam.read()
+        #     frame_width, frame_height = cfg["frame_width"], cfg["frame_height"]
+        #     resized_image = cv2.resize(image, (frame_width, frame_height))
+        #     boxes, proc = manager.extract_boxes(cfg, resized_image)
+        #     image_detect = resized_image.copy()
+        #     pair, image_detect, boxes = manager.detect_pair_side_cam(
+        #         cfg, boxes, image_detect)
+        # else:
+        #     pair = [(cv2.imread("./resources/test_data/side_demo.jpg"), None)]
 
-        # frame_width, frame_height = cfg["frame_width"], cfg["frame_height"]
-        # resized_image = cv2.resize(image, (frame_width, frame_height))
-        # boxes, proc = manager.extract_boxes(cfg, resized_image)
-        # image_detect = resized_image.copy()
-        # pair, image_detect, boxes = manager.detect_pair_side_cam(
-        #     cfg, boxes, image_detect)
+        frame_width, frame_height = cfg["frame_width"], cfg["frame_height"]
+        resized_image = cv2.resize(image, (frame_width, frame_height))
+        boxes, proc = manager.extract_boxes(cfg, resized_image)
+        image_detect = resized_image.copy()
+        pair, image_detect, boxes = manager.detect_pair_side_cam(
+            cfg, boxes, image_detect)
         result = None
         if (pair is not None and len(pair) > 0):
             images = [item[0] for item in pair]
