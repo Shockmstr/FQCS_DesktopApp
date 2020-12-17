@@ -118,6 +118,9 @@ class SideErrorDetectScreen(QWidget):
     def btn_detect_clicked(self):
         manager = DetectorConfig.instance().get_manager()
         if self.__last_pair is not None and manager.get_model() is not None:
+            if len(self.__last_pair) == 0:
+                helpers.show_message("No pair detected")
+                return
             runnable = WorkerRunnable(self.__detect_error,
                                       self.__last_pair,
                                       parent=self)
