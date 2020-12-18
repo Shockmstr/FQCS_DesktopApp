@@ -265,7 +265,10 @@ class MainWindow(QMainWindow):
         for cfg in configs:
             if cfg["is_main"] == True:
                 self.__detector_cfg.set_current_cfg_name(cfg["name"])
-                await manager.load_model(cfg)
+                try:
+                    await manager.load_model(cfg)
+                except:
+                    helpers.show_message("Error loading model")
                 break
         self.__detector_cfg.set_manager(manager)
         self.__detector_cfg.set_current_path(file_path)

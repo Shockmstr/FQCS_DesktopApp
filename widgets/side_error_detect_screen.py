@@ -121,9 +121,8 @@ class SideErrorDetectScreen(QWidget):
             if len(self.__last_pair) == 0:
                 helpers.show_message("No pair detected")
                 return
-            runnable = WorkerRunnable(self.__detect_error,
-                                      self.__last_pair,
-                                      parent=self)
+            images = [img.copy() for idx, img in enumerate(self.__last_pair)]
+            runnable = WorkerRunnable(self.__detect_error, images, parent=self)
             runnable.work_error.connect(lambda ex: print(ex))
             QThreadPool.globalInstance().start(runnable)
 
@@ -149,7 +148,7 @@ class SideErrorDetectScreen(QWidget):
             return
         orig = cv2.resize(image, dim)
         self.image1.imshow(orig)
-        proc, self.__last_pair = self.__process_image(image)
+        proc, self.__last_pair = self.__process_pair(image)
         proc = cv2.resize(proc, dim)
         self.image2.imshow(proc)
 
@@ -212,8 +211,3 @@ class SideErrorDetectScreen(QWidget):
             return image, images
 
         return image, None
-
-    def __process_image(self, image):
-        manager = DetectorConfig.instance().get_manager()
-        proc, pair = self.__process_pair(image)
-        return proc, pair

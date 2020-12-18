@@ -119,8 +119,12 @@ class ErrorDetectScreen(QWidget):
     # hander
     @asyncSlot()
     async def btn_reload_model_clicked(self):
-        await DetectorConfig.instance().get_manager().load_model(
-            self.__current_cfg)
+        try:
+            await DetectorConfig.instance().get_manager().load_model(
+                self.__current_cfg)
+            helpers.show_message("Finish reloading model")
+        except:
+            helpers.show_message("Error reloading model")
 
     def btn_capture_clicked(self):
         self.captured.emit()
